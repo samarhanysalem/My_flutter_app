@@ -37,6 +37,9 @@ dependencies:
 
   # State management, per CLAUDE.md: ChangeNotifier + Provider throughout.
   provider: ^6.1.2
+  firebase_core: ^4.14.0
+  firebase_auth: ^6.6.1
+  cloud_firestore: ^6.9.0
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +51,15 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+
+# firebase_core_web 3.11.0 fails to compile for web: it calls the
+# `dart:js_interop` `isA<T>()` extension (defined on `JSAny?`) on a bare
+# `catch (e)` value, whose static type is `Object`, not `JSAny?`. 3.10.0
+# predates that regression and is otherwise API-compatible with the
+# firebase_core version pinned above. Remove this override once upstream
+# publishes a fix (see https://github.com/firebase/flutterfire/issues).
+dependency_overrides:
+  firebase_core_web: 3.10.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

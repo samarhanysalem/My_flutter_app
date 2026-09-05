@@ -1,19 +1,36 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:doctor_appointment_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:doctor_appointment_app/main.dart';
+import 'features/auth/fake_auth_repository.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Signed-out user sees the sign-in form', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(MyApp(authRepository: FakeAuthRepository()));
+    await tester.pump();
+
+    expect(find.text('Sign in'), findsWidgets);
+    expect(find.byType(TextFormField), findsNWidgets(2));
+  });
+
+  testWidgets('Signing in reveals the home page and the counter works', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(MyApp(authRepository: FakeAuthRepository()));
+    await tester.pump();
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Email'),
+      'doctor@example.com',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Password'),
+      'password123',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
+    await tester.pumpAndSettle();
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

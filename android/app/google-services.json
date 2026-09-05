@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "758398004020",
+    "project_id": "doctor-appointment-app-84847",
+    "storage_bucket": "doctor-appointment-app-84847.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758398004020:android:e9652639d5f5f027afd361",
+        "android_client_info": {
+          "package_name": "com.example.doctor_appointment_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdWvXEv9piCfvhsVUjLji1Kil0fZSaWMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

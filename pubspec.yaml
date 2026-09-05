@@ -55,12 +55,21 @@ dev_dependencies:
 
 # firebase_core_web 3.11.0 fails to compile for web: it calls the
 # `dart:js_interop` `isA<T>()` extension (defined on `JSAny?`) on a bare
-# `catch (e)` value, whose static type is `Object`, not `JSAny?`. 3.10.0
-# predates that regression and is otherwise API-compatible with the
-# firebase_core version pinned above. Remove this override once upstream
-# publishes a fix (see https://github.com/firebase/flutterfire/issues).
+# `catch (e)` value, whose static type is `Object`, not `JSAny?`.
+#
+# This used to be worked around by pinning to 3.10.0, but firebase_auth_web
+# and cloud_firestore_web both require `^3.11.0` and use its interop API
+# directly (firebase_core_web_interop.dart) — running against 3.10.0 instead
+# left auth/Firestore calls hanging forever on web (no exception, no
+# response) instead of failing outright. third_party/firebase_core_web is a
+# vendored copy of the real 3.11.0 release with just those two `.isA<T>()`
+# call sites fixed (cast to `JSAny?` first, since the extension requires
+# that static type), so the interop API stays exactly what those packages
+# expect. Remove this override and the vendored copy once upstream publishes
+# a fix (see https://github.com/firebase/flutterfire/issues).
 dependency_overrides:
-  firebase_core_web: 3.10.0
+  firebase_core_web:
+    path: third_party/firebase_core_web
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

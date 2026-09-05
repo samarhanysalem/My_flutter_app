@@ -32,6 +32,9 @@ class FakeAuthRepository implements AuthRepository {
   Stream<AppUser?> authStateChanges() => _controller.stream;
 
   @override
+  Stream<String> get profileWarnings => const Stream.empty();
+
+  @override
   Future<void> signIn({required String email, required String password}) async {
     signInCalled = true;
     if (errorToThrow != null) throw errorToThrow!;

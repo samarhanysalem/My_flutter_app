@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
-import 'package:flutter/foundation.dart';
 
 import '../models/app_user.dart';
 
@@ -10,6 +9,11 @@ import '../models/app_user.dart';
 /// with a fake instead of talking to real Firebase.
 abstract class AuthRepository {
   Stream<AppUser?> authStateChanges();
+
+  /// One-shot notices for failures that happen *after* an auth action has
+  /// already succeeded (e.g. a best-effort profile save) — not blocking
+  /// errors, just something the UI may want to surface to the user.
+  Stream<String> get profileWarnings;
 
   Future<void> signIn({required String email, required String password});
 
@@ -39,11 +43,15 @@ class FirebaseAuthRepository implements AuthRepository {
 
   final fb.FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firestore;
+  final _profileWarnings = StreamController<String>.broadcast();
 
   @override
   Stream<AppUser?> authStateChanges() {
     return _firebaseAuth.authStateChanges().map(_toAppUser);
   }
+
+  @override
+  Stream<String> get profileWarnings => _profileWarnings.stream;
 
   @override
   Future<void> signIn({required String email, required String password}) async {
@@ -84,7 +92,9 @@ class FirebaseAuthRepository implements AuthRepository {
       user
           .updateDisplayName(fullName)
           .catchError(
-            (Object e) => debugPrint('Failed to set display name: $e'),
+            (Object e) => _profileWarnings.add(
+              "Couldn't save your name — you can update it later.",
+            ),
           ),
     );
     unawaited(
@@ -98,7 +108,9 @@ class FirebaseAuthRepository implements AuthRepository {
             'createdAt': FieldValue.serverTimestamp(),
           })
           .catchError(
-            (Object e) => debugPrint('Failed to save user profile: $e'),
+            (Object e) => _profileWarnings.add(
+              "Couldn't save your profile details — you can update them later.",
+            ),
           ),
     );
   }

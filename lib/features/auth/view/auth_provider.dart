@@ -44,9 +44,19 @@ class AuthProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> signUp({required String email, required String password}) {
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+    required String phone,
+  }) {
     return _runAuthAction(
-      () => _authRepository.signUp(email: email, password: password),
+      () => _authRepository.signUp(
+        email: email,
+        password: password,
+        fullName: fullName,
+        phone: phone,
+      ),
     );
   }
 

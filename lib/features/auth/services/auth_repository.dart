@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 
 import '../models/app_user.dart';
@@ -9,7 +10,12 @@ abstract class AuthRepository {
 
   Future<void> signIn({required String email, required String password});
 
-  Future<void> signUp({required String email, required String password});
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+    required String phone,
+  });
 
   Future<void> signOut();
 }
@@ -24,10 +30,12 @@ class AuthException implements Exception {
 }
 
 class FirebaseAuthRepository implements AuthRepository {
-  FirebaseAuthRepository({fb.FirebaseAuth? firebaseAuth})
-    : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance;
+  FirebaseAuthRepository({fb.FirebaseAuth? firebaseAuth, FirebaseFirestore? firestore})
+    : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
+      _firestore = firestore ?? FirebaseFirestore.instance;
 
   final fb.FirebaseAuth _firebaseAuth;
+  final FirebaseFirestore _firestore;
 
   @override
   Stream<AppUser?> authStateChanges() {
@@ -47,12 +55,26 @@ class FirebaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> signUp({required String email, required String password}) async {
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+    required String phone,
+  }) async {
     try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
+      final credential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      final user = credential.user;
+      if (user == null) return;
+      await user.updateDisplayName(fullName);
+      await _firestore.collection('users').doc(user.uid).set({
+        'fullName': fullName,
+        'email': email,
+        'phone': phone,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
     } on fb.FirebaseAuthException catch (e) {
       throw AuthException(e.message ?? 'Failed to sign up.');
     }

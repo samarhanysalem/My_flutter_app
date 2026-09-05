@@ -25,6 +25,8 @@ class FakeAuthRepository implements AuthRepository {
   bool signInCalled = false;
   bool signUpCalled = false;
   bool signOutCalled = false;
+  String? lastFullName;
+  String? lastPhone;
 
   @override
   Stream<AppUser?> authStateChanges() => _controller.stream;
@@ -38,8 +40,15 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> signUp({required String email, required String password}) async {
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+    required String phone,
+  }) async {
     signUpCalled = true;
+    lastFullName = fullName;
+    lastPhone = phone;
     if (errorToThrow != null) throw errorToThrow!;
     _currentUser = AppUser(uid: 'test-uid', email: email);
     _controller.add(_currentUser);

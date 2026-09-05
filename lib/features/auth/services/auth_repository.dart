@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:flutter/foundation.dart';
 
 import '../models/app_user.dart';
 
@@ -61,23 +64,43 @@ class FirebaseAuthRepository implements AuthRepository {
     required String fullName,
     required String phone,
   }) async {
+    final fb.UserCredential credential;
     try {
-      final credential = await _firebaseAuth.createUserWithEmailAndPassword(
+      credential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      final user = credential.user;
-      if (user == null) return;
-      await user.updateDisplayName(fullName);
-      await _firestore.collection('users').doc(user.uid).set({
-        'fullName': fullName,
-        'email': email,
-        'phone': phone,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
     } on fb.FirebaseAuthException catch (e) {
       throw AuthException(e.message ?? 'Failed to sign up.');
     }
+
+    // The account already exists and authStateChanges() has already fired
+    // by this point, so sign-up itself is done. Saving the display name and
+    // profile doc is best-effort enrichment — it shouldn't block completion
+    // or leave the caller waiting if it's slow or fails.
+    final user = credential.user;
+    if (user == null) return;
+    unawaited(
+      user
+          .updateDisplayName(fullName)
+          .catchError(
+            (Object e) => debugPrint('Failed to set display name: $e'),
+          ),
+    );
+    unawaited(
+      _firestore
+          .collection('users')
+          .doc(user.uid)
+          .set({
+            'fullName': fullName,
+            'email': email,
+            'phone': phone,
+            'createdAt': FieldValue.serverTimestamp(),
+          })
+          .catchError(
+            (Object e) => debugPrint('Failed to save user profile: $e'),
+          ),
+    );
   }
 
   @override

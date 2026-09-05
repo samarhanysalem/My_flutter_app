@@ -88,6 +88,27 @@ Riverpod, GetX, or other state management approaches.
 - Use `ListView.builder` (or other builder-based list widgets) for lists,
   never manually map a full list into a non-lazy `Column`/`ListView`.
 
+## Responsive design
+
+The app ships to web (GitHub Pages), Android, and iOS, so layouts must adapt
+across phone, tablet, and desktop/web viewport widths — not just the phone
+size the widget was built against.
+
+- Don't hardcode pixel widths/heights for layout. Use `MediaQuery`,
+  `LayoutBuilder`, or relative sizing instead of fixed `SizedBox`/`Container`
+  dimensions for anything that should adapt to the viewport.
+- Prefer flexible layout widgets (`Expanded`, `Flexible`, `Wrap`,
+  `FractionallySizedBox`) over fixed-size children when content should grow
+  or shrink with available space.
+- Use `LayoutBuilder` or `MediaQuery.sizeOf(context).width` to switch between
+  a single-column (phone) and multi-column (tablet/web) layout where a
+  screen's content warrants it.
+- Cap content width on wide viewports (e.g. a `ConstrainedBox` with
+  `maxWidth`) rather than letting text, forms, or cards stretch edge-to-edge
+  on desktop/web.
+- Check new screens at multiple sizes — phone, tablet, and a wide web
+  viewport — before considering the UI done.
+
 ## Comments
 
 - Explain *why*, not *what*. The code should already say what it does.

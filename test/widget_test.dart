@@ -28,6 +28,28 @@ void main() {
     expect(find.byType(TextFormField), findsNWidgets(2));
   });
 
+  testWidgets('Password field visibility toggle shows and hides the password', (
+    WidgetTester tester,
+  ) async {
+    await _pumpAuthApp(tester, FakeAuthRepository());
+
+    final passwordField = find.descendant(
+      of: find.byKey(const Key('authField_Password')),
+      matching: find.byType(TextField),
+    );
+    expect(tester.widget<TextField>(passwordField).obscureText, isTrue);
+
+    await tester.tap(find.byIcon(Icons.visibility_off));
+    await tester.pump();
+
+    expect(tester.widget<TextField>(passwordField).obscureText, isFalse);
+
+    await tester.tap(find.byIcon(Icons.visibility));
+    await tester.pump();
+
+    expect(tester.widget<TextField>(passwordField).obscureText, isTrue);
+  });
+
   testWidgets('Register link navigates to the register screen and back', (
     WidgetTester tester,
   ) async {
@@ -92,6 +114,27 @@ void main() {
       expect(find.text('Doctor Appointment App'), findsOneWidget);
     },
   );
+
+  testWidgets('Invalid email is rejected before signing in', (
+    WidgetTester tester,
+  ) async {
+    final repository = FakeAuthRepository();
+    await _pumpAuthApp(tester, repository);
+
+    await tester.enterText(
+      find.byKey(const Key('authField_Email')),
+      'not-an-email',
+    );
+    await tester.enterText(
+      find.byKey(const Key('authField_Password')),
+      'password123',
+    );
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));
+    await tester.pump();
+
+    expect(find.text('Enter a valid email'), findsOneWidget);
+    expect(repository.signInCalled, isFalse);
+  });
 
   testWidgets('Signing in reveals the home page and the counter works', (
     WidgetTester tester,

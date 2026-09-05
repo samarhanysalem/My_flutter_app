@@ -5,8 +5,9 @@ import 'auth_colors.dart';
 
 /// Labeled input matching the design handoff's field spec: 12px secondary
 /// label, 6px gap, 46px-tall input with an 8px-radius border that turns
-/// accent-colored on focus.
-class AuthTextField extends StatelessWidget {
+/// accent-colored on focus. When [obscureText] is true, shows a show/hide
+/// toggle rather than always hiding the input.
+class AuthTextField extends StatefulWidget {
   const AuthTextField({
     super.key,
     required this.label,
@@ -24,6 +25,13 @@ class AuthTextField extends StatelessWidget {
   final Iterable<String>? autofillHints;
   final String? Function(String?)? validator;
 
+  @override
+  State<AuthTextField> createState() => _AuthTextFieldState();
+}
+
+class _AuthTextFieldState extends State<AuthTextField> {
+  late bool _obscured = widget.obscureText;
+
   OutlineInputBorder _border(Color color) => OutlineInputBorder(
     borderRadius: BorderRadius.circular(8),
     borderSide: BorderSide(color: color),
@@ -36,17 +44,20 @@ class AuthTextField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          label,
-          style: GoogleFonts.dmSans(fontSize: 12, color: AuthColors.textSecondary),
+          widget.label,
+          style: GoogleFonts.dmSans(
+            fontSize: 12,
+            color: AuthColors.textSecondary,
+          ),
         ),
         const SizedBox(height: 6),
         TextFormField(
-          key: Key('authField_$label'),
-          controller: controller,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          autofillHints: autofillHints,
-          validator: validator,
+          key: Key('authField_${widget.label}'),
+          controller: widget.controller,
+          obscureText: _obscured,
+          keyboardType: widget.keyboardType,
+          autofillHints: widget.autofillHints,
+          validator: widget.validator,
           style: GoogleFonts.dmSans(fontSize: 14, color: AuthColors.ink),
           decoration: InputDecoration(
             isDense: true,
@@ -61,6 +72,17 @@ class AuthTextField extends StatelessWidget {
             focusedBorder: _border(AuthColors.accent),
             errorBorder: _border(Theme.of(context).colorScheme.error),
             focusedErrorBorder: _border(Theme.of(context).colorScheme.error),
+            suffixIcon: widget.obscureText
+                ? IconButton(
+                    icon: Icon(
+                      _obscured ? Icons.visibility_off : Icons.visibility,
+                      size: 20,
+                      color: AuthColors.textSecondary,
+                    ),
+                    tooltip: _obscured ? 'Show password' : 'Hide password',
+                    onPressed: () => setState(() => _obscured = !_obscured),
+                  )
+                : null,
           ),
         ),
       ],

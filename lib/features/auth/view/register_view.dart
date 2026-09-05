@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../auth_validators.dart';
 import '../widgets/auth_colors.dart';
 import '../widgets/auth_error_text.dart';
 import '../widgets/auth_primary_button.dart';
@@ -123,15 +124,7 @@ class _RegisterViewState extends State<RegisterView> {
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         autofillHints: const [AutofillHints.email],
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Enter your email';
-                          }
-                          if (!value.contains('@')) {
-                            return 'Enter a valid email';
-                          }
-                          return null;
-                        },
+                        validator: AuthValidators.email,
                       ),
                       const SizedBox(height: 14),
                       AuthTextField(
@@ -142,6 +135,13 @@ class _RegisterViewState extends State<RegisterView> {
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Enter your phone number';
+                          }
+                          final digits = value.replaceAll(
+                            RegExp(r'[^0-9]'),
+                            '',
+                          );
+                          if (digits.length < 7) {
+                            return 'Enter a valid phone number';
                           }
                           return null;
                         },
@@ -155,6 +155,10 @@ class _RegisterViewState extends State<RegisterView> {
                         validator: (value) {
                           if (value == null || value.length < 8) {
                             return 'Password must be at least 8 characters';
+                          }
+                          if (!RegExp(r'[A-Za-z]').hasMatch(value) ||
+                              !RegExp(r'[0-9]').hasMatch(value)) {
+                            return 'Include at least one letter and one number';
                           }
                           return null;
                         },

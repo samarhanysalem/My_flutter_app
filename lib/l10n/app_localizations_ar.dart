@@ -257,4 +257,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noSlotsAvailable => 'لا توجد مواعيد متاحة في هذا اليوم.';
+
+  @override
+  String get loadAvailabilityError =>
+      'تعذّر تحميل المواعيد المتاحة. حاول مرة أخرى.';
 }

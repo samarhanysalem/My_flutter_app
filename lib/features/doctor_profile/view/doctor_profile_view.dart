@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../common/models/doctor.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
+import '../services/availability_service.dart';
 import '../widgets/availability_section.dart';
 import '../widgets/book_appointment_button.dart';
 import '../widgets/doctor_about_section.dart';
@@ -13,9 +14,17 @@ import '../widgets/quick_actions_row.dart';
 /// from the design handoff. The booking flow itself is a separate feature
 /// — "Book appointment" is wired up as an entry point stub for now.
 class DoctorProfileView extends StatelessWidget {
-  const DoctorProfileView({super.key, required this.doctor});
+  const DoctorProfileView({
+    super.key,
+    required this.doctor,
+    this.availabilityService,
+  });
 
   final Doctor doctor;
+
+  /// Injectable for tests, so they never talk to real Firestore — see
+  /// `AvailabilitySection`.
+  final AvailabilityService? availabilityService;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +84,10 @@ class DoctorProfileView extends StatelessWidget {
                           bio: doctor.localizedBio(Localizations.localeOf(context)),
                         ),
                         const SizedBox(height: AppTheme.spacing20),
-                        AvailabilitySection(),
+                        AvailabilitySection(
+                          doctorId: doctor.id,
+                          availabilityService: availabilityService,
+                        ),
                       ],
                     ),
                   ),

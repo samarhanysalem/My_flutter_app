@@ -565,6 +565,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No time slots available on this day.'**
   String get noSlotsAvailable;
+
+  /// Shown when fetching a day's time slots fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load availability. Please try again.'**
+  String get loadAvailabilityError;
 }
 
 class _AppLocalizationsDelegate

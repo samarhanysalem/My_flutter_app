@@ -258,4 +258,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noSlotsAvailable => 'No time slots available on this day.';
+
+  @override
+  String get loadAvailabilityError =>
+      'Couldn\'t load availability. Please try again.';
 }

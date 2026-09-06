@@ -354,5 +354,9 @@
   "noSlotsAvailable": "No time slots available on this day.",
   "@noSlotsAvailable": {
     "description": "Shown when the selected day has no available time slots."
+  },
+  "loadAvailabilityError": "Couldn't load availability. Please try again.",
+  "@loadAvailabilityError": {
+    "description": "Shown when fetching a day's time slots fails."
   }
 }

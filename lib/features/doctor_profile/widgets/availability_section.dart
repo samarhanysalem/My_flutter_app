@@ -1,117 +1,125 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
-
-/// Mock time slots per weekday — there's no booking backend yet, so this
-/// stands in for "what's actually free that day". Deliberately fixed rather
-/// than randomized so the same day always shows the same slots.
-const Map<int, List<String>> _slotsByWeekday = {
-  DateTime.monday: ['9:00 AM', '11:15 AM', '2:30 PM'],
-  DateTime.tuesday: ['10:30 AM', '1:00 PM', '4:15 PM'],
-  DateTime.wednesday: ['9:00 AM', '1:00 PM', '5:30 PM'],
-  DateTime.thursday: ['11:15 AM', '2:30 PM', '4:15 PM'],
-  DateTime.friday: ['9:00 AM', '10:30 AM', '5:30 PM'],
-  DateTime.saturday: ['10:30 AM', '2:30 PM'],
-  DateTime.sunday: [],
-};
+import '../services/availability_service.dart';
+import '../view/availability_provider.dart';
 
 DateTime _dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
 
-/// "Available today" time-slot chips, with a calendar button to check a
-/// different day. Selecting a day/slot is local, ephemeral UI state (no
-/// booking backend exists yet), so this owns it directly rather than
-/// lifting it into a ChangeNotifier, per CLAUDE.md's widget rules.
-class AvailabilitySection extends StatefulWidget {
-  AvailabilitySection({super.key, DateTime? today})
-    : today = today ?? DateTime.now();
+/// "Available today" time-slot chips, backed by real availability data from
+/// Firestore (`doctors/{doctorId}/availability/{yyyy-MM-dd}` — see
+/// `AvailabilityService`), with a calendar button to check a different day.
+class AvailabilitySection extends StatelessWidget {
+  AvailabilitySection({
+    super.key,
+    required this.doctorId,
+    AvailabilityService? availabilityService,
+    DateTime? today,
+  }) : availabilityService = availabilityService ?? FirestoreAvailabilityService(),
+       today = _dateOnly(today ?? DateTime.now());
 
-  /// Overridable so tests get deterministic "today" instead of depending on
-  /// the real wall-clock date (which would make the mock slots below flaky).
+  final String doctorId;
+  final AvailabilityService availabilityService;
+
+  /// Overridable so tests get a deterministic "today" instead of depending
+  /// on the real wall-clock date.
   final DateTime today;
 
-  @override
-  State<AvailabilitySection> createState() => _AvailabilitySectionState();
-}
-
-class _AvailabilitySectionState extends State<AvailabilitySection> {
-  late final DateTime _today = _dateOnly(widget.today);
-  late DateTime _selectedDate = _today;
-  int? _selectedSlotIndex = 0;
-
-  List<String> get _slots =>
-      _slotsByWeekday[_selectedDate.weekday] ?? const [];
-
-  Future<void> _pickDate(BuildContext context) async {
+  Future<void> _pickDate(BuildContext context, AvailabilityProvider provider) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
-      firstDate: _today,
-      lastDate: _today.add(const Duration(days: 60)),
+      initialDate: provider.selectedDate,
+      firstDate: today,
+      lastDate: today.add(const Duration(days: 60)),
     );
     if (picked == null) return;
-    setState(() {
-      _selectedDate = _dateOnly(picked);
-      _selectedSlotIndex = _slots.isEmpty ? null : 0;
-    });
+    await provider.selectDate(_dateOnly(picked));
   }
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    final locale = Localizations.localeOf(context);
-    final title = _selectedDate == _today
-        ? loc.availableToday
-        : loc.availableOn(DateFormat.MMMEd(locale.toLanguageTag()).format(_selectedDate));
-    final slots = _slots;
+    return ChangeNotifierProvider<AvailabilityProvider>(
+      create: (_) => AvailabilityProvider(
+        availabilityService: availabilityService,
+        doctorId: doctorId,
+        initialDate: today,
+      ),
+      child: Builder(
+        builder: (context) {
+          final provider = context.watch<AvailabilityProvider>();
+          final loc = AppLocalizations.of(context)!;
+          final locale = Localizations.localeOf(context);
+          final title = provider.selectedDate == today
+              ? loc.availableToday
+              : loc.availableOn(
+                  DateFormat.MMMEd(locale.toLanguageTag()).format(provider.selectedDate),
+                );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                style: AppTheme.sectionTitle,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _pickDate(context),
-              tooltip: loc.selectDate,
-              icon: const Icon(
-                Icons.calendar_month_outlined,
-                size: 20,
-                color: AppTheme.primary,
-              ),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacing10),
-        if (slots.isEmpty)
-          Text(loc.noSlotsAvailable, style: AppTheme.subtitle)
-        else
-          Row(
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (var i = 0; i < slots.length; i++) ...[
-                Expanded(
-                  child: _SlotChip(
-                    label: slots[i],
-                    selected: i == _selectedSlotIndex,
-                    onTap: () => setState(() => _selectedSlotIndex = i),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: AppTheme.sectionTitle,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
+                  IconButton(
+                    onPressed: () => _pickDate(context, provider),
+                    tooltip: loc.selectDate,
+                    icon: const Icon(
+                      Icons.calendar_month_outlined,
+                      size: 20,
+                      color: AppTheme.primary,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppTheme.spacing10),
+              if (provider.isLoading)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: AppTheme.spacing10),
+                  child: Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                )
+              else if (provider.hasError)
+                Text(loc.loadAvailabilityError, style: AppTheme.subtitle)
+              else if (provider.slots.isEmpty)
+                Text(loc.noSlotsAvailable, style: AppTheme.subtitle)
+              else
+                Row(
+                  children: [
+                    for (var i = 0; i < provider.slots.length; i++) ...[
+                      Expanded(
+                        child: _SlotChip(
+                          label: provider.slots[i],
+                          selected: i == provider.selectedSlotIndex,
+                          onTap: () => provider.selectSlot(i),
+                        ),
+                      ),
+                      if (i != provider.slots.length - 1)
+                        const SizedBox(width: AppTheme.spacing8),
+                    ],
+                  ],
                 ),
-                if (i != slots.length - 1)
-                  const SizedBox(width: AppTheme.spacing8),
-              ],
             ],
-          ),
-      ],
+          );
+        },
+      ),
     );
   }
 }

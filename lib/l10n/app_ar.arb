@@ -85,5 +85,6 @@
   "availableToday": "متاح اليوم",
   "availableOn": "متاح في {date}",
   "selectDate": "اختر التاريخ",
-  "noSlotsAvailable": "لا توجد مواعيد متاحة في هذا اليوم."
+  "noSlotsAvailable": "لا توجد مواعيد متاحة في هذا اليوم.",
+  "loadAvailabilityError": "تعذّر تحميل المواعيد المتاحة. حاول مرة أخرى."
 }

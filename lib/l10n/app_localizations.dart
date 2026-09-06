@@ -547,6 +547,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Available today'**
   String get availableToday;
+
+  /// Doctor profile availability section title for a day other than today.
+  ///
+  /// In en, this message translates to:
+  /// **'Available on {date}'**
+  String availableOn(String date);
+
+  /// Tooltip for the calendar button that opens the date picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get selectDate;
+
+  /// Shown when the selected day has no available time slots.
+  ///
+  /// In en, this message translates to:
+  /// **'No time slots available on this day.'**
+  String get noSlotsAvailable;
 }
 
 class _AppLocalizationsDelegate

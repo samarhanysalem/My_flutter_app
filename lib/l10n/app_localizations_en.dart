@@ -247,4 +247,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get availableToday => 'Available today';
+
+  @override
+  String availableOn(String date) {
+    return 'Available on $date';
+  }
+
+  @override
+  String get selectDate => 'Select date';
+
+  @override
+  String get noSlotsAvailable => 'No time slots available on this day.';
 }

@@ -104,22 +104,22 @@ void main() {
     expect(find.text('Booking isn\'t available yet.'), findsOneWidget);
   });
 
-  testWidgets('tapping a time slot changes the selection', (tester) async {
+  testWidgets('offers a calendar button to pick a different day', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       _wrap(const DoctorProfileView(doctor: _doctorWithBio)),
     );
 
-    expect(find.text('10:30 AM'), findsOneWidget);
-    expect(find.text('1:00 PM'), findsOneWidget);
-    expect(find.text('4:15 PM'), findsOneWidget);
+    // The exact slots shown depend on the real day-of-week (see
+    // AvailabilitySection's mock schedule) — that's covered with a fixed
+    // "today" in availability_section_test.dart. Here we only check the
+    // calendar entry point exists and opens without throwing.
+    expect(find.byIcon(Icons.calendar_month_outlined), findsOneWidget);
 
-    // Selecting a different slot shouldn't throw and should still render
-    // all three (the widget re-renders with a new selected index).
-    await tester.tap(find.text('1:00 PM'));
-    await tester.pump();
+    await tester.tap(find.byIcon(Icons.calendar_month_outlined));
+    await tester.pumpAndSettle();
 
-    expect(find.text('10:30 AM'), findsOneWidget);
-    expect(find.text('1:00 PM'), findsOneWidget);
-    expect(find.text('4:15 PM'), findsOneWidget);
+    expect(find.byType(DatePickerDialog), findsOneWidget);
   });
 }

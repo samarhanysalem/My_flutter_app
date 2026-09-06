@@ -82,5 +82,8 @@
   "bookAppointment": "احجز موعدًا",
   "aboutSectionTitle": "نبذة",
   "noBioAvailable": "لا تتوفر نبذة عن هذا الطبيب حتى الآن.",
-  "availableToday": "متاح اليوم"
+  "availableToday": "متاح اليوم",
+  "availableOn": "متاح في {date}",
+  "selectDate": "اختر التاريخ",
+  "noSlotsAvailable": "لا توجد مواعيد متاحة في هذا اليوم."
 }

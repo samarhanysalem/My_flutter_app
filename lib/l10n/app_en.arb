@@ -337,5 +337,22 @@
   "availableToday": "Available today",
   "@availableToday": {
     "description": "Doctor profile availability section title."
+  },
+  "availableOn": "Available on {date}",
+  "@availableOn": {
+    "description": "Doctor profile availability section title for a day other than today.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "selectDate": "Select date",
+  "@selectDate": {
+    "description": "Tooltip for the calendar button that opens the date picker."
+  },
+  "noSlotsAvailable": "No time slots available on this day.",
+  "@noSlotsAvailable": {
+    "description": "Shown when the selected day has no available time slots."
   }
 }

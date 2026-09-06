@@ -246,4 +246,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get availableToday => 'متاح اليوم';
+
+  @override
+  String availableOn(String date) {
+    return 'متاح في $date';
+  }
+
+  @override
+  String get selectDate => 'اختر التاريخ';
+
+  @override
+  String get noSlotsAvailable => 'لا توجد مواعيد متاحة في هذا اليوم.';
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../theme/app_theme.dart';
 import '../../../common/models/doctor.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../theme/app_theme.dart';
 
 /// The "Search doctors, specialties" bar. Filtering is client-side — see
 /// `HomeProvider.setSearchQuery` — and this also offers autocomplete
@@ -37,6 +38,7 @@ class HomeSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return LayoutBuilder(
       builder: (context, constraints) {
         return RawAutocomplete<String>(
@@ -68,7 +70,7 @@ class HomeSearchBar extends StatelessWidget {
                       decoration: InputDecoration(
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'Search doctors, specialties',
+                        hintText: loc.searchHint,
                         hintStyle: AppTheme.subtitle.copyWith(
                           color: AppTheme.textPlaceholder,
                         ),
@@ -81,7 +83,7 @@ class HomeSearchBar extends StatelessWidget {
           },
           optionsViewBuilder: (context, onSelected, options) {
             return Align(
-              alignment: Alignment.topLeft,
+              alignment: AlignmentDirectional.topStart,
               child: Material(
                 elevation: 2,
                 borderRadius: BorderRadius.circular(AppTheme.radiusSmall),

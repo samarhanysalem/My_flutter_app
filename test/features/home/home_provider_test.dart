@@ -31,7 +31,7 @@ void main() {
 
       expect(provider.isLoading, isFalse);
       expect(provider.doctors, doctors);
-      expect(provider.errorMessage, isNull);
+      expect(provider.hasError, isFalse);
 
       provider.dispose();
       service.dispose();
@@ -45,7 +45,7 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       expect(provider.isLoading, isFalse);
-      expect(provider.errorMessage, isNotNull);
+      expect(provider.hasError, isTrue);
       expect(provider.doctors, isEmpty);
 
       provider.dispose();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 const _slots = ['10:30 AM', '1:00 PM', '4:15 PM'];
@@ -22,7 +23,10 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Available today', style: AppTheme.sectionTitle),
+        Text(
+          AppLocalizations.of(context)!.availableToday,
+          style: AppTheme.sectionTitle,
+        ),
         const SizedBox(height: AppTheme.spacing10),
         Row(
           children: [

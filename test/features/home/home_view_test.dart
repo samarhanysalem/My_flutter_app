@@ -1,7 +1,8 @@
+import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
-import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/home/view/home_view.dart';
+import 'package:doctor_appointment_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,8 @@ Future<void> _pumpHome(
 ) async {
   await tester.pumpWidget(
     MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: ChangeNotifierProvider<AuthProvider>.value(
         value: authProvider,
         child: HomeView(appointmentService: appointmentService),

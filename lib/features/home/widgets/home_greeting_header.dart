@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../auth/models/app_user.dart';
 
@@ -15,15 +16,22 @@ class HomeGreetingHeader extends StatelessWidget {
   final AppUser? user;
   final VoidCallback onAvatarTap;
 
-  String get _greeting {
+  String _greeting(AppLocalizations loc) {
     final hour = DateTime.now().hour;
-    final timeOfDay = hour < 12
-        ? 'morning'
-        : hour < 17
-        ? 'afternoon'
-        : 'evening';
     final name = _firstName;
-    return name == null ? 'Good $timeOfDay' : 'Good $timeOfDay, $name';
+    if (hour < 12) {
+      return name == null
+          ? loc.greetingMorningNoName
+          : loc.greetingMorningWithName(name);
+    }
+    if (hour < 17) {
+      return name == null
+          ? loc.greetingAfternoonNoName
+          : loc.greetingAfternoonWithName(name);
+    }
+    return name == null
+        ? loc.greetingEveningNoName
+        : loc.greetingEveningWithName(name);
   }
 
   String? get _firstName {
@@ -46,12 +54,13 @@ class HomeGreetingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           child: Text(
-            _greeting,
+            _greeting(loc),
             style: AppTheme.greeting,
             overflow: TextOverflow.ellipsis,
           ),

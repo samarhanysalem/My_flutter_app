@@ -31,6 +31,16 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # English + Arabic localization (see lib/l10n/). `intl` is left
+  # unconstrained so it always resolves to whatever version this Flutter
+  # SDK's flutter_localizations requires.
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+  # Persists the user's chosen language (see lib/config/locale_provider.dart).
+  shared_preferences: ^2.3.3
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -87,6 +97,9 @@ flutter_launcher_icons:
 
 # The following section is specific to Flutter packages.
 flutter:
+
+  # Generates lib's AppLocalizations class from lib/l10n/*.arb per l10n.yaml.
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -20,8 +20,11 @@ class HomeProvider extends ChangeNotifier {
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
-  String? _errorMessage;
-  String? get errorMessage => _errorMessage;
+  // Only whether loading failed, not the message itself — the message is
+  // user-facing copy, so it's localized where it's displayed (DoctorList)
+  // rather than baked into this non-widget layer as a fixed-language string.
+  bool _hasError = false;
+  bool get hasError => _hasError;
 
   List<Doctor> _doctors = [];
   List<Doctor> _allDoctors = List.unmodifiable(const <Doctor>[]);
@@ -71,13 +74,13 @@ class HomeProvider extends ChangeNotifier {
     _doctors = doctors;
     _allDoctors = List.unmodifiable(doctors);
     _isLoading = false;
-    _errorMessage = null;
+    _hasError = false;
     notifyListeners();
   }
 
   void _onError(Object error) {
     _isLoading = false;
-    _errorMessage = 'Something went wrong loading doctors. Please try again.';
+    _hasError = true;
     notifyListeners();
   }
 

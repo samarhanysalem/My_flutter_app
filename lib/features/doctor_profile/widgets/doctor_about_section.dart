@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// The "About" section. Falls back to generic copy for a doctor whose
@@ -11,14 +12,15 @@ class DoctorAboutSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final trimmedBio = bio?.trim();
     final text = (trimmedBio == null || trimmedBio.isEmpty)
-        ? 'No bio available yet for this doctor.'
+        ? loc.noBioAvailable
         : trimmedBio;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('About', style: AppTheme.sectionTitle),
+        Text(loc.aboutSectionTitle, style: AppTheme.sectionTitle),
         const SizedBox(height: AppTheme.spacing8),
         Text(text, style: AppTheme.proseSecondary),
       ],

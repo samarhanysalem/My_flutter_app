@@ -1,34 +1,63 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 class _Specialty {
-  const _Specialty(this.label, this.icon, [String? filterValue])
-    : filterValue = filterValue ?? label;
+  const _Specialty(this.id, this.icon, this.filterValue);
 
-  final String label;
+  /// Stable identifier used to look up the localized [label] — see
+  /// [_labelFor]. Not shown to the user.
+  final String id;
   final IconData icon;
 
   /// The substring matched against `Doctor.specialty` — see
-  /// `HomeProvider.doctors`. Defaults to [label], but a short display label
-  /// that isn't itself a substring of the real specialty name (e.g.
-  /// "Endocrine" vs. "Endocrinologist", "Eye" vs. "Ophthalmologist") must
-  /// override this with one that actually is.
+  /// `HomeProvider.doctors`. Always English, regardless of the app's
+  /// language, since it's matched against the English specialty names
+  /// stored in Firestore. A short label that isn't itself a substring of
+  /// the real specialty name (e.g. "Endocrine" vs. "Endocrinologist", "Eye"
+  /// vs. "Ophthalmologist") must use one that actually is.
   final String filterValue;
 }
 
 const _specialties = [
-  _Specialty('Cardio', Icons.favorite_border),
-  _Specialty('Ortho', Icons.accessibility_new),
-  _Specialty('Neuro', Icons.psychology_outlined),
-  _Specialty('Derma', Icons.face_retouching_natural),
-  _Specialty('Pediatric', Icons.child_care),
-  _Specialty('Endocrine', Icons.biotech_outlined, 'Endocrin'),
-  _Specialty('Psych', Icons.self_improvement),
-  _Specialty('Gastro', Icons.local_dining),
-  _Specialty('Eye', Icons.visibility_outlined, 'Ophthalmolog'),
-  _Specialty('Family', Icons.family_restroom),
+  _Specialty('cardio', Icons.favorite_border, 'Cardio'),
+  _Specialty('ortho', Icons.accessibility_new, 'Ortho'),
+  _Specialty('neuro', Icons.psychology_outlined, 'Neuro'),
+  _Specialty('derma', Icons.face_retouching_natural, 'Derma'),
+  _Specialty('pediatric', Icons.child_care, 'Pediatric'),
+  _Specialty('endocrine', Icons.biotech_outlined, 'Endocrin'),
+  _Specialty('psych', Icons.self_improvement, 'Psych'),
+  _Specialty('gastro', Icons.local_dining, 'Gastro'),
+  _Specialty('eye', Icons.visibility_outlined, 'Ophthalmolog'),
+  _Specialty('family', Icons.family_restroom, 'Family'),
 ];
+
+String _labelFor(AppLocalizations loc, String id) {
+  switch (id) {
+    case 'cardio':
+      return loc.specialtyCardio;
+    case 'ortho':
+      return loc.specialtyOrtho;
+    case 'neuro':
+      return loc.specialtyNeuro;
+    case 'derma':
+      return loc.specialtyDerma;
+    case 'pediatric':
+      return loc.specialtyPediatric;
+    case 'endocrine':
+      return loc.specialtyEndocrine;
+    case 'psych':
+      return loc.specialtyPsych;
+    case 'gastro':
+      return loc.specialtyGastro;
+    case 'eye':
+      return loc.specialtyEye;
+    case 'family':
+      return loc.specialtyFamily;
+  }
+  throw ArgumentError('Unknown specialty id: $id');
+}
 
 /// Horizontally scrollable specialty shortcuts (so a narrow phone doesn't
 /// force these to shrink or wrap — there are enough specialties now that
@@ -49,12 +78,13 @@ class SpecialtyShortcutsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
           _SpecialtyTile(
-            label: 'All',
+            label: loc.specialtyAll,
             icon: Icons.apps,
             selected: selectedSpecialty == null,
             onTap: () => onSelect(null),
@@ -62,7 +92,7 @@ class SpecialtyShortcutsRow extends StatelessWidget {
           const SizedBox(width: AppTheme.spacing14),
           for (final specialty in _specialties) ...[
             _SpecialtyTile(
-              label: specialty.label,
+              label: _labelFor(loc, specialty.id),
               icon: specialty.icon,
               selected: selectedSpecialty == specialty.filterValue,
               onTap: () => onSelect(specialty.filterValue),

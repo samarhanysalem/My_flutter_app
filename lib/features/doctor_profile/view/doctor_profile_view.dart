@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../theme/app_theme.dart';
 import '../../../common/models/doctor.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../theme/app_theme.dart';
 import '../widgets/availability_section.dart';
 import '../widgets/book_appointment_button.dart';
 import '../widgets/doctor_about_section.dart';
@@ -54,7 +55,10 @@ class DoctorProfileView extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: AppTheme.spacing12),
-                            Text('Doctor profile', style: AppTheme.screenTitle),
+                            Text(
+                              AppLocalizations.of(context)!.doctorProfileTitle,
+                              style: AppTheme.screenTitle,
+                            ),
                           ],
                         ),
                         const SizedBox(height: AppTheme.spacing20),

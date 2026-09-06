@@ -4,11 +4,13 @@ import 'package:provider/provider.dart';
 import '../../../common/utils/not_available_yet.dart';
 import '../../../common/widgets/app_logo_mark.dart';
 import '../../../config/app_config.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../auth_validators.dart';
 import '../widgets/auth_error_text.dart';
 import '../widgets/auth_primary_button.dart';
 import '../widgets/auth_text_field.dart';
+import '../widgets/language_toggle_button.dart';
 import 'auth_provider.dart';
 import 'register_view.dart';
 
@@ -48,6 +50,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppTheme.screenGround,
       body: SafeArea(
@@ -61,12 +64,18 @@ class _LoginViewState extends State<LoginView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const AppLogoMark(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        AppLogoMark(),
+                        LanguageToggleButton(),
+                      ],
+                    ),
                     const SizedBox(height: AppTheme.spacing28),
-                    Text('Welcome back', style: AppTheme.heading),
+                    Text(loc.welcomeBack, style: AppTheme.heading),
                     const SizedBox(height: AppTheme.spacing6),
                     Text(
-                      'Sign in to book with the ${AppConfig.companyName} team.',
+                      loc.signInSubtitle(AppConfig.companyName),
                       style: AppTheme.subtitle,
                     ),
                     const SizedBox(height: AppTheme.spacing28),
@@ -74,21 +83,24 @@ class _LoginViewState extends State<LoginView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         AuthTextField(
-                          label: 'Email',
+                          fieldKey: 'email',
+                          label: loc.emailLabel,
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           autofillHints: const [AutofillHints.email],
-                          validator: AuthValidators.email,
+                          validator: (value) =>
+                              AuthValidators.email(value, loc),
                         ),
                         const SizedBox(height: AppTheme.spacing14),
                         AuthTextField(
-                          label: 'Password',
+                          fieldKey: 'password',
+                          label: loc.passwordLabel,
                           controller: _passwordController,
                           obscureText: true,
                           autofillHints: const [AutofillHints.password],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter your password';
+                              return loc.enterYourPassword;
                             }
                             return null;
                           },
@@ -99,10 +111,12 @@ class _LoginViewState extends State<LoginView> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
-                        onTap: () =>
-                            showNotAvailableYet(context, 'Password reset'),
+                        onTap: () => showNotAvailableYet(
+                          context,
+                          loc.passwordResetFeature,
+                        ),
                         child: Text(
-                          'Forgot password?',
+                          loc.forgotPassword,
                           style: AppTheme.linkAccentSmall,
                         ),
                       ),
@@ -113,7 +127,7 @@ class _LoginViewState extends State<LoginView> {
                     ],
                     const SizedBox(height: AppTheme.spacing24),
                     AuthPrimaryButton(
-                      label: 'Sign in',
+                      label: loc.signIn,
                       isLoading: authProvider.isLoading,
                       onPressed: () => _submit(authProvider),
                     ),
@@ -125,7 +139,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Text('or', style: AppTheme.caption),
+                          child: Text(loc.orDivider, style: AppTheme.caption),
                         ),
                         const Expanded(
                           child: Divider(color: AppTheme.divider, height: 1),
@@ -137,8 +151,10 @@ class _LoginViewState extends State<LoginView> {
                       width: double.infinity,
                       height: 46,
                       child: OutlinedButton.icon(
-                        onPressed: () =>
-                            showNotAvailableYet(context, 'Phone sign-in'),
+                        onPressed: () => showNotAvailableYet(
+                          context,
+                          loc.phoneSignInFeature,
+                        ),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: AppTheme.border),
                           shape: RoundedRectangleBorder(
@@ -153,7 +169,7 @@ class _LoginViewState extends State<LoginView> {
                           color: AppTheme.textSecondary,
                         ),
                         label: Text(
-                          'Continue with phone number',
+                          loc.continueWithPhone,
                           style: AppTheme.body,
                         ),
                       ),
@@ -163,11 +179,11 @@ class _LoginViewState extends State<LoginView> {
                       child: Wrap(
                         alignment: WrapAlignment.center,
                         children: [
-                          Text('New here? ', style: AppTheme.subtitle),
+                          Text(loc.newHereQuestion, style: AppTheme.subtitle),
                           GestureDetector(
                             onTap: _openRegister,
                             child: Text(
-                              'Create an account',
+                              loc.createAnAccount,
                               style: AppTheme.linkAccent,
                             ),
                           ),

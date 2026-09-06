@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/models/doctor.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../auth/view/auth_provider.dart';
 import '../../doctor_profile/view/doctor_profile_view.dart';
@@ -53,18 +54,19 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _confirmSignOut(BuildContext context) async {
     final authProvider = context.read<AuthProvider>();
+    final loc = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Sign out?'),
+        title: Text(loc.signOutQuestion),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Cancel'),
+            child: Text(loc.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Sign out'),
+            child: Text(loc.signOut),
           ),
         ],
       ),
@@ -74,11 +76,9 @@ class _HomeViewState extends State<HomeView> {
         await authProvider.signOut();
       } catch (_) {
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Sign out failed. Please try again.'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(loc.signOutFailed)));
       }
     }
   }
@@ -156,7 +156,10 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                               ),
                               const SizedBox(height: AppTheme.spacing20),
-                              Text('Our doctors', style: AppTheme.sectionTitle),
+                              Text(
+                                AppLocalizations.of(context)!.ourDoctors,
+                                style: AppTheme.sectionTitle,
+                              ),
                               const SizedBox(height: AppTheme.spacing12),
                             ],
                           ),
@@ -171,25 +174,25 @@ class _HomeViewState extends State<HomeView> {
                         ),
                         sliver: Selector<
                           HomeProvider,
-                          (List<Doctor>, bool, String?, bool)
+                          (List<Doctor>, bool, bool, bool)
                         >(
                           selector: (_, provider) => (
                             provider.doctors,
                             provider.isLoading,
-                            provider.errorMessage,
+                            provider.hasError,
                             provider.hasActiveFilter,
                           ),
                           builder: (context, state, _) {
                             final (
                               doctors,
                               isLoading,
-                              errorMessage,
+                              hasError,
                               hasActiveFilter,
                             ) = state;
                             return DoctorList(
                               doctors: doctors,
                               isLoading: isLoading,
-                              errorMessage: errorMessage,
+                              hasError: hasError,
                               hasActiveFilter: hasActiveFilter,
                               onDoctorTap: (doctor) =>
                                   _openDoctorProfile(context, doctor),

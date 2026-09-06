@@ -61,7 +61,7 @@ void main() {
     await _pumpAuthApp(tester, FakeAuthRepository());
 
     final passwordField = find.descendant(
-      of: find.byKey(const Key('authField_Password')),
+      of: find.byKey(const Key('authField_password')),
       matching: find.byType(TextField),
     );
     expect(tester.widget<TextField>(passwordField).obscureText, isTrue);
@@ -115,19 +115,19 @@ void main() {
       );
 
       await tester.enterText(
-        find.byKey(const Key('authField_Full name')),
+        find.byKey(const Key('authField_fullName')),
         'Yara Bennett',
       );
       await tester.enterText(
-        find.byKey(const Key('authField_Email')),
+        find.byKey(const Key('authField_email')),
         'yara@example.com',
       );
       await tester.enterText(
-        find.byKey(const Key('authField_Phone')),
+        find.byKey(const Key('authField_phone')),
         '+61 400 000 000',
       );
       await tester.enterText(
-        find.byKey(const Key('authField_Password')),
+        find.byKey(const Key('authField_password')),
         'password123',
       );
 
@@ -152,11 +152,11 @@ void main() {
     await _pumpAuthApp(tester, repository);
 
     await tester.enterText(
-      find.byKey(const Key('authField_Email')),
+      find.byKey(const Key('authField_email')),
       'not-an-email',
     );
     await tester.enterText(
-      find.byKey(const Key('authField_Password')),
+      find.byKey(const Key('authField_password')),
       'password123',
     );
     await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));
@@ -173,11 +173,11 @@ void main() {
     );
 
     await tester.enterText(
-      find.byKey(const Key('authField_Email')),
+      find.byKey(const Key('authField_email')),
       'doctor@example.com',
     );
     await tester.enterText(
-      find.byKey(const Key('authField_Password')),
+      find.byKey(const Key('authField_password')),
       'password123',
     );
     await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));

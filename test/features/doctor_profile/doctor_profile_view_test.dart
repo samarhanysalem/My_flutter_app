@@ -1,7 +1,16 @@
-import 'package:doctor_appointment_app/features/doctor_profile/view/doctor_profile_view.dart';
 import 'package:doctor_appointment_app/common/models/doctor.dart';
+import 'package:doctor_appointment_app/features/doctor_profile/view/doctor_profile_view.dart';
+import 'package:doctor_appointment_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+Widget _wrap(Widget child) {
+  return MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: child,
+  );
+}
 
 const _doctorWithBio = Doctor(
   id: '1',
@@ -21,7 +30,7 @@ const _doctorWithoutBio = Doctor(
 void main() {
   testWidgets('shows the doctor\'s hero details and bio', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(home: DoctorProfileView(doctor: _doctorWithBio)),
+      _wrap(const DoctorProfileView(doctor: _doctorWithBio)),
     );
 
     expect(find.text('Doctor profile'), findsOneWidget);
@@ -38,7 +47,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(home: DoctorProfileView(doctor: _doctorWithoutBio)),
+      _wrap(const DoctorProfileView(doctor: _doctorWithoutBio)),
     );
 
     expect(
@@ -49,8 +58,8 @@ void main() {
 
   testWidgets('back button pops the route', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: Builder(
+      _wrap(
+        Builder(
           builder: (context) => ElevatedButton(
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -75,7 +84,7 @@ void main() {
 
   testWidgets('a quick action shows a not-available notice', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(home: DoctorProfileView(doctor: _doctorWithBio)),
+      _wrap(const DoctorProfileView(doctor: _doctorWithBio)),
     );
 
     await tester.tap(find.text('Message'));
@@ -87,7 +96,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(home: DoctorProfileView(doctor: _doctorWithBio)),
+      _wrap(const DoctorProfileView(doctor: _doctorWithBio)),
     );
 
     await tester.tap(find.text('Book appointment'));
@@ -97,7 +106,7 @@ void main() {
 
   testWidgets('tapping a time slot changes the selection', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(home: DoctorProfileView(doctor: _doctorWithBio)),
+      _wrap(const DoctorProfileView(doctor: _doctorWithBio)),
     );
 
     expect(find.text('10:30 AM'), findsOneWidget);

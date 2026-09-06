@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/utils/not_available_yet.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// Fixed bottom CTA. The booking flow itself isn't built yet, so this is
@@ -11,11 +12,12 @@ class BookAppointmentButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return SizedBox(
       width: double.infinity,
       height: 48,
       child: ElevatedButton(
-        onPressed: () => showNotAvailableYet(context, 'Booking'),
+        onPressed: () => showNotAvailableYet(context, loc.bookingFeature),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primary,
           foregroundColor: AppTheme.onPrimary,
@@ -24,7 +26,7 @@ class BookAppointmentButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
           ),
         ),
-        child: Text('Book appointment', style: AppTheme.buttonLabel),
+        child: Text(loc.bookAppointment, style: AppTheme.buttonLabel),
       ),
     );
   }

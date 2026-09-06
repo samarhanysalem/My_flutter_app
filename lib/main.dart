@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'config/app_config.dart';
+import 'config/locale_provider.dart';
 import 'features/auth/services/auth_repository.dart';
 import 'features/auth/view/auth_gate.dart';
 import 'features/auth/view/auth_provider.dart';
 import 'features/home/services/appointment_service.dart';
 import 'firebase_options.dart';
+import 'l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
@@ -29,14 +31,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AuthProvider>(
-      create: (_) => AuthProvider(
-        authRepository: _authRepository ?? FirebaseAuthRepository(),
-      ),
-      child: MaterialApp(
-        title: AppConfig.appName,
-        theme: AppTheme.materialTheme,
-        home: AuthGate(appointmentService: _appointmentService),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthProvider>(
+          create: (_) => AuthProvider(
+            authRepository: _authRepository ?? FirebaseAuthRepository(),
+          ),
+        ),
+        ChangeNotifierProvider<LocaleProvider>(create: (_) => LocaleProvider()),
+      ],
+      child: Consumer<LocaleProvider>(
+        builder: (context, localeProvider, _) => MaterialApp(
+          title: AppConfig.appName,
+          theme: AppTheme.materialTheme,
+          locale: localeProvider.locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: AuthGate(appointmentService: _appointmentService),
+        ),
       ),
     );
   }

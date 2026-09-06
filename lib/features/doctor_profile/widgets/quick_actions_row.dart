@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/utils/not_available_yet.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 class _QuickAction {
-  const _QuickAction(this.label, this.icon);
+  const _QuickAction(this.id, this.icon);
 
-  final String label;
+  /// Stable identifier used to look up the localized label — see
+  /// [_labelFor]. Not shown to the user.
+  final String id;
   final IconData icon;
 }
 
 const _actions = [
-  _QuickAction('Message', Icons.mail_outline),
-  _QuickAction('Call', Icons.call_outlined),
-  _QuickAction('Location', Icons.location_on_outlined),
+  _QuickAction('message', Icons.mail_outline),
+  _QuickAction('call', Icons.call_outlined),
+  _QuickAction('location', Icons.location_on_outlined),
 ];
+
+String _labelFor(AppLocalizations loc, String id) {
+  switch (id) {
+    case 'message':
+      return loc.messageAction;
+    case 'call':
+      return loc.callAction;
+    case 'location':
+      return loc.locationAction;
+  }
+  throw ArgumentError('Unknown quick action id: $id');
+}
 
 /// Message / Call / Location shortcuts from the design handoff. None are
 /// wired to a real feature yet, so each just surfaces a "not available
@@ -24,12 +39,14 @@ class QuickActionsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Row(
       children: [
         for (final action in _actions) ...[
           Expanded(
             child: InkWell(
-              onTap: () => showNotAvailableYet(context, action.label),
+              onTap: () =>
+                  showNotAvailableYet(context, _labelFor(loc, action.id)),
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -46,7 +63,7 @@ class QuickActionsRow extends StatelessWidget {
                   children: [
                     Icon(action.icon, size: 18, color: AppTheme.primary),
                     const SizedBox(height: AppTheme.spacing6),
-                    Text(action.label, style: AppTheme.captionSecondary),
+                    Text(_labelFor(loc, action.id), style: AppTheme.captionSecondary),
                   ],
                 ),
               ),

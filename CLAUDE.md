@@ -109,6 +109,27 @@ size the widget was built against.
 - Check new screens at multiple sizes — phone, tablet, and a wide web
   viewport — before considering the UI done.
 
+## White-label / branding rules
+
+This app is sold as a customizable template to multiple customers. Keeping
+branding and business logic strictly separated is what makes rebranding for
+a new customer a small, safe change instead of a re-audit of the codebase.
+
+- All customer-specific values MUST go through `lib/config/app_config.dart`
+  — never hardcode app name, company name, colors, or asset paths directly
+  in widget files.
+- All colors, typography, spacing, and corner radius MUST come from
+  `lib/theme/app_theme.dart`, which itself reads from `AppConfig`. Do not
+  define colors or text styles inline in widgets.
+- Any new asset (logo, icons, images) that could vary per customer goes in
+  `assets/branding/`, not `assets/images/` or similar generic folders.
+- Business logic (`AuthService`, `AppointmentService`, Firestore structure,
+  Firebase config) is shared code and must stay separate from branding —
+  never add customer-specific conditionals into service/logic files.
+- Before adding any new screen, check `app_config.dart` and `app_theme.dart`
+  first and reuse existing values rather than introducing new hardcoded
+  ones.
+
 ## Comments
 
 - Explain *why*, not *what*. The code should already say what it does.

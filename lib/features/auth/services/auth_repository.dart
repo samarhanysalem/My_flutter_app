@@ -43,7 +43,29 @@ class FirebaseAuthRepository implements AuthRepository {
 
   final fb.FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firestore;
-  final _profileWarnings = StreamController<String>.broadcast();
+
+  // Enrichment (display name / Firestore profile doc) runs unawaited right
+  // after sign-up, before the UI has necessarily navigated to a screen that
+  // listens for warnings. A plain broadcast StreamController drops events
+  // with no listener attached, so queue them here and flush on the next
+  // subscribe instead of losing them.
+  final _queuedProfileWarnings = <String>[];
+  late final StreamController<String> _profileWarnings = StreamController<String>.broadcast(
+    onListen: () {
+      for (final message in _queuedProfileWarnings) {
+        _profileWarnings.add(message);
+      }
+      _queuedProfileWarnings.clear();
+    },
+  );
+
+  void _addProfileWarning(String message) {
+    if (_profileWarnings.hasListener) {
+      _profileWarnings.add(message);
+    } else {
+      _queuedProfileWarnings.add(message);
+    }
+  }
 
   @override
   Stream<AppUser?> authStateChanges() {
@@ -92,7 +114,7 @@ class FirebaseAuthRepository implements AuthRepository {
       user
           .updateDisplayName(fullName)
           .catchError(
-            (Object e) => _profileWarnings.add(
+            (Object e) => _addProfileWarning(
               "Couldn't save your name — you can update it later.",
             ),
           ),
@@ -108,7 +130,7 @@ class FirebaseAuthRepository implements AuthRepository {
             'createdAt': FieldValue.serverTimestamp(),
           })
           .catchError(
-            (Object e) => _profileWarnings.add(
+            (Object e) => _addProfileWarning(
               "Couldn't save your profile details — you can update them later.",
             ),
           ),

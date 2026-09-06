@@ -2,7 +2,7 @@
 class AuthValidators {
   const AuthValidators._();
 
-  static final _emailPattern = RegExp(r'^[\w.-]+@([\w-]+\.)+[A-Za-z]{2,}$');
+  static final _emailPattern = RegExp(r'^[\w.+-]+@([\w-]+\.)+[A-Za-z]{2,}$');
 
   static String? email(String? value) {
     if (value == null || value.trim().isEmpty) {

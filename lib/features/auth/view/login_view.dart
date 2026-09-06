@@ -30,7 +30,7 @@ class _LoginViewState extends State<LoginView> {
   }
 
   Future<void> _submit(AuthProvider authProvider) async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     await authProvider.signIn(
       email: _emailController.text.trim(),
       password: _passwordController.text,

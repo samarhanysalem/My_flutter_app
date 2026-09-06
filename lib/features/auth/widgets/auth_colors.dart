@@ -16,8 +16,4 @@ class AuthColors {
   static const divider = Color(0xFFE2E2E7);
   static const disabledFill = Color(0xFFDCDCE0);
   static const checkboxBorder = Color(0xFFD3D3DA);
-
-  /// Darkened accent for pressed/hover states; the handoff gives this as a
-  /// separate OKLCH value but a simple mix reproduces it closely enough.
-  static Color get accentPressed => Color.lerp(accent, Colors.black, 0.12)!;
 }

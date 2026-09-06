@@ -36,7 +36,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   Future<void> _submit(AuthProvider authProvider) async {
     if (!_termsAccepted) return;
-    if (!_formKey.currentState!.validate()) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     await authProvider.signUp(
       email: _emailController.text.trim(),
       password: _passwordController.text,

@@ -68,6 +68,46 @@ void main() {
       repository.dispose();
     });
 
+    test('signUp forwards fullName and phone to the repository', () async {
+      final repository = FakeAuthRepository();
+      final provider = AuthProvider(authRepository: repository);
+      await Future<void>.delayed(Duration.zero);
+
+      await provider.signUp(
+        email: 'a@b.com',
+        password: 'password123',
+        fullName: 'Yara Bennett',
+        phone: '+1 400 000 000',
+      );
+
+      expect(repository.signUpCalled, isTrue);
+      expect(repository.lastFullName, 'Yara Bennett');
+      expect(repository.lastPhone, '+1 400 000 000');
+      expect(provider.status, AuthStatus.authenticated);
+      expect(provider.errorMessage, isNull);
+
+      provider.dispose();
+      repository.dispose();
+    });
+
+    test('profileWarnings proxies the repository stream', () async {
+      final repository = FakeAuthRepository();
+      final provider = AuthProvider(authRepository: repository);
+      await Future<void>.delayed(Duration.zero);
+
+      final warnings = <String>[];
+      final subscription = provider.profileWarnings.listen(warnings.add);
+
+      repository.emitProfileWarning("Couldn't save your profile details.");
+      await Future<void>.delayed(Duration.zero);
+
+      expect(warnings, ["Couldn't save your profile details."]);
+
+      await subscription.cancel();
+      provider.dispose();
+      repository.dispose();
+    });
+
     test('signOut clears the user', () async {
       final repository = FakeAuthRepository(
         initialUser: const AppUser(uid: 'u1'),

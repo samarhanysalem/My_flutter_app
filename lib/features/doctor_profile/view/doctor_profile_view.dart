@@ -57,8 +57,10 @@ class DoctorProfileView extends StatelessWidget {
                               onPressed: () => Navigator.of(context).pop(),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
-                              icon: const Icon(
-                                Icons.arrow_back,
+                              icon: Icon(
+                                Directionality.of(context) == TextDirection.rtl
+                                    ? Icons.arrow_forward
+                                    : Icons.arrow_back,
                                 size: 20,
                                 color: AppTheme.ink,
                               ),

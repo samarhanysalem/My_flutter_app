@@ -110,7 +110,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     const SizedBox(height: AppTheme.spacing8),
                     Align(
-                      alignment: Alignment.centerRight,
+                      alignment: AlignmentDirectional.centerEnd,
                       child: GestureDetector(
                         onTap: () => showNotAvailableYet(
                           context,

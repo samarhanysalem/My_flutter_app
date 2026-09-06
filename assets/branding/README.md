@@ -8,18 +8,24 @@ never means touching widget code.
 ## Files a new customer's build needs here
 
 - `logo.png` — the app mark shown on auth screens and (later) splash/about
-  screens, referenced via `AppConfig.logoAssetPath`. If this file is ever
-  removed, `AppLogoMark` (`lib/common/widgets/app_logo_mark.dart`) falls
-  back to a neutral icon, so the app still runs without it.
+  screens, referenced via `AppConfig.logoAssetPath`. Until this file exists,
+  `AppLogoMark` (`lib/common/widgets/app_logo_mark.dart`) falls back to a
+  neutral icon, so the app still runs without it.
 - `app_icon.png` — a square, min-1024x1024 source image for the native
-  Android/iOS launcher icon. After replacing it, run
+  Android/iOS launcher icon. After adding it, run
   `dart run flutter_launcher_icons` (config already in `pubspec.yaml`) to
   regenerate the native icon files — this is a one-time codegen step, not
   something read at runtime.
 
-This folder is already declared under `flutter: assets:` in `pubspec.yaml`,
-so swapping either file in place (same filename) is all a new customer's
-build needs — no `pubspec.yaml` change required.
+`logo.png` isn't declared under `flutter: assets:` in `pubspec.yaml` yet
+because the file doesn't exist in this template. When a customer's logo is
+added here, also add this folder to `pubspec.yaml`'s `assets:` list:
+
+```yaml
+flutter:
+  assets:
+    - assets/branding/
+```
 
 ## Full white-label checklist for a new customer
 
@@ -35,8 +41,8 @@ each field on that intake form maps to one of these steps.
    needs. This is the single file that drives branding/theme throughout the
    app (via `lib/theme/app_theme.dart`).
 2. **`assets/branding/`** — drop in this customer's `logo.png` and
-   `app_icon.png` (same filenames — already declared in `pubspec.yaml`),
-   then run `flutter_launcher_icons` as described above.
+   `app_icon.png` (and add the `pubspec.yaml` `assets:` entry above, then
+   run `flutter_launcher_icons` as described above).
 3. **`lib/firebase_options.dart`** — regenerate with `flutterfire configure`
    against this customer's own Firebase project. Every customer gets a
    separate Firebase project; auth/Firestore data must never share a

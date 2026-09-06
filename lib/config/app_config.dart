@@ -14,35 +14,33 @@ class AppConfig {
   const AppConfig._();
 
   /// The OS-level app name: task switcher, browser tab, `MaterialApp.title`.
-  static const String appName = 'SmileCare Dental';
+  static const String appName = 'Doctor Appointment App';
 
   /// The in-app display name (app bars, about screens). Usually the same as
   /// [appName], kept separate in case a customer wants a shorter in-app
   /// label than their full store-listing name.
-  static const String displayName = 'SmileCare Dental';
+  static const String displayName = 'Doctor Appointment App';
 
   /// The clinic/company this build represents — used in headers, about
   /// screens, and copy like "Sign in to book with the [companyName] team."
-  static const String companyName = 'SmileCare Dental Clinic';
+  static const String companyName = 'Lakeside Clinic';
 
   /// Primary brand color: CTAs, links, active/selected states.
-  static const Color primaryColor = Color(0xFF2E8B7A);
+  static const Color primaryColor = Color(0xFF4C6FD4);
 
   /// Secondary/tint brand color: light backgrounds behind primary-colored
   /// icons, badges, and highlights. Not yet consumed by any built screen —
   /// reserved for Home/Booking/etc. (e.g. the specialty shortcuts on Home)
   /// per the design handoff, so those screens have a token to build against
   /// from day one instead of introducing their own.
-  static const Color accentColor = Color(0xFFF4A340);
+  static const Color accentColor = Color(0xFFEAF1FD);
 
   /// Optional extra brand colors from a customer's existing style guide.
-  /// Left null when a customer's intake form doesn't specify one — the
-  /// nullable type is intentional even when, as here, this build's value
-  /// happens to be set, so it stays `Color?` across edits.
-  // ignore: unnecessary_nullable_for_final_variable_declarations
-  static const Color? secondaryColor = Color(0xFFFFFFFF);
-  // ignore: unnecessary_nullable_for_final_variable_declarations
-  static const Color? tertiaryColor = Color(0xFF1A1A1A);
+  /// Null unless a customer's intake form specifies one; nothing currently
+  /// reads these, but they exist so there's somewhere to put a value the
+  /// intake form collects instead of it being dropped on the floor.
+  static const Color? secondaryColor = null;
+  static const Color? tertiaryColor = null;
 
   /// Google Fonts family name used throughout the app via AppTheme (e.g.
   /// 'DM Sans', 'Inter', 'Poppins'). Only change this if a customer's brand
@@ -55,8 +53,8 @@ class AppConfig {
   static const String logoAssetPath = 'assets/branding/logo.png';
 
   /// Support contact shown on about/help screens, if/when one exists.
-  static const String supportEmail = 'support@smilecaredental.test';
-  static const String supportPhone = '+1 555 010 2938';
+  static const String supportEmail = 'support@lakesideclinic.example';
+  static const String supportPhone = '+1 (555) 010-0100';
 
   // --- Feature toggles ---------------------------------------------------
   // Customer-specific behavior differences belong here as flags that

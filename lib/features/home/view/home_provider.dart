@@ -25,6 +25,10 @@ class HomeProvider extends ChangeNotifier {
 
   List<Doctor> _doctors = [];
 
+  /// The unfiltered list, for building search suggestions from — [doctors]
+  /// below is already narrowed by the current filters.
+  List<Doctor> get allDoctors => List.unmodifiable(_doctors);
+
   String _searchQuery = '';
 
   String? _selectedSpecialty;

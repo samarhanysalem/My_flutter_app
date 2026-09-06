@@ -107,6 +107,12 @@ void main() {
     await tester.enterText(find.byType(TextField), 'Cole');
     await tester.pump();
 
+    // Dismiss the autocomplete suggestion overlay (which would otherwise
+    // also render a "Dr. Marcus Cole" match) so this only checks the
+    // filtered doctor list underneath.
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pump();
+
     expect(find.text('Dr. Marcus Cole'), findsOneWidget);
     expect(find.text('Dr. Sara Whitmore'), findsNothing);
 

@@ -107,7 +107,10 @@ class _HomeViewState extends State<HomeView> {
                           onAvatarTap: () => _confirmSignOut(context),
                         ),
                         const SizedBox(height: AppTheme.spacing20),
-                        HomeSearchBar(onChanged: homeProvider.setSearchQuery),
+                        HomeSearchBar(
+                          doctors: homeProvider.allDoctors,
+                          onChanged: homeProvider.setSearchQuery,
+                        ),
                         const SizedBox(height: AppTheme.spacing20),
                         SpecialtyShortcutsRow(
                           selectedSpecialty: homeProvider.selectedSpecialty,

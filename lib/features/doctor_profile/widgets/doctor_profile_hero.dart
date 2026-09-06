@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
-import '../../home/models/doctor.dart';
+import '../../../common/models/doctor.dart';
 
 /// Avatar, name, specialty, and rating at the top of the profile screen.
 class DoctorProfileHero extends StatelessWidget {

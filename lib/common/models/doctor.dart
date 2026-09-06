@@ -1,5 +1,6 @@
-/// A doctor listed on the Home screen, sourced from Firestore's `doctors`
-/// collection.
+/// A doctor sourced from Firestore's `doctors` collection. Shared across the
+/// `home` and `doctor_profile` features, so it lives here rather than inside
+/// either feature folder.
 class Doctor {
   const Doctor({
     required this.id,

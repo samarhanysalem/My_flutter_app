@@ -1,6 +1,6 @@
 import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
-import 'package:doctor_appointment_app/features/home/models/doctor.dart';
+import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/home/view/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

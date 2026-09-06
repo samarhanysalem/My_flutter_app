@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../../common/models/doctor.dart';
 import '../../../theme/app_theme.dart';
-import '../models/doctor.dart';
 import 'doctor_card.dart';
 
-/// Renders the "Our doctors" section body: a loading spinner, an error
-/// message, an empty state, or the filtered list — never a blank screen.
+/// Renders the "Our doctors" section body as a sliver — a loading spinner,
+/// an error message, an empty state, or the filtered list — never a blank
+/// screen. Returns a sliver (not a plain box widget) so it can sit directly
+/// in `HomeView`'s `CustomScrollView`: that lets the doctor list build
+/// lazily (only the on-screen cards) instead of the whole roster eagerly,
+/// which a `shrinkWrap` list nested in a scroll view would force.
 class DoctorList extends StatelessWidget {
   const DoctorList({
     super.key,
@@ -29,43 +33,47 @@ class DoctorList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: AppTheme.spacing24),
-        child: Center(child: CircularProgressIndicator()),
+      return const SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: AppTheme.spacing24),
+          child: Center(child: CircularProgressIndicator()),
+        ),
       );
     }
 
     if (errorMessage != null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing24),
-        child: Center(
-          child: Text(
-            errorMessage!,
-            style: AppTheme.subtitle,
-            textAlign: TextAlign.center,
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing24),
+          child: Center(
+            child: Text(
+              errorMessage!,
+              style: AppTheme.subtitle,
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       );
     }
 
     if (doctors.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing24),
-        child: Center(
-          child: Text(
-            hasActiveFilter
-                ? 'No doctors match your search.'
-                : 'No doctors available yet.',
-            style: AppTheme.subtitle,
-            textAlign: TextAlign.center,
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing24),
+          child: Center(
+            child: Text(
+              hasActiveFilter
+                  ? 'No doctors match your search.'
+                  : 'No doctors available yet.',
+              style: AppTheme.subtitle,
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       );
     }
 
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+    return SliverList.separated(
       itemCount: doctors.length,
       separatorBuilder: (_, _) => const SizedBox(height: AppTheme.spacing12),
       itemBuilder: (context, index) {

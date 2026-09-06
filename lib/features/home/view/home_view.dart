@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/models/doctor.dart';
 import '../../../theme/app_theme.dart';
 import '../../auth/view/auth_provider.dart';
 import '../../doctor_profile/view/doctor_profile_view.dart';
-import '../models/doctor.dart';
 import '../services/appointment_service.dart';
 import '../widgets/doctor_list.dart';
 import '../widgets/home_greeting_header.dart';
@@ -70,7 +70,16 @@ class _HomeViewState extends State<HomeView> {
       ),
     );
     if (confirmed ?? false) {
-      await authProvider.signOut();
+      try {
+        await authProvider.signOut();
+      } catch (_) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sign out failed. Please try again.'),
+          ),
+        );
+      }
     }
   }
 
@@ -90,45 +99,105 @@ class _HomeViewState extends State<HomeView> {
       child: Builder(
         builder: (context) {
           final authProvider = context.watch<AuthProvider>();
-          final homeProvider = context.watch<HomeProvider>();
           return Scaffold(
             backgroundColor: AppTheme.screenGround,
             body: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppTheme.spacing20),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 600),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        HomeGreetingHeader(
-                          user: authProvider.user,
-                          onAvatarTap: () => _confirmSignOut(context),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  // A CustomScrollView so the doctor list below can be a
+                  // real SliverList — built lazily, only for on-screen
+                  // cards — rather than a shrinkWrap ListView nested in a
+                  // SingleChildScrollView, which builds every card up
+                  // front regardless of what's visible.
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppTheme.spacing20,
+                          AppTheme.spacing20,
+                          AppTheme.spacing20,
+                          0,
                         ),
-                        const SizedBox(height: AppTheme.spacing20),
-                        HomeSearchBar(
-                          doctors: homeProvider.allDoctors,
-                          onChanged: homeProvider.setSearchQuery,
+                        sliver: SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              HomeGreetingHeader(
+                                user: authProvider.user,
+                                onAvatarTap: () => _confirmSignOut(context),
+                              ),
+                              const SizedBox(height: AppTheme.spacing20),
+                              // Each section below is scoped to just the
+                              // slice of HomeProvider it needs, so typing in
+                              // the search bar (which changes on every
+                              // keystroke) only rebuilds the doctor list,
+                              // not the greeting or this bar itself.
+                              Selector<HomeProvider, List<Doctor>>(
+                                selector: (_, provider) => provider.allDoctors,
+                                builder: (context, allDoctors, _) =>
+                                    HomeSearchBar(
+                                      doctors: allDoctors,
+                                      onChanged: context
+                                          .read<HomeProvider>()
+                                          .setSearchQuery,
+                                    ),
+                              ),
+                              const SizedBox(height: AppTheme.spacing20),
+                              Selector<HomeProvider, String?>(
+                                selector: (_, provider) =>
+                                    provider.selectedSpecialty,
+                                builder: (context, selectedSpecialty, _) =>
+                                    SpecialtyShortcutsRow(
+                                      selectedSpecialty: selectedSpecialty,
+                                      onSelect: context
+                                          .read<HomeProvider>()
+                                          .selectSpecialty,
+                                    ),
+                              ),
+                              const SizedBox(height: AppTheme.spacing20),
+                              Text('Our doctors', style: AppTheme.sectionTitle),
+                              const SizedBox(height: AppTheme.spacing12),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: AppTheme.spacing20),
-                        SpecialtyShortcutsRow(
-                          selectedSpecialty: homeProvider.selectedSpecialty,
-                          onSelect: homeProvider.selectSpecialty,
+                      ),
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppTheme.spacing20,
+                          0,
+                          AppTheme.spacing20,
+                          AppTheme.spacing20,
                         ),
-                        const SizedBox(height: AppTheme.spacing20),
-                        Text('Our doctors', style: AppTheme.sectionTitle),
-                        const SizedBox(height: AppTheme.spacing12),
-                        DoctorList(
-                          doctors: homeProvider.doctors,
-                          isLoading: homeProvider.isLoading,
-                          errorMessage: homeProvider.errorMessage,
-                          hasActiveFilter: homeProvider.hasActiveFilter,
-                          onDoctorTap: (doctor) =>
-                              _openDoctorProfile(context, doctor),
+                        sliver: Selector<
+                          HomeProvider,
+                          (List<Doctor>, bool, String?, bool)
+                        >(
+                          selector: (_, provider) => (
+                            provider.doctors,
+                            provider.isLoading,
+                            provider.errorMessage,
+                            provider.hasActiveFilter,
+                          ),
+                          builder: (context, state, _) {
+                            final (
+                              doctors,
+                              isLoading,
+                              errorMessage,
+                              hasActiveFilter,
+                            ) = state;
+                            return DoctorList(
+                              doctors: doctors,
+                              isLoading: isLoading,
+                              errorMessage: errorMessage,
+                              hasActiveFilter: hasActiveFilter,
+                              onDoctorTap: (doctor) =>
+                                  _openDoctorProfile(context, doctor),
+                            );
+                          },
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
-import '../models/doctor.dart';
+import '../../../common/models/doctor.dart';
 
 /// The "Search doctors, specialties" bar. Filtering is client-side — see
 /// `HomeProvider.setSearchQuery` — and this also offers autocomplete

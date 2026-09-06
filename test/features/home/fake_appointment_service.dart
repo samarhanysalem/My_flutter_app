@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:doctor_appointment_app/features/home/models/doctor.dart';
+import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/home/services/appointment_service.dart';
 
 /// Hand-written test double so Home tests never touch real Firestore.

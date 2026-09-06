@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import '../models/doctor.dart';
+import '../../../common/models/doctor.dart';
 import '../services/appointment_service.dart';
 
 class HomeProvider extends ChangeNotifier {
@@ -24,10 +24,13 @@ class HomeProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   List<Doctor> _doctors = [];
+  List<Doctor> _allDoctors = List.unmodifiable(const <Doctor>[]);
 
   /// The unfiltered list, for building search suggestions from — [doctors]
-  /// below is already narrowed by the current filters.
-  List<Doctor> get allDoctors => List.unmodifiable(_doctors);
+  /// below is already narrowed by the current filters. Cached alongside
+  /// [_doctors] rather than wrapped on every access, since this is read on
+  /// every rebuild of the search bar.
+  List<Doctor> get allDoctors => _allDoctors;
 
   String _searchQuery = '';
 
@@ -66,6 +69,7 @@ class HomeProvider extends ChangeNotifier {
 
   void _onDoctors(List<Doctor> doctors) {
     _doctors = doctors;
+    _allDoctors = List.unmodifiable(doctors);
     _isLoading = false;
     _errorMessage = null;
     notifyListeners();

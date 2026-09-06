@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../common/utils/not_available_yet.dart';
 import '../../../theme/app_theme.dart';
 
 /// Fixed bottom CTA. The booking flow itself isn't built yet, so this is
@@ -14,11 +15,7 @@ class BookAppointmentButton extends StatelessWidget {
       width: double.infinity,
       height: 48,
       child: ElevatedButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Booking isn\'t available yet.')),
-          );
-        },
+        onPressed: () => showNotAvailableYet(context, 'Booking'),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primary,
           foregroundColor: AppTheme.onPrimary,

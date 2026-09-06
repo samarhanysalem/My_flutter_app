@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../common/utils/not_available_yet.dart';
 import '../../../theme/app_theme.dart';
 
 class _QuickAction {
@@ -21,12 +22,6 @@ const _actions = [
 class QuickActionsRow extends StatelessWidget {
   const QuickActionsRow({super.key});
 
-  void _notAvailableYet(BuildContext context, String feature) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('$feature isn\'t available yet.')));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -34,7 +29,7 @@ class QuickActionsRow extends StatelessWidget {
         for (final action in _actions) ...[
           Expanded(
             child: InkWell(
-              onTap: () => _notAvailableYet(context, action.label),
+              onTap: () => showNotAvailableYet(context, action.label),
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               child: Container(
                 padding: const EdgeInsets.symmetric(

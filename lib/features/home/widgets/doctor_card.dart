@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../common/models/doctor.dart';
 import '../../../theme/app_theme.dart';
-import '../models/doctor.dart';
 
 /// A single row in the "Our doctors" list: avatar, name/specialty, and
 /// rating, matching the design handoff's card layout.

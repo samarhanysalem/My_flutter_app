@@ -1,4 +1,4 @@
-import 'package:doctor_appointment_app/features/home/models/doctor.dart';
+import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/home/view/home_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 

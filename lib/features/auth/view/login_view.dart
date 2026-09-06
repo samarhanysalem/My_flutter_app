@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/utils/not_available_yet.dart';
 import '../../../common/widgets/app_logo_mark.dart';
 import '../../../config/app_config.dart';
 import '../../../theme/app_theme.dart';
@@ -42,12 +43,6 @@ class _LoginViewState extends State<LoginView> {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const RegisterView()));
-  }
-
-  void _notAvailableYet(String feature) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('$feature isn\'t available yet.')));
   }
 
   @override
@@ -104,7 +99,8 @@ class _LoginViewState extends State<LoginView> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
-                        onTap: () => _notAvailableYet('Password reset'),
+                        onTap: () =>
+                            showNotAvailableYet(context, 'Password reset'),
                         child: Text(
                           'Forgot password?',
                           style: AppTheme.linkAccentSmall,
@@ -141,7 +137,8 @@ class _LoginViewState extends State<LoginView> {
                       width: double.infinity,
                       height: 46,
                       child: OutlinedButton.icon(
-                        onPressed: () => _notAvailableYet('Phone sign-in'),
+                        onPressed: () =>
+                            showNotAvailableYet(context, 'Phone sign-in'),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: AppTheme.border),
                           shape: RoundedRectangleBorder(

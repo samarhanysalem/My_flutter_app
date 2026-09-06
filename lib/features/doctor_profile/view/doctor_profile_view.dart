@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../theme/app_theme.dart';
-import '../../home/models/doctor.dart';
+import '../../../common/models/doctor.dart';
 import '../widgets/availability_section.dart';
 import '../widgets/book_appointment_button.dart';
 import '../widgets/doctor_about_section.dart';

@@ -398,6 +398,66 @@ abstract class AppLocalizations {
   /// **'Family'**
   String get specialtyFamily;
 
+  /// Full specialty name shown on a doctor's card/profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardiologist'**
+  String get specialtyFullCardiologist;
+
+  /// Full specialty name shown on a doctor's card/profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Orthopedic Surgeon'**
+  String get specialtyFullOrthopedicSurgeon;
+
+  /// Full specialty name shown on a doctor's card/profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Neurologist'**
+  String get specialtyFullNeurologist;
+
+  /// Full specialty name shown on a doctor's card/profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Dermatologist'**
+  String get specialtyFullDermatologist;
+
+  /// Full specialty name shown on a doctor's card/profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Pediatrician'**
+  String get specialtyFullPediatrician;
+
+  /// Full specialty name shown on a doctor's card/profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Endocrinologist'**
+  String get specialtyFullEndocrinologist;
+
+  /// Full specialty name shown on a doctor's card/profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychiatrist'**
+  String get specialtyFullPsychiatrist;
+
+  /// Full specialty name shown on a doctor's card/profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Gastroenterologist'**
+  String get specialtyFullGastroenterologist;
+
+  /// Full specialty name shown on a doctor's card/profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Ophthalmologist'**
+  String get specialtyFullOphthalmologist;
+
+  /// Full specialty name shown on a doctor's card/profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Medicine'**
+  String get specialtyFullFamilyMedicine;
+
   /// Morning greeting with the user's first name.
   ///
   /// In en, this message translates to:

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/models/doctor.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// A single row in the "Our doctors" list: avatar, name/specialty, and
@@ -19,6 +20,8 @@ class DoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
@@ -46,13 +49,13 @@ class DoctorCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    doctor.name,
+                    doctor.localizedName(locale),
                     style: AppTheme.cardTitle,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: AppTheme.spacing2),
                   Text(
-                    doctor.specialty,
+                    doctor.localizedSpecialty(loc),
                     style: AppTheme.fieldLabel,
                     overflow: TextOverflow.ellipsis,
                   ),

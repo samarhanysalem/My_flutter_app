@@ -29,6 +29,10 @@ class HomeSearchBar extends StatelessWidget {
       if (doctor.name.toLowerCase().contains(trimmed)) {
         matches.add(doctor.name);
       }
+      final nameAr = doctor.nameAr;
+      if (nameAr != null && nameAr.toLowerCase().contains(trimmed)) {
+        matches.add(nameAr);
+      }
       if (doctor.specialty.toLowerCase().contains(trimmed)) {
         matches.add(doctor.specialty);
       }

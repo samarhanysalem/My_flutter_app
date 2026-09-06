@@ -168,6 +168,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get specialtyFamily => 'Family';
 
   @override
+  String get specialtyFullCardiologist => 'Cardiologist';
+
+  @override
+  String get specialtyFullOrthopedicSurgeon => 'Orthopedic Surgeon';
+
+  @override
+  String get specialtyFullNeurologist => 'Neurologist';
+
+  @override
+  String get specialtyFullDermatologist => 'Dermatologist';
+
+  @override
+  String get specialtyFullPediatrician => 'Pediatrician';
+
+  @override
+  String get specialtyFullEndocrinologist => 'Endocrinologist';
+
+  @override
+  String get specialtyFullPsychiatrist => 'Psychiatrist';
+
+  @override
+  String get specialtyFullGastroenterologist => 'Gastroenterologist';
+
+  @override
+  String get specialtyFullOphthalmologist => 'Ophthalmologist';
+
+  @override
+  String get specialtyFullFamilyMedicine => 'Family Medicine';
+
+  @override
   String greetingMorningWithName(String name) {
     return 'Good morning, $name';
   }

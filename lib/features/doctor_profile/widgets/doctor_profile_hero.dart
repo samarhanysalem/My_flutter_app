@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../theme/app_theme.dart';
 import '../../../common/models/doctor.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../theme/app_theme.dart';
 
 /// Avatar, name, specialty, and rating at the top of the profile screen.
 class DoctorProfileHero extends StatelessWidget {
@@ -16,6 +17,8 @@ class DoctorProfileHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context);
     return Column(
       children: [
         Container(
@@ -24,9 +27,9 @@ class DoctorProfileHero extends StatelessWidget {
           decoration: BoxDecoration(color: avatarColor, shape: BoxShape.circle),
         ),
         const SizedBox(height: AppTheme.spacing8),
-        Text(doctor.name, style: AppTheme.greeting),
+        Text(doctor.localizedName(locale), style: AppTheme.greeting),
         const SizedBox(height: AppTheme.spacing4),
-        Text(doctor.specialty, style: AppTheme.subtitle),
+        Text(doctor.localizedSpecialty(loc), style: AppTheme.subtitle),
         const SizedBox(height: AppTheme.spacing4),
         Row(
           mainAxisSize: MainAxisSize.min,

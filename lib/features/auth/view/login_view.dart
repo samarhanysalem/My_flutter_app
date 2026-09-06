@@ -51,6 +51,7 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final loc = AppLocalizations.of(context)!;
+    final companyName = AppConfig.companyNameFor(Localizations.localeOf(context));
     return Scaffold(
       backgroundColor: AppTheme.screenGround,
       body: SafeArea(
@@ -75,7 +76,7 @@ class _LoginViewState extends State<LoginView> {
                     Text(loc.welcomeBack, style: AppTheme.heading),
                     const SizedBox(height: AppTheme.spacing6),
                     Text(
-                      loc.signInSubtitle(AppConfig.companyName),
+                      loc.signInSubtitle(companyName),
                       style: AppTheme.subtitle,
                     ),
                     const SizedBox(height: AppTheme.spacing28),

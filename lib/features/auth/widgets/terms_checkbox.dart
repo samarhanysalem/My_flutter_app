@@ -37,9 +37,9 @@ class TermsCheckbox extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              AppLocalizations.of(
-                context,
-              )!.agreeToTerms(AppConfig.companyName),
+              AppLocalizations.of(context)!.agreeToTerms(
+                AppConfig.companyNameFor(Localizations.localeOf(context)),
+              ),
               style: AppTheme.termsText,
             ),
           ),

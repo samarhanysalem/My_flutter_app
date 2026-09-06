@@ -222,6 +222,46 @@
   "@specialtyFamily": {
     "description": "Short label for the Family Medicine specialty shortcut."
   },
+  "specialtyFullCardiologist": "Cardiologist",
+  "@specialtyFullCardiologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullOrthopedicSurgeon": "Orthopedic Surgeon",
+  "@specialtyFullOrthopedicSurgeon": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullNeurologist": "Neurologist",
+  "@specialtyFullNeurologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullDermatologist": "Dermatologist",
+  "@specialtyFullDermatologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullPediatrician": "Pediatrician",
+  "@specialtyFullPediatrician": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullEndocrinologist": "Endocrinologist",
+  "@specialtyFullEndocrinologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullPsychiatrist": "Psychiatrist",
+  "@specialtyFullPsychiatrist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullGastroenterologist": "Gastroenterologist",
+  "@specialtyFullGastroenterologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullOphthalmologist": "Ophthalmologist",
+  "@specialtyFullOphthalmologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullFamilyMedicine": "Family Medicine",
+  "@specialtyFullFamilyMedicine": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
   "greetingMorningWithName": "Good morning, {name}",
   "@greetingMorningWithName": {
     "description": "Morning greeting with the user's first name.",

@@ -167,6 +167,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String get specialtyFamily => 'طب الأسرة';
 
   @override
+  String get specialtyFullCardiologist => 'طبيب قلب';
+
+  @override
+  String get specialtyFullOrthopedicSurgeon => 'جراح عظام';
+
+  @override
+  String get specialtyFullNeurologist => 'طبيب أعصاب';
+
+  @override
+  String get specialtyFullDermatologist => 'طبيب جلدية';
+
+  @override
+  String get specialtyFullPediatrician => 'طبيب أطفال';
+
+  @override
+  String get specialtyFullEndocrinologist => 'طبيب غدد صماء';
+
+  @override
+  String get specialtyFullPsychiatrist => 'طبيب نفسي';
+
+  @override
+  String get specialtyFullGastroenterologist => 'طبيب جهاز هضمي';
+
+  @override
+  String get specialtyFullOphthalmologist => 'طبيب عيون';
+
+  @override
+  String get specialtyFullFamilyMedicine => 'طب الأسرة';
+
+  @override
   String greetingMorningWithName(String name) {
     return 'صباح الخير، $name';
   }

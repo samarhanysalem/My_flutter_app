@@ -54,6 +54,7 @@ class HomeProvider extends ChangeNotifier {
       final matchesQuery =
           query.isEmpty ||
           doctor.name.toLowerCase().contains(query) ||
+          (doctor.nameAr?.toLowerCase().contains(query) ?? false) ||
           doctor.specialty.toLowerCase().contains(query);
       return matchesSpecialty && matchesQuery;
     }).toList();

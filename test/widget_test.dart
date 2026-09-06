@@ -141,7 +141,7 @@ void main() {
       await tester.tap(createAccountButton);
       await _settleOnHome(tester, appointmentService);
 
-      expect(find.text('Nearby doctors'), findsOneWidget);
+      expect(find.text('Our doctors'), findsOneWidget);
     },
   );
 
@@ -184,6 +184,6 @@ void main() {
     await _settleOnHome(tester, appointmentService);
 
     expect(find.text('Welcome back'), findsNothing);
-    expect(find.text('Nearby doctors'), findsOneWidget);
+    expect(find.text('Our doctors'), findsOneWidget);
   });
 }

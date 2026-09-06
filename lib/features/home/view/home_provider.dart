@@ -54,9 +54,9 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Selecting the already-selected specialty clears the filter.
-  void selectSpecialty(String specialty) {
-    _selectedSpecialty = _selectedSpecialty == specialty ? null : specialty;
+  /// Pass `null` (the "All" shortcut) to clear the filter.
+  void selectSpecialty(String? specialty) {
+    _selectedSpecialty = specialty;
     notifyListeners();
   }
 

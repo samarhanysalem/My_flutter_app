@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../theme/app_theme.dart';
 import '../models/doctor.dart';
 
-/// A single row in the "Nearby doctors" list: avatar, name/specialty, and
-/// rating/distance, matching the design handoff's card layout.
+/// A single row in the "Our doctors" list: avatar, name/specialty, and
+/// rating, matching the design handoff's card layout.
 class DoctorCard extends StatelessWidget {
   const DoctorCard({
     super.key,
@@ -60,23 +60,12 @@ class DoctorCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppTheme.spacing12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.star, size: 11, color: AppTheme.ratingStar),
-                    const SizedBox(width: AppTheme.spacing3),
-                    Text(doctor.rating.toStringAsFixed(1), style: AppTheme.caption),
-                  ],
-                ),
-                const SizedBox(height: AppTheme.spacing4),
-                Text(
-                  '${doctor.distanceMiles.toStringAsFixed(1)} mi',
-                  style: AppTheme.caption,
-                ),
+                const Icon(Icons.star, size: 11, color: AppTheme.ratingStar),
+                const SizedBox(width: AppTheme.spacing3),
+                Text(doctor.rating.toStringAsFixed(1), style: AppTheme.caption),
               ],
             ),
           ],

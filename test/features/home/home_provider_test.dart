@@ -11,14 +11,12 @@ void main() {
         id: '1',
         name: 'Dr. Sara Whitmore',
         specialty: 'Cardiologist',
-        distanceMiles: 0.8,
         rating: 4.9,
       ),
       Doctor(
         id: '2',
         name: 'Dr. Marcus Cole',
         specialty: 'Orthopedic Surgeon',
-        distanceMiles: 1.2,
         rating: 4.8,
       ),
     ];
@@ -73,7 +71,7 @@ void main() {
       service.dispose();
     });
 
-    test('selecting a specialty filters, and selecting it again clears it', () async {
+    test('selecting a specialty filters, and selecting null (All) clears it', () async {
       final service = FakeAppointmentService();
       final provider = HomeProvider(appointmentService: service);
       service.emitDoctors(doctors);
@@ -84,7 +82,7 @@ void main() {
       expect(provider.doctors, [doctors[0]]);
       expect(provider.hasActiveFilter, isTrue);
 
-      provider.selectSpecialty('Cardiologist');
+      provider.selectSpecialty(null);
       expect(provider.selectedSpecialty, isNull);
       expect(provider.doctors, doctors);
       expect(provider.hasActiveFilter, isFalse);

@@ -14,14 +14,12 @@ const _doctors = [
     id: '1',
     name: 'Dr. Sara Whitmore',
     specialty: 'Cardiologist',
-    distanceMiles: 0.8,
     rating: 4.9,
   ),
   Doctor(
     id: '2',
     name: 'Dr. Marcus Cole',
     specialty: 'Orthopedic Surgeon',
-    distanceMiles: 1.2,
     rating: 4.8,
   ),
 ];
@@ -130,6 +128,29 @@ void main() {
 
     expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
     expect(find.text('Dr. Marcus Cole'), findsNothing);
+
+    appointmentService.dispose();
+  });
+
+  testWidgets('tapping All clears an active specialty filter', (
+    tester,
+  ) async {
+    final authProvider = await _signedInAuthProvider(tester);
+    final appointmentService = FakeAppointmentService();
+    await _pumpHome(tester, authProvider, appointmentService);
+
+    appointmentService.emitDoctors(_doctors);
+    await tester.pump();
+
+    await tester.tap(find.text('Cardio'));
+    await tester.pump();
+    expect(find.text('Dr. Marcus Cole'), findsNothing);
+
+    await tester.tap(find.text('All'));
+    await tester.pump();
+
+    expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
+    expect(find.text('Dr. Marcus Cole'), findsOneWidget);
 
     appointmentService.dispose();
   });

@@ -4,7 +4,7 @@ import '../../../theme/app_theme.dart';
 import '../models/doctor.dart';
 import 'doctor_card.dart';
 
-/// Renders the "Nearby doctors" section body: a loading spinner, an error
+/// Renders the "Our doctors" section body: a loading spinner, an error
 /// message, an empty state, or the filtered list — never a blank screen.
 class DoctorList extends StatelessWidget {
   const DoctorList({

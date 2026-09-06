@@ -16,8 +16,9 @@ const _specialties = [
 ];
 
 /// Horizontally scrollable specialty shortcuts (so a narrow phone doesn't
-/// force these to shrink or wrap). Tapping one toggles a client-side
-/// specialty filter on the doctor list; tapping "More" isn't wired to
+/// force these to shrink or wrap). "All" clears the filter and is
+/// highlighted whenever none is selected; tapping a specialty applies a
+/// client-side filter on the doctor list; tapping "More" isn't wired to
 /// anything yet.
 class SpecialtyShortcutsRow extends StatelessWidget {
   const SpecialtyShortcutsRow({
@@ -27,7 +28,7 @@ class SpecialtyShortcutsRow extends StatelessWidget {
   });
 
   final String? selectedSpecialty;
-  final ValueChanged<String> onSelect;
+  final ValueChanged<String?> onSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,13 @@ class SpecialtyShortcutsRow extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
+          _SpecialtyTile(
+            label: 'All',
+            icon: Icons.apps,
+            selected: selectedSpecialty == null,
+            onTap: () => onSelect(null),
+          ),
+          const SizedBox(width: AppTheme.spacing14),
           for (final specialty in _specialties) ...[
             _SpecialtyTile(
               label: specialty.label,

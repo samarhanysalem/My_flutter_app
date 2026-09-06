@@ -114,7 +114,7 @@ class _HomeViewState extends State<HomeView> {
                           onSelect: homeProvider.selectSpecialty,
                         ),
                         const SizedBox(height: AppTheme.spacing20),
-                        Text('Nearby doctors', style: AppTheme.sectionTitle),
+                        Text('Our doctors', style: AppTheme.sectionTitle),
                         const SizedBox(height: AppTheme.spacing12),
                         DoctorList(
                           doctors: homeProvider.doctors,

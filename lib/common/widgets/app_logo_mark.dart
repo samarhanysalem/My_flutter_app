@@ -24,8 +24,8 @@ class AppLogoMark extends StatelessWidget {
       ),
       child: Image.asset(
         AppConfig.logoAssetPath,
-        width: size * 0.48,
-        height: size * 0.48,
+        width: size * 0.64,
+        height: size * 0.64,
         // No color/colorBlendMode tint here: the customer's real logo is a
         // full-color image and Image's default srcIn blend would flatten
         // it to a solid silhouette. Only the monochrome fallback glyph
@@ -33,7 +33,7 @@ class AppLogoMark extends StatelessWidget {
         errorBuilder: (context, error, stackTrace) => Icon(
           Icons.favorite,
           color: AppTheme.onPrimary,
-          size: size * 0.48,
+          size: size * 0.64,
         ),
       ),
     );

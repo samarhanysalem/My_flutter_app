@@ -105,9 +105,19 @@ size the widget was built against.
   screen's content warrants it.
 - Cap content width on wide viewports (e.g. a `ConstrainedBox` with
   `maxWidth`) rather than letting text, forms, or cards stretch edge-to-edge
-  on desktop/web.
+  on desktop/web. **A `maxWidth` cap on its own is not enough** — a
+  `ConstrainedBox`/`SizedBox` with a `maxWidth` sitting directly inside a
+  `SingleChildScrollView`, `Column`, or `Padding` is left-aligned by
+  default, not centered. Always wrap it in `Center` (or an equivalent
+  alignment) so capped content sits in the middle of the extra space on a
+  wide viewport instead of being stranded against one edge — this exact
+  bug shipped once already (auth screens looked fine on phone widths, then
+  sat flush-left with a large dead area on a tablet/desktop viewport)
+  because the cap was added without the `Center`.
 - Check new screens at multiple sizes — phone, tablet, and a wide web
-  viewport — before considering the UI done.
+  viewport — before considering the UI done. Specifically look for content
+  stuck to one edge with unused space elsewhere at tablet/desktop widths;
+  that's the signature of a missing `Center` around capped-width content.
 
 ## White-label / branding rules
 

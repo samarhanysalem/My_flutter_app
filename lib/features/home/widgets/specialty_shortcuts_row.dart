@@ -3,10 +3,18 @@ import 'package:flutter/material.dart';
 import '../../../theme/app_theme.dart';
 
 class _Specialty {
-  const _Specialty(this.label, this.icon);
+  const _Specialty(this.label, this.icon, [String? filterValue])
+    : filterValue = filterValue ?? label;
 
   final String label;
   final IconData icon;
+
+  /// The substring matched against `Doctor.specialty` — see
+  /// `HomeProvider.doctors`. Defaults to [label], but a short display label
+  /// that isn't itself a substring of the real specialty name (e.g.
+  /// "Endocrine" vs. "Endocrinologist", "Eye" vs. "Ophthalmologist") must
+  /// override this with one that actually is.
+  final String filterValue;
 }
 
 const _specialties = [
@@ -15,10 +23,10 @@ const _specialties = [
   _Specialty('Neuro', Icons.psychology_outlined),
   _Specialty('Derma', Icons.face_retouching_natural),
   _Specialty('Pediatric', Icons.child_care),
-  _Specialty('Endocrine', Icons.biotech_outlined),
+  _Specialty('Endocrine', Icons.biotech_outlined, 'Endocrin'),
   _Specialty('Psych', Icons.self_improvement),
   _Specialty('Gastro', Icons.local_dining),
-  _Specialty('Eye', Icons.visibility_outlined),
+  _Specialty('Eye', Icons.visibility_outlined, 'Ophthalmolog'),
   _Specialty('Family', Icons.family_restroom),
 ];
 
@@ -56,8 +64,8 @@ class SpecialtyShortcutsRow extends StatelessWidget {
             _SpecialtyTile(
               label: specialty.label,
               icon: specialty.icon,
-              selected: selectedSpecialty == specialty.label,
-              onTap: () => onSelect(specialty.label),
+              selected: selectedSpecialty == specialty.filterValue,
+              onTap: () => onSelect(specialty.filterValue),
             ),
             const SizedBox(width: AppTheme.spacing14),
           ],

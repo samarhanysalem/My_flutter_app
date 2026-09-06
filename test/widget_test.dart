@@ -1,3 +1,4 @@
+import 'package:doctor_appointment_app/config/app_config.dart';
 import 'package:doctor_appointment_app/features/auth/widgets/terms_checkbox.dart';
 import 'package:doctor_appointment_app/main.dart';
 import 'package:flutter/material.dart';
@@ -111,7 +112,7 @@ void main() {
       await tester.tap(createAccountButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('Doctor Appointment App'), findsOneWidget);
+      expect(find.text(AppConfig.displayName), findsOneWidget);
     },
   );
 

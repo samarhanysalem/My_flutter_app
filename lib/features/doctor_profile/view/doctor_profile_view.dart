@@ -71,7 +71,9 @@ class DoctorProfileView extends StatelessWidget {
                         const SizedBox(height: AppTheme.spacing20),
                         const QuickActionsRow(),
                         const SizedBox(height: AppTheme.spacing20),
-                        DoctorAboutSection(bio: doctor.bio),
+                        DoctorAboutSection(
+                          bio: doctor.localizedBio(Localizations.localeOf(context)),
+                        ),
                         const SizedBox(height: AppTheme.spacing20),
                         const AvailabilitySection(),
                       ],

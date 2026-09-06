@@ -25,6 +25,15 @@ class AppConfig {
   /// screens, and copy like "Sign in to book with the [companyName] team."
   static const String companyName = 'Lakeside Clinic';
 
+  /// Arabic form of [companyName]. Not a literal translation — it's a
+  /// brand/proper name — but the Arabic rendering this customer's own
+  /// marketing would use, shown wherever the app's locale is Arabic.
+  static const String companyNameAr = 'عيادة ليكسايد';
+
+  /// [companyName], localized for [locale].
+  static String companyNameFor(Locale locale) =>
+      locale.languageCode == 'ar' ? companyNameAr : companyName;
+
   /// Primary brand color: CTAs, links, active/selected states.
   static const Color primaryColor = Color(0xFF4C6FD4);
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../config/app_config.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// The 18x18 custom checkbox + terms copy from the Register screen design.
@@ -36,7 +37,9 @@ class TermsCheckbox extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              "I agree to ${AppConfig.companyName}'s terms and privacy policy.",
+              AppLocalizations.of(context)!.agreeToTerms(
+                AppConfig.companyNameFor(Localizations.localeOf(context)),
+              ),
               style: AppTheme.termsText,
             ),
           ),

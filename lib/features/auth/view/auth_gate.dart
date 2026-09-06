@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../home/services/appointment_service.dart';
 import '../../home/view/home_view.dart';
 import 'auth_provider.dart';
 import 'login_view.dart';
 
 /// Shows the sign-in flow or the authenticated app depending on auth state.
 class AuthGate extends StatelessWidget {
-  const AuthGate({super.key});
+  const AuthGate({super.key, AppointmentService? appointmentService})
+    : _appointmentService = appointmentService;
+
+  final AppointmentService? _appointmentService;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +26,7 @@ class AuthGate extends StatelessWidget {
           case AuthStatus.unauthenticated:
             return const LoginView();
           case AuthStatus.authenticated:
-            return const HomeView();
+            return HomeView(appointmentService: _appointmentService);
         }
       },
     );

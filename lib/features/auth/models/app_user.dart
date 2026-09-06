@@ -2,8 +2,9 @@
 /// `package:firebase_auth`'s `User` type so the rest of the app (and tests)
 /// don't depend on a Firebase-specific, hard-to-construct object.
 class AppUser {
-  const AppUser({required this.uid, this.email});
+  const AppUser({required this.uid, this.email, this.displayName});
 
   final String uid;
   final String? email;
+  final String? displayName;
 }

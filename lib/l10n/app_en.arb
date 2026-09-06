@@ -1,0 +1,362 @@
+{
+  "@@locale": "en",
+
+  "notAvailableYet": "{feature} isn't available yet.",
+  "@notAvailableYet": {
+    "description": "Snackbar shown when tapping a feature that isn't built yet.",
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+
+  "welcomeBack": "Welcome back",
+  "@welcomeBack": {
+    "description": "Login screen heading."
+  },
+  "signInSubtitle": "Sign in to book with the {companyName} team.",
+  "@signInSubtitle": {
+    "description": "Login screen subtitle.",
+    "placeholders": {
+      "companyName": {
+        "type": "String"
+      }
+    }
+  },
+  "emailLabel": "Email",
+  "@emailLabel": {
+    "description": "Email text field label."
+  },
+  "passwordLabel": "Password",
+  "@passwordLabel": {
+    "description": "Password text field label."
+  },
+  "forgotPassword": "Forgot password?",
+  "@forgotPassword": {
+    "description": "Login screen forgot-password link."
+  },
+  "signIn": "Sign in",
+  "@signIn": {
+    "description": "Sign-in button label."
+  },
+  "orDivider": "or",
+  "@orDivider": {
+    "description": "Divider text between sign-in methods."
+  },
+  "continueWithPhone": "Continue with phone number",
+  "@continueWithPhone": {
+    "description": "Phone sign-in button label."
+  },
+  "newHereQuestion": "New here? ",
+  "@newHereQuestion": {
+    "description": "Prompt before the create-account link on the login screen."
+  },
+  "createAnAccount": "Create an account",
+  "@createAnAccount": {
+    "description": "Link to the register screen from the login screen."
+  },
+  "passwordResetFeature": "Password reset",
+  "@passwordResetFeature": {
+    "description": "Feature name used in the not-available-yet notice for forgot password."
+  },
+  "phoneSignInFeature": "Phone sign-in",
+  "@phoneSignInFeature": {
+    "description": "Feature name used in the not-available-yet notice for phone sign-in."
+  },
+
+  "createYourAccount": "Create your account",
+  "@createYourAccount": {
+    "description": "Register screen heading."
+  },
+  "registerSubtitle": "Takes a minute. You will pay at the clinic, so no card needed.",
+  "@registerSubtitle": {
+    "description": "Register screen subtitle."
+  },
+  "fullNameLabel": "Full name",
+  "@fullNameLabel": {
+    "description": "Full name text field label."
+  },
+  "phoneLabel": "Phone",
+  "@phoneLabel": {
+    "description": "Phone text field label."
+  },
+  "alreadyRegisteredQuestion": "Already registered? ",
+  "@alreadyRegisteredQuestion": {
+    "description": "Prompt before the sign-in link on the register screen."
+  },
+  "createAccount": "Create account",
+  "@createAccount": {
+    "description": "Create-account button label."
+  },
+
+  "enterYourEmail": "Enter your email",
+  "@enterYourEmail": {
+    "description": "Validation error when the email field is empty."
+  },
+  "enterAValidEmail": "Enter a valid email",
+  "@enterAValidEmail": {
+    "description": "Validation error when the email field doesn't look like an email."
+  },
+  "enterYourPassword": "Enter your password",
+  "@enterYourPassword": {
+    "description": "Validation error when the sign-in password field is empty."
+  },
+  "enterYourFullName": "Enter your full name",
+  "@enterYourFullName": {
+    "description": "Validation error when the full name field is empty."
+  },
+  "enterYourPhoneNumber": "Enter your phone number",
+  "@enterYourPhoneNumber": {
+    "description": "Validation error when the phone field is empty."
+  },
+  "enterAValidPhoneNumber": "Enter a valid phone number",
+  "@enterAValidPhoneNumber": {
+    "description": "Validation error when the phone field has too few digits."
+  },
+  "passwordTooShort": "Password must be at least 8 characters",
+  "@passwordTooShort": {
+    "description": "Validation error when the sign-up password is too short."
+  },
+  "passwordNeedsLetterAndNumber": "Include at least one letter and one number",
+  "@passwordNeedsLetterAndNumber": {
+    "description": "Validation error when the sign-up password lacks a letter or digit."
+  },
+
+  "agreeToTerms": "I agree to {companyName}'s terms and privacy policy.",
+  "@agreeToTerms": {
+    "description": "Terms checkbox label on the register screen.",
+    "placeholders": {
+      "companyName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "showPassword": "Show password",
+  "@showPassword": {
+    "description": "Tooltip for the show-password icon button."
+  },
+  "hidePassword": "Hide password",
+  "@hidePassword": {
+    "description": "Tooltip for the hide-password icon button."
+  },
+
+  "searchHint": "Search doctors, specialties",
+  "@searchHint": {
+    "description": "Placeholder text in the home screen search bar."
+  },
+  "ourDoctors": "Our doctors",
+  "@ourDoctors": {
+    "description": "Home screen doctor list section title."
+  },
+  "loadDoctorsError": "Something went wrong loading doctors. Please try again.",
+  "@loadDoctorsError": {
+    "description": "Shown when the doctor list fails to load."
+  },
+  "noDoctorsAvailable": "No doctors available yet.",
+  "@noDoctorsAvailable": {
+    "description": "Empty state when there are no doctors at all."
+  },
+  "noDoctorsMatchSearch": "No doctors match your search.",
+  "@noDoctorsMatchSearch": {
+    "description": "Empty state when a search/specialty filter matches nothing."
+  },
+  "signOutQuestion": "Sign out?",
+  "@signOutQuestion": {
+    "description": "Sign-out confirmation dialog title."
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Generic cancel button label."
+  },
+  "signOut": "Sign out",
+  "@signOut": {
+    "description": "Sign-out button label."
+  },
+  "signOutFailed": "Sign out failed. Please try again.",
+  "@signOutFailed": {
+    "description": "Snackbar shown when sign-out throws."
+  },
+  "specialtyAll": "All",
+  "@specialtyAll": {
+    "description": "Specialty shortcut that clears the filter."
+  },
+  "specialtyCardio": "Cardio",
+  "@specialtyCardio": {
+    "description": "Short label for the Cardiologist specialty shortcut."
+  },
+  "specialtyOrtho": "Ortho",
+  "@specialtyOrtho": {
+    "description": "Short label for the Orthopedic Surgeon specialty shortcut."
+  },
+  "specialtyNeuro": "Neuro",
+  "@specialtyNeuro": {
+    "description": "Short label for the Neurologist specialty shortcut."
+  },
+  "specialtyDerma": "Derma",
+  "@specialtyDerma": {
+    "description": "Short label for the Dermatologist specialty shortcut."
+  },
+  "specialtyPediatric": "Pediatric",
+  "@specialtyPediatric": {
+    "description": "Short label for the Pediatrician specialty shortcut."
+  },
+  "specialtyEndocrine": "Endocrine",
+  "@specialtyEndocrine": {
+    "description": "Short label for the Endocrinologist specialty shortcut."
+  },
+  "specialtyPsych": "Psych",
+  "@specialtyPsych": {
+    "description": "Short label for the Psychiatrist specialty shortcut."
+  },
+  "specialtyGastro": "Gastro",
+  "@specialtyGastro": {
+    "description": "Short label for the Gastroenterologist specialty shortcut."
+  },
+  "specialtyEye": "Eye",
+  "@specialtyEye": {
+    "description": "Short label for the Ophthalmologist specialty shortcut."
+  },
+  "specialtyFamily": "Family",
+  "@specialtyFamily": {
+    "description": "Short label for the Family Medicine specialty shortcut."
+  },
+  "specialtyFullCardiologist": "Cardiologist",
+  "@specialtyFullCardiologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullOrthopedicSurgeon": "Orthopedic Surgeon",
+  "@specialtyFullOrthopedicSurgeon": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullNeurologist": "Neurologist",
+  "@specialtyFullNeurologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullDermatologist": "Dermatologist",
+  "@specialtyFullDermatologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullPediatrician": "Pediatrician",
+  "@specialtyFullPediatrician": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullEndocrinologist": "Endocrinologist",
+  "@specialtyFullEndocrinologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullPsychiatrist": "Psychiatrist",
+  "@specialtyFullPsychiatrist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullGastroenterologist": "Gastroenterologist",
+  "@specialtyFullGastroenterologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullOphthalmologist": "Ophthalmologist",
+  "@specialtyFullOphthalmologist": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "specialtyFullFamilyMedicine": "Family Medicine",
+  "@specialtyFullFamilyMedicine": {
+    "description": "Full specialty name shown on a doctor's card/profile."
+  },
+  "greetingMorningWithName": "Good morning, {name}",
+  "@greetingMorningWithName": {
+    "description": "Morning greeting with the user's first name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingMorningNoName": "Good morning",
+  "@greetingMorningNoName": {
+    "description": "Morning greeting when no name is available."
+  },
+  "greetingAfternoonWithName": "Good afternoon, {name}",
+  "@greetingAfternoonWithName": {
+    "description": "Afternoon greeting with the user's first name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingAfternoonNoName": "Good afternoon",
+  "@greetingAfternoonNoName": {
+    "description": "Afternoon greeting when no name is available."
+  },
+  "greetingEveningWithName": "Good evening, {name}",
+  "@greetingEveningWithName": {
+    "description": "Evening greeting with the user's first name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingEveningNoName": "Good evening",
+  "@greetingEveningNoName": {
+    "description": "Evening greeting when no name is available."
+  },
+
+  "doctorProfileTitle": "Doctor profile",
+  "@doctorProfileTitle": {
+    "description": "Doctor profile screen title."
+  },
+  "messageAction": "Message",
+  "@messageAction": {
+    "description": "Quick action label to message the doctor."
+  },
+  "callAction": "Call",
+  "@callAction": {
+    "description": "Quick action label to call the doctor."
+  },
+  "locationAction": "Location",
+  "@locationAction": {
+    "description": "Quick action label to view the clinic location."
+  },
+  "bookingFeature": "Booking",
+  "@bookingFeature": {
+    "description": "Feature name used in the not-available-yet notice for booking."
+  },
+  "bookAppointment": "Book appointment",
+  "@bookAppointment": {
+    "description": "Book appointment button label."
+  },
+  "aboutSectionTitle": "About",
+  "@aboutSectionTitle": {
+    "description": "Doctor profile About section title."
+  },
+  "noBioAvailable": "No bio available yet for this doctor.",
+  "@noBioAvailable": {
+    "description": "Fallback copy when a doctor has no bio."
+  },
+  "availableToday": "Available today",
+  "@availableToday": {
+    "description": "Doctor profile availability section title."
+  },
+  "availableOn": "Available on {date}",
+  "@availableOn": {
+    "description": "Doctor profile availability section title for a day other than today.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "selectDate": "Select date",
+  "@selectDate": {
+    "description": "Tooltip for the calendar button that opens the date picker."
+  },
+  "noSlotsAvailable": "No time slots available on this day.",
+  "@noSlotsAvailable": {
+    "description": "Shown when the selected day has no available time slots."
+  },
+  "loadAvailabilityError": "Couldn't load availability. Please try again.",
+  "@loadAvailabilityError": {
+    "description": "Shown when fetching a day's time slots fails."
+  }
+}

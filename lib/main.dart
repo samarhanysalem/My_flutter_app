@@ -2,10 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'config/app_config.dart';
 import 'features/auth/services/auth_repository.dart';
 import 'features/auth/view/auth_gate.dart';
 import 'features/auth/view/auth_provider.dart';
 import 'firebase_options.dart';
+import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,10 +28,8 @@ class MyApp extends StatelessWidget {
         authRepository: _authRepository ?? FirebaseAuthRepository(),
       ),
       child: MaterialApp(
-        title: 'Doctor Appointment App',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
+        title: AppConfig.appName,
+        theme: AppTheme.materialTheme,
         home: const AuthGate(),
       ),
     );

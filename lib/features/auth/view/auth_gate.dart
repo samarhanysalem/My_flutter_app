@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../home/view/home_view.dart';
 import 'auth_provider.dart';
-import 'sign_in_view.dart';
+import 'login_view.dart';
 
 /// Shows the sign-in flow or the authenticated app depending on auth state.
 class AuthGate extends StatelessWidget {
@@ -20,7 +20,7 @@ class AuthGate extends StatelessWidget {
               body: Center(child: CircularProgressIndicator()),
             );
           case AuthStatus.unauthenticated:
-            return const SignInView();
+            return const LoginView();
           case AuthStatus.authenticated:
             return const HomeView();
         }

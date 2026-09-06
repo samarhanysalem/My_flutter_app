@@ -30,6 +30,11 @@ class AuthProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  /// One-shot notices for non-blocking, post-success failures (e.g. a
+  /// profile save that failed after sign-up already succeeded). Not part of
+  /// [ChangeNotifier] state — subscribe where you want to show them.
+  Stream<String> get profileWarnings => _authRepository.profileWarnings;
+
   void _onAuthStateChanged(AppUser? user) {
     _user = user;
     _status = user == null
@@ -44,9 +49,19 @@ class AuthProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> signUp({required String email, required String password}) {
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+    required String phone,
+  }) {
     return _runAuthAction(
-      () => _authRepository.signUp(email: email, password: password),
+      () => _authRepository.signUp(
+        email: email,
+        password: password,
+        fullName: fullName,
+        phone: phone,
+      ),
     );
   }
 

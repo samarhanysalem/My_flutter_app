@@ -17,6 +17,7 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   late final StreamController<AppUser?> _controller;
+  final _profileWarningsController = StreamController<String>.broadcast();
   AppUser? _currentUser;
 
   /// Set to make the next [signIn]/[signUp] call fail with this error.
@@ -25,9 +26,19 @@ class FakeAuthRepository implements AuthRepository {
   bool signInCalled = false;
   bool signUpCalled = false;
   bool signOutCalled = false;
+  String? lastFullName;
+  String? lastPhone;
 
   @override
   Stream<AppUser?> authStateChanges() => _controller.stream;
+
+  @override
+  Stream<String> get profileWarnings => _profileWarningsController.stream;
+
+  /// Lets a test simulate a repository-level profile warning (e.g. a failed
+  /// best-effort profile save) to verify it reaches [AuthProvider].
+  void emitProfileWarning(String message) =>
+      _profileWarningsController.add(message);
 
   @override
   Future<void> signIn({required String email, required String password}) async {
@@ -38,8 +49,15 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> signUp({required String email, required String password}) async {
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+    required String phone,
+  }) async {
     signUpCalled = true;
+    lastFullName = fullName;
+    lastPhone = phone;
     if (errorToThrow != null) throw errorToThrow!;
     _currentUser = AppUser(uid: 'test-uid', email: email);
     _controller.add(_currentUser);
@@ -52,5 +70,8 @@ class FakeAuthRepository implements AuthRepository {
     _controller.add(null);
   }
 
-  void dispose() => _controller.close();
+  void dispose() {
+    _controller.close();
+    _profileWarningsController.close();
+  }
 }

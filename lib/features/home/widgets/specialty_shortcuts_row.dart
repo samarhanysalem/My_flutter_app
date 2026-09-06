@@ -13,13 +13,22 @@ const _specialties = [
   _Specialty('Cardio', Icons.favorite_border),
   _Specialty('Ortho', Icons.accessibility_new),
   _Specialty('Neuro', Icons.psychology_outlined),
+  _Specialty('Derma', Icons.face_retouching_natural),
+  _Specialty('Pediatric', Icons.child_care),
+  _Specialty('Endocrine', Icons.biotech_outlined),
+  _Specialty('Psych', Icons.self_improvement),
+  _Specialty('Gastro', Icons.local_dining),
+  _Specialty('Eye', Icons.visibility_outlined),
+  _Specialty('Family', Icons.family_restroom),
 ];
 
 /// Horizontally scrollable specialty shortcuts (so a narrow phone doesn't
-/// force these to shrink or wrap). "All" clears the filter and is
+/// force these to shrink or wrap — there are enough specialties now that
+/// this row always overflows and scrolls). "All" clears the filter and is
 /// highlighted whenever none is selected; tapping a specialty applies a
-/// client-side filter on the doctor list; tapping "More" isn't wired to
-/// anything yet.
+/// client-side substring filter on the doctor list (see
+/// `HomeProvider.doctors`), so a short label like "Derma" still matches the
+/// full "Dermatologist" specialty stored in Firestore.
 class SpecialtyShortcutsRow extends StatelessWidget {
   const SpecialtyShortcutsRow({
     super.key,
@@ -52,19 +61,6 @@ class SpecialtyShortcutsRow extends StatelessWidget {
             ),
             const SizedBox(width: AppTheme.spacing14),
           ],
-          _SpecialtyTile(
-            label: 'More',
-            icon: Icons.more_horiz,
-            selected: false,
-            neutral: true,
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('More specialties isn\'t available yet.'),
-                ),
-              );
-            },
-          ),
         ],
       ),
     );
@@ -77,13 +73,11 @@ class _SpecialtyTile extends StatelessWidget {
     required this.icon,
     required this.selected,
     required this.onTap,
-    this.neutral = false,
   });
 
   final String label;
   final IconData icon;
   final bool selected;
-  final bool neutral;
   final VoidCallback onTap;
 
   @override
@@ -93,9 +87,6 @@ class _SpecialtyTile extends StatelessWidget {
     if (selected) {
       background = AppTheme.primary;
       iconColor = AppTheme.onPrimary;
-    } else if (neutral) {
-      background = AppTheme.screenGround;
-      iconColor = AppTheme.textSecondary;
     } else {
       background = AppTheme.accentTint;
       iconColor = AppTheme.primary;

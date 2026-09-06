@@ -71,6 +71,7 @@ class AppTheme {
   static const double spacing10 = 10;
   static const double spacing12 = 12;
   static const double spacing14 = 14;
+  static const double spacing16 = 16;
   static const double spacing18 = 18;
   static const double spacing20 = 20;
   static const double spacing22 = 22;
@@ -131,6 +132,15 @@ class AppTheme {
 
   static TextStyle get cardTitle =>
       _font(fontSize: 14, fontWeight: FontWeight.w500, color: ink);
+
+  static TextStyle get screenTitle =>
+      _font(fontSize: 17, fontWeight: FontWeight.w500, color: ink);
+
+  /// Longer-form paragraph text (e.g. a doctor's bio) — same secondary
+  /// color as [subtitle], but with line spacing so multi-line text reads
+  /// comfortably.
+  static TextStyle get proseSecondary =>
+      _font(fontSize: 13, height: 1.5, color: textSecondary);
 
   static TextStyle get termsText =>
       _font(fontSize: 12, height: 1.45, color: textSecondary);

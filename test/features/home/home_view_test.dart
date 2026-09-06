@@ -155,9 +155,7 @@ void main() {
     appointmentService.dispose();
   });
 
-  testWidgets('tapping a doctor card opens the doctor profile placeholder', (
-    tester,
-  ) async {
+  testWidgets('tapping a doctor card opens their profile', (tester) async {
     final authProvider = await _signedInAuthProvider(tester);
     final appointmentService = FakeAppointmentService();
     await _pumpHome(tester, authProvider, appointmentService);
@@ -168,7 +166,12 @@ void main() {
     await tester.tap(find.text('Dr. Sara Whitmore'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Doctor profile coming soon.'), findsOneWidget);
+    expect(find.text('Doctor profile'), findsOneWidget);
+    expect(
+      find.text('Dr. Sara Whitmore'),
+      findsOneWidget,
+    ); // now the hero's name, not the list card
+    expect(find.text('Available today'), findsOneWidget);
 
     appointmentService.dispose();
   });

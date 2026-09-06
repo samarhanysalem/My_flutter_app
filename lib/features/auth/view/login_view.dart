@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/widgets/app_logo_mark.dart';
+import '../../../config/app_config.dart';
+import '../../../theme/app_theme.dart';
 import '../auth_validators.dart';
-import '../widgets/auth_colors.dart';
 import '../widgets/auth_error_text.dart';
 import '../widgets/auth_primary_button.dart';
 import '../widgets/auth_text_field.dart';
@@ -53,7 +54,7 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     return Scaffold(
-      backgroundColor: AuthColors.screenGround,
+      backgroundColor: AppTheme.screenGround,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
@@ -64,39 +65,15 @@ class _LoginViewState extends State<LoginView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 46,
-                    height: 46,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AuthColors.accent,
-                      borderRadius: BorderRadius.circular(13),
-                    ),
-                    child: const Icon(
-                      Icons.favorite,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
+                  const AppLogoMark(),
+                  const SizedBox(height: AppTheme.spacing28),
+                  Text('Welcome back', style: AppTheme.heading),
+                  const SizedBox(height: AppTheme.spacing6),
                   Text(
-                    'Welcome back',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: -0.02 * 24,
-                      color: AuthColors.ink,
-                    ),
+                    'Sign in to book with the ${AppConfig.companyName} team.',
+                    style: AppTheme.subtitle,
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Sign in to book with the Lakeside clinic team.',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 13,
-                      color: AuthColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: AppTheme.spacing28),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -107,7 +84,7 @@ class _LoginViewState extends State<LoginView> {
                         autofillHints: const [AutofillHints.email],
                         validator: AuthValidators.email,
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: AppTheme.spacing14),
                       AuthTextField(
                         label: 'Password',
                         controller: _passwordController,
@@ -122,98 +99,78 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppTheme.spacing8),
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
                       onTap: () => _notAvailableYet('Password reset'),
                       child: Text(
                         'Forgot password?',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 12,
-                          color: AuthColors.accent,
-                        ),
+                        style: AppTheme.linkAccentSmall,
                       ),
                     ),
                   ),
                   if (authProvider.errorMessage != null) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppTheme.spacing12),
                     AuthErrorText(message: authProvider.errorMessage!),
                   ],
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppTheme.spacing24),
                   AuthPrimaryButton(
                     label: 'Sign in',
                     isLoading: authProvider.isLoading,
                     onPressed: () => _submit(authProvider),
                   ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: AppTheme.spacing22),
                   Row(
                     children: [
                       const Expanded(
-                        child: Divider(color: AuthColors.divider, height: 1),
+                        child: Divider(color: AppTheme.divider, height: 1),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text(
-                          'or',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11,
-                            color: AuthColors.textPlaceholder,
-                          ),
-                        ),
+                        child: Text('or', style: AppTheme.caption),
                       ),
                       const Expanded(
-                        child: Divider(color: AuthColors.divider, height: 1),
+                        child: Divider(color: AppTheme.divider, height: 1),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: AppTheme.spacing22),
                   SizedBox(
                     width: double.infinity,
                     height: 46,
                     child: OutlinedButton.icon(
                       onPressed: () => _notAvailableYet('Phone sign-in'),
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AuthColors.border),
+                        side: const BorderSide(color: AppTheme.border),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.radiusSmall,
+                          ),
                         ),
                       ),
                       icon: const Icon(
                         Icons.phone,
                         size: 15,
-                        color: AuthColors.textSecondary,
+                        color: AppTheme.textSecondary,
                       ),
                       label: Text(
                         'Continue with phone number',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 14,
-                          color: AuthColors.ink,
-                        ),
+                        style: AppTheme.body,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppTheme.spacing20),
                   Center(
                     child: Wrap(
                       alignment: WrapAlignment.center,
                       children: [
-                        Text(
-                          'New here? ',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 13,
-                            color: AuthColors.textSecondary,
-                          ),
-                        ),
+                        Text('New here? ', style: AppTheme.subtitle),
                         GestureDetector(
                           onTap: _openRegister,
                           child: Text(
                             'Create an account',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: AuthColors.accent,
-                            ),
+                            style: AppTheme.linkAccent,
                           ),
                         ),
                       ],

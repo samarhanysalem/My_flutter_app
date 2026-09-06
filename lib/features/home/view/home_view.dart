@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../config/app_config.dart';
 import '../../auth/view/auth_provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -51,7 +52,7 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Doctor Appointment App'),
+        title: const Text(AppConfig.displayName),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import 'auth_colors.dart';
+import '../../../theme/app_theme.dart';
 
 /// Labeled input matching the design handoff's field spec: 12px secondary
 /// label, 6px gap, 46px-tall input with an 8px-radius border that turns
@@ -33,7 +32,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
   late bool _obscured = widget.obscureText;
 
   OutlineInputBorder _border(Color color) => OutlineInputBorder(
-    borderRadius: BorderRadius.circular(8),
+    borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
     borderSide: BorderSide(color: color),
   );
 
@@ -43,14 +42,8 @@ class _AuthTextFieldState extends State<AuthTextField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          widget.label,
-          style: GoogleFonts.dmSans(
-            fontSize: 12,
-            color: AuthColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: 6),
+        Text(widget.label, style: AppTheme.fieldLabel),
+        const SizedBox(height: AppTheme.spacing6),
         TextFormField(
           key: Key('authField_${widget.label}'),
           controller: widget.controller,
@@ -58,7 +51,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
           keyboardType: widget.keyboardType,
           autofillHints: widget.autofillHints,
           validator: widget.validator,
-          style: GoogleFonts.dmSans(fontSize: 14, color: AuthColors.ink),
+          style: AppTheme.body,
           decoration: InputDecoration(
             isDense: true,
             contentPadding: const EdgeInsets.symmetric(
@@ -66,10 +59,10 @@ class _AuthTextFieldState extends State<AuthTextField> {
               vertical: 13,
             ),
             filled: true,
-            fillColor: AuthColors.surface,
-            border: _border(AuthColors.border),
-            enabledBorder: _border(AuthColors.border),
-            focusedBorder: _border(AuthColors.accent),
+            fillColor: AppTheme.surface,
+            border: _border(AppTheme.border),
+            enabledBorder: _border(AppTheme.border),
+            focusedBorder: _border(AppTheme.primary),
             errorBorder: _border(Theme.of(context).colorScheme.error),
             focusedErrorBorder: _border(Theme.of(context).colorScheme.error),
             suffixIcon: widget.obscureText
@@ -77,7 +70,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
                     icon: Icon(
                       _obscured ? Icons.visibility_off : Icons.visibility,
                       size: 20,
-                      color: AuthColors.textSecondary,
+                      color: AppTheme.textSecondary,
                     ),
                     tooltip: _obscured ? 'Show password' : 'Hide password',
                     onPressed: () => setState(() => _obscured = !_obscured),

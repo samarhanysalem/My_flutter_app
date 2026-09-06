@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../../theme/app_theme.dart';
 import '../auth_validators.dart';
-import '../widgets/auth_colors.dart';
 import '../widgets/auth_error_text.dart';
 import '../widgets/auth_primary_button.dart';
 import '../widgets/auth_text_field.dart';
@@ -56,7 +55,7 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     return Scaffold(
-      backgroundColor: AuthColors.screenGround,
+      backgroundColor: AppTheme.screenGround,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
@@ -75,7 +74,7 @@ class _RegisterViewState extends State<RegisterView> {
                         onPressed: () => Navigator.of(context).pop(),
                         icon: const Icon(
                           Icons.chevron_left,
-                          color: AuthColors.ink,
+                          color: AppTheme.ink,
                           size: 28,
                         ),
                         padding: EdgeInsets.zero,
@@ -86,24 +85,13 @@ class _RegisterViewState extends State<RegisterView> {
                       ),
                     ),
                   ),
-                  Text(
-                    'Create your account',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: -0.02 * 24,
-                      color: AuthColors.ink,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
+                  Text('Create your account', style: AppTheme.heading),
+                  const SizedBox(height: AppTheme.spacing6),
                   Text(
                     'Takes a minute. You will pay at the clinic, so no card needed.',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 13,
-                      color: AuthColors.textSecondary,
-                    ),
+                    style: AppTheme.subtitle,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppTheme.spacing24),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -118,7 +106,7 @@ class _RegisterViewState extends State<RegisterView> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: AppTheme.spacing14),
                       AuthTextField(
                         label: 'Email',
                         controller: _emailController,
@@ -126,7 +114,7 @@ class _RegisterViewState extends State<RegisterView> {
                         autofillHints: const [AutofillHints.email],
                         validator: AuthValidators.email,
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: AppTheme.spacing14),
                       AuthTextField(
                         label: 'Phone',
                         controller: _phoneController,
@@ -146,7 +134,7 @@ class _RegisterViewState extends State<RegisterView> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: AppTheme.spacing14),
                       AuthTextField(
                         label: 'Password',
                         controller: _passwordController,
@@ -165,17 +153,17 @@ class _RegisterViewState extends State<RegisterView> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: AppTheme.spacing18),
                   TermsCheckbox(
                     value: _termsAccepted,
                     onChanged: (value) =>
                         setState(() => _termsAccepted = value),
                   ),
                   if (authProvider.errorMessage != null) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppTheme.spacing12),
                     AuthErrorText(message: authProvider.errorMessage!),
                   ],
-                  const SizedBox(height: 22),
+                  const SizedBox(height: AppTheme.spacing22),
                   AuthPrimaryButton(
                     label: 'Create account',
                     isLoading: authProvider.isLoading,
@@ -183,28 +171,15 @@ class _RegisterViewState extends State<RegisterView> {
                         ? () => _submit(authProvider)
                         : null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppTheme.spacing20),
                   Center(
                     child: Wrap(
                       alignment: WrapAlignment.center,
                       children: [
-                        Text(
-                          'Already registered? ',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 13,
-                            color: AuthColors.textSecondary,
-                          ),
-                        ),
+                        Text('Already registered? ', style: AppTheme.subtitle),
                         GestureDetector(
                           onTap: () => Navigator.of(context).pop(),
-                          child: Text(
-                            'Sign in',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: AuthColors.accent,
-                            ),
-                          ),
+                          child: Text('Sign in', style: AppTheme.linkAccent),
                         ),
                       ],
                     ),

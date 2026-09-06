@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import 'auth_colors.dart';
+import '../../../theme/app_theme.dart';
 
 /// The full-width 50px CTA used by both Sign in and Register, including the
 /// design's disabled-state colors when [onPressed] is null.
@@ -26,12 +25,14 @@ class AuthPrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: enabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AuthColors.accent,
-          disabledBackgroundColor: AuthColors.disabledFill,
+          backgroundColor: AppTheme.primary,
+          disabledBackgroundColor: AppTheme.disabledFill,
           foregroundColor: Colors.white,
-          disabledForegroundColor: AuthColors.textDisabled,
+          disabledForegroundColor: AppTheme.textDisabled,
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+          ),
         ),
         child: isLoading
             ? const SizedBox(
@@ -42,13 +43,7 @@ class AuthPrimaryButton extends StatelessWidget {
                   color: Colors.white,
                 ),
               )
-            : Text(
-                label,
-                style: GoogleFonts.dmSans(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+            : Text(label, style: AppTheme.buttonLabel),
       ),
     );
   }

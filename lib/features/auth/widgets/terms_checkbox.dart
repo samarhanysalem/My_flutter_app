@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import 'auth_colors.dart';
+import '../../../config/app_config.dart';
+import '../../../theme/app_theme.dart';
 
 /// The 18x18 custom checkbox + terms copy from the Register screen design.
 class TermsCheckbox extends StatelessWidget {
@@ -23,10 +23,10 @@ class TermsCheckbox extends StatelessWidget {
             height: 18,
             margin: const EdgeInsets.only(top: 1),
             decoration: BoxDecoration(
-              color: value ? AuthColors.accent : Colors.white,
-              borderRadius: BorderRadius.circular(5),
+              color: value ? AppTheme.primary : Colors.white,
+              borderRadius: BorderRadius.circular(AppTheme.radiusXs),
               border: Border.all(
-                color: value ? AuthColors.accent : AuthColors.checkboxBorder,
+                color: value ? AppTheme.primary : AppTheme.checkboxBorder,
               ),
             ),
             child: value
@@ -36,12 +36,8 @@ class TermsCheckbox extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              "I agree to the clinic's terms and privacy policy.",
-              style: GoogleFonts.dmSans(
-                fontSize: 12,
-                height: 1.45,
-                color: AuthColors.textSecondary,
-              ),
+              "I agree to ${AppConfig.companyName}'s terms and privacy policy.",
+              style: AppTheme.termsText,
             ),
           ),
         ],

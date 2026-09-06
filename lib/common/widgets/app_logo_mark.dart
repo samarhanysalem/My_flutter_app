@@ -26,9 +26,15 @@ class AppLogoMark extends StatelessWidget {
         AppConfig.logoAssetPath,
         width: size * 0.48,
         height: size * 0.48,
-        color: Colors.white,
-        errorBuilder: (context, error, stackTrace) =>
-            Icon(Icons.favorite, color: Colors.white, size: size * 0.48),
+        // No color/colorBlendMode tint here: the customer's real logo is a
+        // full-color image and Image's default srcIn blend would flatten
+        // it to a solid silhouette. Only the monochrome fallback glyph
+        // below needs to be recolored to sit on the primary background.
+        errorBuilder: (context, error, stackTrace) => Icon(
+          Icons.favorite,
+          color: AppTheme.onPrimary,
+          size: size * 0.48,
+        ),
       ),
     );
   }

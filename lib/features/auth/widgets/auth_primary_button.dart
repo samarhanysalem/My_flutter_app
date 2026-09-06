@@ -27,7 +27,7 @@ class AuthPrimaryButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primary,
           disabledBackgroundColor: AppTheme.disabledFill,
-          foregroundColor: Colors.white,
+          foregroundColor: AppTheme.onPrimary,
           disabledForegroundColor: AppTheme.textDisabled,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -40,7 +40,7 @@ class AuthPrimaryButton extends StatelessWidget {
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Colors.white,
+                  color: AppTheme.onPrimary,
                 ),
               )
             : Text(label, style: AppTheme.buttonLabel),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+import '../../../theme/app_theme.dart';
 
 class AuthErrorText extends StatelessWidget {
   const AuthErrorText({super.key, required this.message});
@@ -10,8 +11,7 @@ class AuthErrorText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       message,
-      style: GoogleFonts.dmSans(
-        fontSize: 12,
+      style: AppTheme.errorText.copyWith(
         color: Theme.of(context).colorScheme.error,
       ),
       textAlign: TextAlign.center,

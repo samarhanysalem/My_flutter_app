@@ -23,14 +23,14 @@ class TermsCheckbox extends StatelessWidget {
             height: 18,
             margin: const EdgeInsets.only(top: 1),
             decoration: BoxDecoration(
-              color: value ? AppTheme.primary : Colors.white,
+              color: value ? AppTheme.primary : AppTheme.surface,
               borderRadius: BorderRadius.circular(AppTheme.radiusXs),
               border: Border.all(
                 color: value ? AppTheme.primary : AppTheme.checkboxBorder,
               ),
             ),
             child: value
-                ? const Icon(Icons.check, size: 12, color: Colors.white)
+                ? const Icon(Icons.check, size: 12, color: AppTheme.onPrimary)
                 : null,
           ),
           const SizedBox(width: 10),

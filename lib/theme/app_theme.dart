@@ -18,6 +18,12 @@ class AppTheme {
   static const Color primary = AppConfig.primaryColor;
   static const Color accentTint = AppConfig.accentColor;
 
+  /// Text/icon color for content rendered on top of a [primary]-colored
+  /// surface (buttons, the logo badge, a checked checkbox) — distinct from
+  /// [surface] even though both are white today, since a future palette
+  /// could change one without the other.
+  static const Color onPrimary = Colors.white;
+
   // --- Neutral colors (shared design system) ---------------------------
   static const Color ink = Color(0xFF131316);
   static const Color textSecondary = Color(0xFF6A6A74);
@@ -83,6 +89,11 @@ class AppTheme {
     height: 1.45,
     color: textSecondary,
   );
+
+  /// Color left unset — callers combine this with `Theme.of(context)`'s
+  /// error color, since that's a `BuildContext`-scoped value AppTheme
+  /// doesn't have access to.
+  static TextStyle get errorText => GoogleFonts.dmSans(fontSize: 12);
 
   /// The MaterialApp-level ThemeData, seeded from the brand primary color.
   static ThemeData get materialTheme => ThemeData(

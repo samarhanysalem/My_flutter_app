@@ -29,7 +29,10 @@ class AppConfig {
   static const Color primaryColor = Color(0xFF4C6FD4);
 
   /// Secondary/tint brand color: light backgrounds behind primary-colored
-  /// icons, badges, and highlights (e.g. the specialty shortcuts on Home).
+  /// icons, badges, and highlights. Not yet consumed by any built screen —
+  /// reserved for Home/Booking/etc. (e.g. the specialty shortcuts on Home)
+  /// per the design handoff, so those screens have a token to build against
+  /// from day one instead of introducing their own.
   static const Color accentColor = Color(0xFFEAF1FD);
 
   /// Relative to the bundled asset root. See `assets/branding/README.md`

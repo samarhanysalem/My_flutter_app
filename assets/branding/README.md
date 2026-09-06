@@ -11,8 +11,11 @@ never means touching widget code.
   screens, referenced via `AppConfig.logoAssetPath`. Until this file exists,
   `AppLogoMark` (`lib/common/widgets/app_logo_mark.dart`) falls back to a
   neutral icon, so the app still runs without it.
-- A launcher/splash icon, once app-icon generation is wired up (not yet part
-  of this refactor).
+- `app_icon.png` — a square, min-1024x1024 source image for the native
+  Android/iOS launcher icon. After adding it, run
+  `dart run flutter_launcher_icons` (config already in `pubspec.yaml`) to
+  regenerate the native icon files — this is a one-time codegen step, not
+  something read at runtime.
 
 `logo.png` isn't declared under `flutter: assets:` in `pubspec.yaml` yet
 because the file doesn't exist in this template. When a customer's logo is
@@ -26,12 +29,20 @@ flutter:
 
 ## Full white-label checklist for a new customer
 
+Cross-reference against `docs/customer_brand_requirements_template.md` —
+each field on that intake form maps to one of these steps.
+
 1. **`lib/config/app_config.dart`** — `appName`, `displayName`,
-   `companyName`, `primaryColor`, `accentColor`, `supportEmail`,
-   `supportPhone`. This is the single file that drives branding/theme
-   throughout the app (via `lib/theme/app_theme.dart`).
-2. **`assets/branding/`** — drop in this customer's `logo.png` (and add the
-   `pubspec.yaml` entry above).
+   `companyName`, `primaryColor`, `accentColor`, `secondaryColor`/
+   `tertiaryColor` (optional, if the customer's style guide has them),
+   `fontFamily` (a Google Fonts family name — leave as-is unless the
+   customer specifies one), `supportEmail`, `supportPhone`, and any
+   `multipleClinicLocationsEnabled`-style feature toggle their engagement
+   needs. This is the single file that drives branding/theme throughout the
+   app (via `lib/theme/app_theme.dart`).
+2. **`assets/branding/`** — drop in this customer's `logo.png` and
+   `app_icon.png` (and add the `pubspec.yaml` `assets:` entry above, then
+   run `flutter_launcher_icons` as described above).
 3. **`lib/firebase_options.dart`** — regenerate with `flutterfire configure`
    against this customer's own Firebase project. Every customer gets a
    separate Firebase project; auth/Firestore data must never share a
@@ -44,6 +55,12 @@ flutter:
      `CFBundleDisplayName`, `web/manifest.json`, `web/index.html`) to match
      `AppConfig.displayName` — these are compiled into the native shell and
      can't be read from Dart config at runtime.
+
+A customer's store listing description, screenshots, and developer account
+access (the intake form's "Store listing" section) are store-console/asset
+work, not code changes — nothing in this repo needs to change for those.
+Free-form "other customization" requests are inherently bespoke and get
+scoped per engagement rather than pre-provisioned here.
 
 Business logic (`AuthRepository`, Firestore document structure) is the same
 for every customer and does not change as part of this checklist.

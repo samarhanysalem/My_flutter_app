@@ -52,6 +52,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
 
 # firebase_core_web 3.11.0 fails to compile for web: it calls the
 # `dart:js_interop` `isA<T>()` extension (defined on `JSAny?`) on a bare
@@ -70,6 +71,16 @@ dev_dependencies:
 dependency_overrides:
   firebase_core_web:
     path: third_party/firebase_core_web
+
+# Regenerates native Android/iOS launcher icons from a single source image.
+# Run `dart run flutter_launcher_icons` after a customer's app_icon.png is
+# added to assets/branding/ (see assets/branding/README.md) — this config
+# section itself is inert until that command is run, so it's safe to keep
+# here even before the file exists.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/branding/app_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

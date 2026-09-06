@@ -35,6 +35,19 @@ class AppConfig {
   /// from day one instead of introducing their own.
   static const Color accentColor = Color(0xFFEAF1FD);
 
+  /// Optional extra brand colors from a customer's existing style guide.
+  /// Null unless a customer's intake form specifies one; nothing currently
+  /// reads these, but they exist so there's somewhere to put a value the
+  /// intake form collects instead of it being dropped on the floor.
+  static const Color? secondaryColor = null;
+  static const Color? tertiaryColor = null;
+
+  /// Google Fonts family name used throughout the app via AppTheme (e.g.
+  /// 'DM Sans', 'Inter', 'Poppins'). Only change this if a customer's brand
+  /// guidelines call for a specific Google Font; otherwise the template's
+  /// default applies.
+  static const String fontFamily = 'DM Sans';
+
   /// Relative to the bundled asset root. See `assets/branding/README.md`
   /// for the exact file this customer's build needs to provide.
   static const String logoAssetPath = 'assets/branding/logo.png';
@@ -42,4 +55,13 @@ class AppConfig {
   /// Support contact shown on about/help screens, if/when one exists.
   static const String supportEmail = 'support@lakesideclinic.example';
   static const String supportPhone = '+1 (555) 010-0100';
+
+  // --- Feature toggles ---------------------------------------------------
+  // Customer-specific behavior differences belong here as flags that
+  // screens branch on — never as a customer name check in a widget or
+  // service file. Add new toggles as new customer engagements need them.
+
+  /// Whether this build supports multiple clinic locations, vs. the
+  /// standard single-location booking flow.
+  static const bool multipleClinicLocationsEnabled = false;
 }

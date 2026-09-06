@@ -18,6 +18,11 @@ class AppTheme {
   static const Color primary = AppConfig.primaryColor;
   static const Color accentTint = AppConfig.accentColor;
 
+  /// Extra brand colors from a customer's style guide, if they gave one.
+  /// Null for most customers — check for null before use.
+  static const Color? secondary = AppConfig.secondaryColor;
+  static const Color? tertiary = AppConfig.tertiaryColor;
+
   /// Text/icon color for content rendered on top of a [primary]-colored
   /// surface (buttons, the logo badge, a checked checkbox) — distinct from
   /// [surface] even though both are white today, since a future palette
@@ -54,46 +59,55 @@ class AppTheme {
   static const double spacing28 = 28;
 
   // --- Typography ----------------------------------------------------
-  static TextStyle get heading => GoogleFonts.dmSans(
+  // Every style routes through this one call, so AppConfig.fontFamily is
+  // the only place a customer's font preference needs to change.
+  static TextStyle _font({
+    required double fontSize,
+    FontWeight? fontWeight,
+    double? letterSpacing,
+    double? height,
+    Color? color,
+  }) => GoogleFonts.getFont(
+    AppConfig.fontFamily,
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    letterSpacing: letterSpacing,
+    height: height,
+    color: color,
+  );
+
+  static TextStyle get heading => _font(
     fontSize: 24,
     fontWeight: FontWeight.w500,
     letterSpacing: -0.02 * 24,
     color: ink,
   );
 
-  static TextStyle get subtitle =>
-      GoogleFonts.dmSans(fontSize: 13, color: textSecondary);
+  static TextStyle get subtitle => _font(fontSize: 13, color: textSecondary);
 
   static TextStyle get fieldLabel =>
-      GoogleFonts.dmSans(fontSize: 12, color: textSecondary);
+      _font(fontSize: 12, color: textSecondary);
 
-  static TextStyle get body => GoogleFonts.dmSans(fontSize: 14, color: ink);
+  static TextStyle get body => _font(fontSize: 14, color: ink);
 
   static TextStyle get buttonLabel =>
-      GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w500);
+      _font(fontSize: 15, fontWeight: FontWeight.w500);
 
-  static TextStyle get linkAccent => GoogleFonts.dmSans(
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
-    color: primary,
-  );
+  static TextStyle get linkAccent =>
+      _font(fontSize: 13, fontWeight: FontWeight.w500, color: primary);
 
-  static TextStyle get linkAccentSmall =>
-      GoogleFonts.dmSans(fontSize: 12, color: primary);
+  static TextStyle get linkAccentSmall => _font(fontSize: 12, color: primary);
 
   static TextStyle get caption =>
-      GoogleFonts.dmSans(fontSize: 11, color: textPlaceholder);
+      _font(fontSize: 11, color: textPlaceholder);
 
-  static TextStyle get termsText => GoogleFonts.dmSans(
-    fontSize: 12,
-    height: 1.45,
-    color: textSecondary,
-  );
+  static TextStyle get termsText =>
+      _font(fontSize: 12, height: 1.45, color: textSecondary);
 
   /// Color left unset — callers combine this with `Theme.of(context)`'s
   /// error color, since that's a `BuildContext`-scoped value AppTheme
   /// doesn't have access to.
-  static TextStyle get errorText => GoogleFonts.dmSans(fontSize: 12);
+  static TextStyle get errorText => _font(fontSize: 12);
 
   /// The MaterialApp-level ThemeData, seeded from the brand primary color.
   static ThemeData get materialTheme => ThemeData(

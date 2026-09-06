@@ -6,6 +6,7 @@ import 'config/app_config.dart';
 import 'features/auth/services/auth_repository.dart';
 import 'features/auth/view/auth_gate.dart';
 import 'features/auth/view/auth_provider.dart';
+import 'features/home/services/appointment_service.dart';
 import 'firebase_options.dart';
 import 'theme/app_theme.dart';
 
@@ -16,10 +17,15 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, AuthRepository? authRepository})
-    : _authRepository = authRepository;
+  const MyApp({
+    super.key,
+    AuthRepository? authRepository,
+    AppointmentService? appointmentService,
+  }) : _authRepository = authRepository,
+       _appointmentService = appointmentService;
 
   final AuthRepository? _authRepository;
+  final AppointmentService? _appointmentService;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +36,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: AppConfig.appName,
         theme: AppTheme.materialTheme,
-        home: const AuthGate(),
+        home: AuthGate(appointmentService: _appointmentService),
       ),
     );
   }

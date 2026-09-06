@@ -142,6 +142,10 @@ class FirebaseAuthRepository implements AuthRepository {
 
   AppUser? _toAppUser(fb.User? user) {
     if (user == null) return null;
-    return AppUser(uid: user.uid, email: user.email);
+    return AppUser(
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+    );
   }
 }

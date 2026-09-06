@@ -3,18 +3,28 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../config/app_config.dart';
+import '../../../theme/app_theme.dart';
 import '../../auth/view/auth_provider.dart';
+import '../../doctor_profile/view/doctor_profile_view.dart';
+import '../models/doctor.dart';
+import '../services/appointment_service.dart';
+import '../widgets/doctor_list.dart';
+import '../widgets/home_greeting_header.dart';
+import '../widgets/home_search_bar.dart';
+import '../widgets/specialty_shortcuts_row.dart';
+import 'home_provider.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+  const HomeView({super.key, AppointmentService? appointmentService})
+    : _appointmentService = appointmentService;
+
+  final AppointmentService? _appointmentService;
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-  int _counter = 0;
   late final StreamSubscription<String> _profileWarningSubscription;
 
   @override
@@ -41,42 +51,87 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
   }
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  Future<void> _confirmSignOut(BuildContext context) async {
+    final authProvider = context.read<AuthProvider>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Sign out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Sign out'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed ?? false) {
+      await authProvider.signOut();
+    }
+  }
+
+  void _openDoctorProfile(BuildContext context, Doctor doctor) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => DoctorProfileView(doctor: doctor)));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(AppConfig.displayName),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Sign out',
-            onPressed: () => context.read<AuthProvider>().signOut(),
-          ),
-        ],
+    return ChangeNotifierProvider<HomeProvider>(
+      create: (_) => HomeProvider(
+        appointmentService: widget._appointmentService ??
+            FirestoreAppointmentService(),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      child: Builder(
+        builder: (context) {
+          final authProvider = context.watch<AuthProvider>();
+          final homeProvider = context.watch<HomeProvider>();
+          return Scaffold(
+            backgroundColor: AppTheme.screenGround,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppTheme.spacing20),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HomeGreetingHeader(
+                          user: authProvider.user,
+                          onAvatarTap: () => _confirmSignOut(context),
+                        ),
+                        const SizedBox(height: AppTheme.spacing20),
+                        HomeSearchBar(onChanged: homeProvider.setSearchQuery),
+                        const SizedBox(height: AppTheme.spacing20),
+                        SpecialtyShortcutsRow(
+                          selectedSpecialty: homeProvider.selectedSpecialty,
+                          onSelect: homeProvider.selectSpecialty,
+                        ),
+                        const SizedBox(height: AppTheme.spacing20),
+                        Text('Nearby doctors', style: AppTheme.sectionTitle),
+                        const SizedBox(height: AppTheme.spacing12),
+                        DoctorList(
+                          doctors: homeProvider.doctors,
+                          isLoading: homeProvider.isLoading,
+                          errorMessage: homeProvider.errorMessage,
+                          hasActiveFilter: homeProvider.hasActiveFilter,
+                          onDoctorTap: (doctor) =>
+                              _openDoctorProfile(context, doctor),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+          );
+        },
       ),
     );
   }

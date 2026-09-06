@@ -1,22 +1,48 @@
-import 'package:doctor_appointment_app/config/app_config.dart';
 import 'package:doctor_appointment_app/features/auth/widgets/terms_checkbox.dart';
 import 'package:doctor_appointment_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'features/auth/fake_auth_repository.dart';
+import 'features/home/fake_appointment_service.dart';
 
 /// The login/register forms are taller than the default 800x600 test
 /// surface; widgets below the fold fail to hit-test inside the
 /// SingleChildScrollView unless the surface is made tall enough to fit them.
-Future<void> _pumpAuthApp(WidgetTester tester, FakeAuthRepository repository) async {
+///
+/// Returns the fake `AppointmentService` a signed-in user's Home screen
+/// will fetch doctors from — swapped in so these auth-flow tests never
+/// touch real Firestore. Once a test reaches Home, it must call
+/// `emitDoctors(...)` on it (see `_settleOnHome`) before `pumpAndSettle()`:
+/// Home's loading spinner animates indefinitely until doctors arrive, and
+/// pumpAndSettle() never returns while something is still animating.
+Future<FakeAppointmentService> _pumpAuthApp(
+  WidgetTester tester,
+  FakeAuthRepository repository,
+) async {
   tester.view.physicalSize = const Size(400, 1400);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
 
-  await tester.pumpWidget(MyApp(authRepository: repository));
+  final appointmentService = FakeAppointmentService();
+  addTearDown(appointmentService.dispose);
+  await tester.pumpWidget(
+    MyApp(authRepository: repository, appointmentService: appointmentService),
+  );
   await tester.pump();
+  return appointmentService;
+}
+
+/// Call right after an action that lands on Home (sign in / sign up) and
+/// before asserting on it — see `_pumpAuthApp` for why.
+Future<void> _settleOnHome(
+  WidgetTester tester,
+  FakeAppointmentService appointmentService,
+) async {
+  await tester.pump();
+  appointmentService.emitDoctors(const []);
+  await tester.pumpAndSettle();
 }
 
 void main() {
@@ -71,7 +97,10 @@ void main() {
   testWidgets(
     'Create account is disabled until terms are accepted, then signs up',
     (WidgetTester tester) async {
-      await _pumpAuthApp(tester, FakeAuthRepository());
+      final appointmentService = await _pumpAuthApp(
+        tester,
+        FakeAuthRepository(),
+      );
 
       await tester.tap(find.text('Create an account'));
       await tester.pumpAndSettle();
@@ -110,9 +139,9 @@ void main() {
       );
 
       await tester.tap(createAccountButton);
-      await tester.pumpAndSettle();
+      await _settleOnHome(tester, appointmentService);
 
-      expect(find.text(AppConfig.displayName), findsOneWidget);
+      expect(find.text('Nearby doctors'), findsOneWidget);
     },
   );
 
@@ -137,10 +166,11 @@ void main() {
     expect(repository.signInCalled, isFalse);
   });
 
-  testWidgets('Signing in reveals the home page and the counter works', (
-    WidgetTester tester,
-  ) async {
-    await _pumpAuthApp(tester, FakeAuthRepository());
+  testWidgets('Signing in reveals the home page', (WidgetTester tester) async {
+    final appointmentService = await _pumpAuthApp(
+      tester,
+      FakeAuthRepository(),
+    );
 
     await tester.enterText(
       find.byKey(const Key('authField_Email')),
@@ -151,18 +181,9 @@ void main() {
       'password123',
     );
     await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));
-    await tester.pumpAndSettle();
+    await _settleOnHome(tester, appointmentService);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Welcome back'), findsNothing);
+    expect(find.text('Nearby doctors'), findsOneWidget);
   });
 }

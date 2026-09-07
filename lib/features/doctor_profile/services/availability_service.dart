@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'availability_date_id.dart';
+
 /// Abstraction over the availability backend, so `AvailabilityProvider` can
 /// be unit tested with a fake instead of talking to real Firestore.
 abstract class AvailabilityService {
@@ -35,16 +37,10 @@ class FirestoreAvailabilityService implements AvailabilityService {
         .collection('doctors')
         .doc(doctorId)
         .collection('availability')
-        .doc(_dateId(date))
+        .doc(availabilityDateId(date))
         .get();
     final slots = snapshot.data()?['slots'];
     if (slots is! List) return const [];
     return slots.whereType<String>().toList();
-  }
-
-  /// `availability` documents are keyed by calendar date as `yyyy-MM-dd`.
-  static String _dateId(DateTime date) {
-    String pad(int n, int width) => n.toString().padLeft(width, '0');
-    return '${pad(date.year, 4)}-${pad(date.month, 2)}-${pad(date.day, 2)}';
   }
 }

@@ -318,13 +318,25 @@
   "@locationAction": {
     "description": "Quick action label to view the clinic location."
   },
-  "bookingFeature": "Booking",
-  "@bookingFeature": {
-    "description": "Feature name used in the not-available-yet notice for booking."
-  },
   "bookAppointment": "Book appointment",
   "@bookAppointment": {
     "description": "Book appointment button label."
+  },
+  "appointmentBooked": "Appointment booked for {date} at {slot}.",
+  "@appointmentBooked": {
+    "description": "Confirmation snackbar shown after successfully booking an appointment.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "slot": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingFailed": "Couldn't book that slot — it may have just been taken. Please choose another.",
+  "@bookingFailed": {
+    "description": "Shown when booking an appointment fails, e.g. the slot was booked by someone else first."
   },
   "aboutSectionTitle": "About",
   "@aboutSectionTitle": {

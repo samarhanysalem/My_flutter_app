@@ -1,32 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-import '../../../common/utils/not_available_yet.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
+import '../view/availability_provider.dart';
 
-/// Fixed bottom CTA. The booking flow itself isn't built yet, so this is
-/// the entry point stub — matches the "not available yet" pattern used
-/// elsewhere in the app for unbuilt features.
+/// Fixed bottom CTA. Books whichever slot is currently selected in
+/// AvailabilitySection — both read the same `AvailabilityProvider`,
+/// provided by `DoctorProfileView` above them both. Disabled until a slot
+/// is selected, and while a booking is in flight.
 class BookAppointmentButton extends StatelessWidget {
   const BookAppointmentButton({super.key});
+
+  Future<void> _book(
+    BuildContext context,
+    AvailabilityProvider provider,
+    AppLocalizations loc,
+    Locale locale,
+  ) async {
+    final date = provider.selectedDate;
+    final slot = provider.selectedSlot!;
+    final success = await provider.bookSelectedSlot();
+    if (!context.mounted) return;
+    final message = success
+        ? loc.appointmentBooked(
+            DateFormat.MMMEd(locale.toLanguageTag()).format(date),
+            slot,
+          )
+        : loc.bookingFailed;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context);
+    final provider = context.watch<AvailabilityProvider>();
+    final canBook = !provider.isBooking && provider.selectedSlot != null;
+
     return SizedBox(
       width: double.infinity,
       height: 48,
       child: ElevatedButton(
-        onPressed: () => showNotAvailableYet(context, loc.bookingFeature),
+        onPressed: canBook ? () => _book(context, provider, loc, locale) : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primary,
+          disabledBackgroundColor: AppTheme.disabledFill,
           foregroundColor: AppTheme.onPrimary,
+          disabledForegroundColor: AppTheme.textDisabled,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
           ),
         ),
-        child: Text(loc.bookAppointment, style: AppTheme.buttonLabel),
+        child: provider.isBooking
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppTheme.onPrimary,
+                ),
+              )
+            : Text(loc.bookAppointment, style: AppTheme.buttonLabel),
       ),
     );
   }

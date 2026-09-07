@@ -518,17 +518,23 @@ abstract class AppLocalizations {
   /// **'Location'**
   String get locationAction;
 
-  /// Feature name used in the not-available-yet notice for booking.
-  ///
-  /// In en, this message translates to:
-  /// **'Booking'**
-  String get bookingFeature;
-
   /// Book appointment button label.
   ///
   /// In en, this message translates to:
   /// **'Book appointment'**
   String get bookAppointment;
+
+  /// Confirmation snackbar shown after successfully booking an appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment booked for {date} at {slot}.'**
+  String appointmentBooked(String date, String slot);
+
+  /// Shown when booking an appointment fails, e.g. the slot was booked by someone else first.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t book that slot — it may have just been taken. Please choose another.'**
+  String get bookingFailed;
 
   /// Doctor profile About section title.
   ///

@@ -40,12 +40,17 @@ Future<void> _pumpHome(
   FakeAppointmentService appointmentService,
 ) async {
   await tester.pumpWidget(
-    MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: ChangeNotifierProvider<AuthProvider>.value(
-        value: authProvider,
-        child: HomeView(appointmentService: appointmentService),
+    // The AuthProvider is provided above MaterialApp (not inside `home:`)
+    // so it's still reachable from routes HomeView pushes via Navigator —
+    // a route pushed later is a sibling of `home:`'s content in the
+    // widget tree, not a descendant of it, so a provider placed inside
+    // `home:` wouldn't be visible there.
+    ChangeNotifierProvider<AuthProvider>.value(
+      value: authProvider,
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: HomeView(appointmentService: appointmentService),
       ),
     ),
   );

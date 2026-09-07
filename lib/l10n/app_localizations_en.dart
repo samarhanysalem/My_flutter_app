@@ -234,10 +234,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get locationAction => 'Location';
 
   @override
-  String get bookingFeature => 'Booking';
+  String get bookAppointment => 'Book appointment';
 
   @override
-  String get bookAppointment => 'Book appointment';
+  String appointmentBooked(String date, String slot) {
+    return 'Appointment booked for $date at $slot.';
+  }
+
+  @override
+  String get bookingFailed =>
+      'Couldn\'t book that slot — it may have just been taken. Please choose another.';
 
   @override
   String get aboutSectionTitle => 'About';

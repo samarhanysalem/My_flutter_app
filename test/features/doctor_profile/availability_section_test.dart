@@ -1,9 +1,13 @@
+import 'package:doctor_appointment_app/features/doctor_profile/services/availability_service.dart';
+import 'package:doctor_appointment_app/features/doctor_profile/view/availability_provider.dart';
 import 'package:doctor_appointment_app/features/doctor_profile/widgets/availability_section.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 import 'fake_availability_service.dart';
+import 'fake_booking_service.dart';
 
 // Fixed reference dates so tests don't depend on which real day the suite
 // runs on.
@@ -11,11 +15,26 @@ final _tuesday = DateTime(2024, 1, 2);
 final _wednesday = DateTime(2024, 1, 3);
 final _sunday = DateTime(2024, 1, 7);
 
-Widget _wrap(Widget child) {
+Widget _wrap(
+  AvailabilityService availabilityService, {
+  required DateTime today,
+}) {
   return MaterialApp(
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
-    home: Scaffold(body: child),
+    home: Scaffold(
+      body: ChangeNotifierProvider<AvailabilityProvider>(
+        create: (_) => AvailabilityProvider(
+          availabilityService: availabilityService,
+          bookingService: FakeBookingService(),
+          doctorId: 'doc-1',
+          doctorName: 'Dr. Test',
+          patientId: 'patient-1',
+          initialDate: today,
+        ),
+        child: AvailabilitySection(today: today),
+      ),
+    ),
   );
 }
 
@@ -26,15 +45,7 @@ void main() {
     final service = FakeAvailabilityService({
       _tuesday: ['10:30 AM', '1:00 PM', '4:15 PM'],
     });
-    await tester.pumpWidget(
-      _wrap(
-        AvailabilitySection(
-          doctorId: 'doc-1',
-          availabilityService: service,
-          today: _tuesday,
-        ),
-      ),
-    );
+    await tester.pumpWidget(_wrap(service, today: _tuesday));
     await tester.pump();
 
     expect(find.text('Available today'), findsOneWidget);
@@ -58,15 +69,7 @@ void main() {
     final service = FakeAvailabilityService({
       _tuesday: ['10:30 AM'],
     });
-    await tester.pumpWidget(
-      _wrap(
-        AvailabilitySection(
-          doctorId: 'doc-1',
-          availabilityService: service,
-          today: _tuesday,
-        ),
-      ),
-    );
+    await tester.pumpWidget(_wrap(service, today: _tuesday));
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
@@ -82,15 +85,7 @@ void main() {
       _tuesday: ['10:30 AM', '4:15 PM'],
       _wednesday: ['9:00 AM', '5:30 PM'],
     });
-    await tester.pumpWidget(
-      _wrap(
-        AvailabilitySection(
-          doctorId: 'doc-1',
-          availabilityService: service,
-          today: _tuesday,
-        ),
-      ),
-    );
+    await tester.pumpWidget(_wrap(service, today: _tuesday));
     await tester.pump();
 
     await tester.tap(find.byIcon(Icons.calendar_month_outlined));
@@ -116,15 +111,7 @@ void main() {
     tester,
   ) async {
     final service = FakeAvailabilityService(const {});
-    await tester.pumpWidget(
-      _wrap(
-        AvailabilitySection(
-          doctorId: 'doc-1',
-          availabilityService: service,
-          today: _sunday,
-        ),
-      ),
-    );
+    await tester.pumpWidget(_wrap(service, today: _sunday));
     await tester.pump();
 
     expect(
@@ -138,15 +125,7 @@ void main() {
   ) async {
     final service = FakeAvailabilityService(const {})
       ..errorToThrow = Exception('boom');
-    await tester.pumpWidget(
-      _wrap(
-        AvailabilitySection(
-          doctorId: 'doc-1',
-          availabilityService: service,
-          today: _tuesday,
-        ),
-      ),
-    );
+    await tester.pumpWidget(_wrap(service, today: _tuesday));
     await tester.pump();
 
     expect(

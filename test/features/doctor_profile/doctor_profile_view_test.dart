@@ -1,26 +1,52 @@
 import 'package:doctor_appointment_app/common/models/doctor.dart';
+import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
+import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
 import 'package:doctor_appointment_app/features/doctor_profile/view/doctor_profile_view.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
+import '../auth/fake_auth_repository.dart';
 import 'fake_availability_service.dart';
+import 'fake_booking_service.dart';
+
+final _today = DateTime(2024, 1, 2);
 
 Widget _wrap(Widget child) {
-  return MaterialApp(
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: child,
+  final authProvider = AuthProvider(
+    authRepository: FakeAuthRepository(
+      initialUser: const AppUser(uid: 'patient-1', displayName: 'Alex Doe'),
+    ),
+  );
+  // The AuthProvider is provided above MaterialApp (not inside `home:`) so
+  // it's still reachable from routes pushed later via Navigator — see the
+  // "back button pops the route" test, which pushes DoctorProfileView as a
+  // second route.
+  return ChangeNotifierProvider<AuthProvider>.value(
+    value: authProvider,
+    child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child,
+    ),
   );
 }
 
-/// A DoctorProfileView with no published availability — none of these
-/// tests care about specific time slots (see availability_section_test.dart
-/// for that), just that the screen never touches real Firestore.
-DoctorProfileView _profileView(Doctor doctor) {
+/// A DoctorProfileView with no published availability — most of these
+/// tests don't care about specific time slots (see
+/// availability_section_test.dart and the booking tests below for that),
+/// just that the screen never touches real Firestore.
+DoctorProfileView _profileView(
+  Doctor doctor, {
+  FakeAvailabilityService? availabilityService,
+  FakeBookingService? bookingService,
+}) {
   return DoctorProfileView(
     doctor: doctor,
-    availabilityService: FakeAvailabilityService(const {}),
+    availabilityService: availabilityService ?? FakeAvailabilityService(const {}),
+    bookingService: bookingService ?? FakeBookingService(),
+    today: _today,
   );
 }
 
@@ -97,16 +123,6 @@ void main() {
     expect(find.text('Message isn\'t available yet.'), findsOneWidget);
   });
 
-  testWidgets('book appointment shows a not-available notice', (
-    tester,
-  ) async {
-    await tester.pumpWidget(_wrap(_profileView(_doctorWithBio)));
-
-    await tester.tap(find.text('Book appointment'));
-    await tester.pump();
-    expect(find.text('Booking isn\'t available yet.'), findsOneWidget);
-  });
-
   testWidgets('offers a calendar button to pick a different day', (
     tester,
   ) async {
@@ -121,5 +137,84 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(DatePickerDialog), findsOneWidget);
+  });
+
+  testWidgets('book appointment is disabled until a slot is selected', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        _profileView(
+          _doctorWithBio,
+          availabilityService: FakeAvailabilityService(const {}),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(
+      find.widgetWithText(ElevatedButton, 'Book appointment'),
+    );
+    expect(button.onPressed, isNull);
+  });
+
+  testWidgets('booking the selected slot shows a confirmation', (
+    tester,
+  ) async {
+    final bookingService = FakeBookingService();
+    await tester.pumpWidget(
+      _wrap(
+        _profileView(
+          _doctorWithBio,
+          availabilityService: FakeAvailabilityService({
+            _today: ['10:30 AM', '1:00 PM'],
+          }),
+          bookingService: bookingService,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    // The first slot is selected by default.
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Book appointment'));
+    await tester.pump();
+
+    expect(
+      find.textContaining('Appointment booked'),
+      findsOneWidget,
+    );
+    expect(bookingService.bookedSlots, ['10:30 AM']);
+    // The booked slot is no longer offered.
+    expect(find.text('10:30 AM'), findsNothing);
+    expect(find.text('1:00 PM'), findsOneWidget);
+  });
+
+  testWidgets('shows an error notice when booking fails', (tester) async {
+    final bookingService = FakeBookingService()
+      ..errorToThrow = Exception('slot taken');
+    await tester.pumpWidget(
+      _wrap(
+        _profileView(
+          _doctorWithBio,
+          availabilityService: FakeAvailabilityService({
+            _today: ['10:30 AM'],
+          }),
+          bookingService: bookingService,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Book appointment'));
+    await tester.pump();
+
+    expect(
+      find.text(
+        'Couldn\'t book that slot — it may have just been taken. Please choose another.',
+      ),
+      findsOneWidget,
+    );
+    // A failed booking doesn't remove the slot.
+    expect(find.text('10:30 AM'), findsOneWidget);
   });
 }

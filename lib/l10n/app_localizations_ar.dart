@@ -233,10 +233,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get locationAction => 'الموقع';
 
   @override
-  String get bookingFeature => 'الحجز';
+  String get bookAppointment => 'احجز موعدًا';
 
   @override
-  String get bookAppointment => 'احجز موعدًا';
+  String appointmentBooked(String date, String slot) {
+    return 'تم حجز الموعد في $date الساعة $slot.';
+  }
+
+  @override
+  String get bookingFailed =>
+      'تعذّر حجز هذا الموعد، فقد يكون حُجز للتو. الرجاء اختيار موعد آخر.';
 
   @override
   String get aboutSectionTitle => 'نبذة';

@@ -290,5 +290,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String get myAppointmentsTitle => 'مواعيدي';
 
   @override
-  String get noAppointmentDetails => 'لا توجد تفاصيل موعد لعرضها بعد.';
+  String get upcomingTabLabel => 'القادمة';
+
+  @override
+  String get pastTabLabel => 'السابقة';
+
+  @override
+  String get appointmentStatusCompleted => 'مكتمل';
+
+  @override
+  String get getDirections => 'الحصول على الاتجاهات';
+
+  @override
+  String get reschedule => 'إعادة الجدولة';
+
+  @override
+  String get noUpcomingAppointments => 'لا توجد مواعيد قادمة';
+
+  @override
+  String get noPastAppointments => 'لا توجد مواعيد سابقة';
+
+  @override
+  String get bookNow => 'احجز الآن';
+
+  @override
+  String get loadAppointmentsError => 'تعذّر تحميل المواعيد. حاول مرة أخرى.';
+
+  @override
+  String get rescheduleDoctorNotFound =>
+      'تعذّر العثور على هذا الطبيب. حاول مرة أخرى.';
+
+  @override
+  String get couldNotOpenMaps => 'تعذّر فتح الخرائط. حاول مرة أخرى.';
 }

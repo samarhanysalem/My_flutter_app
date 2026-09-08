@@ -291,5 +291,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myAppointmentsTitle => 'My appointments';
 
   @override
-  String get noAppointmentDetails => 'No appointment details to show yet.';
+  String get upcomingTabLabel => 'Upcoming';
+
+  @override
+  String get pastTabLabel => 'Past';
+
+  @override
+  String get appointmentStatusCompleted => 'Completed';
+
+  @override
+  String get getDirections => 'Get directions';
+
+  @override
+  String get reschedule => 'Reschedule';
+
+  @override
+  String get noUpcomingAppointments => 'No upcoming appointments';
+
+  @override
+  String get noPastAppointments => 'No past appointments';
+
+  @override
+  String get bookNow => 'Book now';
+
+  @override
+  String get loadAppointmentsError =>
+      'Couldn\'t load appointments. Please try again.';
+
+  @override
+  String get rescheduleDoctorNotFound =>
+      'Couldn\'t find that doctor. Please try again.';
+
+  @override
+  String get couldNotOpenMaps => 'Couldn\'t open maps. Please try again.';
 }

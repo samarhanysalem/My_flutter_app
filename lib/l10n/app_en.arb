@@ -401,8 +401,48 @@
   "@myAppointmentsTitle": {
     "description": "Title of the My appointments screen."
   },
-  "noAppointmentDetails": "No appointment details to show yet.",
-  "@noAppointmentDetails": {
-    "description": "Shown on My appointments when it's opened from the nav tab rather than from a specific appointment."
+  "upcomingTabLabel": "Upcoming",
+  "@upcomingTabLabel": {
+    "description": "My appointments tab label for upcoming appointments."
+  },
+  "pastTabLabel": "Past",
+  "@pastTabLabel": {
+    "description": "My appointments tab label for past appointments."
+  },
+  "appointmentStatusCompleted": "Completed",
+  "@appointmentStatusCompleted": {
+    "description": "Status badge on a past (completed) appointment."
+  },
+  "getDirections": "Get directions",
+  "@getDirections": {
+    "description": "Button on an upcoming appointment card that opens the device's maps app."
+  },
+  "reschedule": "Reschedule",
+  "@reschedule": {
+    "description": "Button on an upcoming appointment card that opens the Booking screen for that doctor."
+  },
+  "noUpcomingAppointments": "No upcoming appointments",
+  "@noUpcomingAppointments": {
+    "description": "Empty state on My appointments' Upcoming tab."
+  },
+  "noPastAppointments": "No past appointments",
+  "@noPastAppointments": {
+    "description": "Empty state on My appointments' Past tab."
+  },
+  "bookNow": "Book now",
+  "@bookNow": {
+    "description": "Button on the Upcoming tab's empty state that switches to the Home tab to book one."
+  },
+  "loadAppointmentsError": "Couldn't load appointments. Please try again.",
+  "@loadAppointmentsError": {
+    "description": "Shown when fetching a My appointments tab's list fails."
+  },
+  "rescheduleDoctorNotFound": "Couldn't find that doctor. Please try again.",
+  "@rescheduleDoctorNotFound": {
+    "description": "Shown when \"Reschedule\" can't look up the appointment's doctor record."
+  },
+  "couldNotOpenMaps": "Couldn't open maps. Please try again.",
+  "@couldNotOpenMaps": {
+    "description": "Shown when \"Get directions\" fails to open the device's maps app."
   }
 }

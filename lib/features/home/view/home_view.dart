@@ -141,7 +141,7 @@ class _HomeViewState extends State<HomeView> {
                                       appointment: appointment,
                                       onViewDetails: () => context
                                           .read<NavShellController>()
-                                          .showAppointmentDetails(appointment),
+                                          .selectTab(MainTab.appointments),
                                     ),
                                   );
                                 },

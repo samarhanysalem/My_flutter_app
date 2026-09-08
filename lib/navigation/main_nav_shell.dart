@@ -31,7 +31,7 @@ class MainNavShell extends StatelessWidget {
               index: nav.selectedTab.index,
               children: [
                 HomeView(appointmentService: appointmentService),
-                MyAppointmentsView(appointment: nav.appointmentToShow),
+                MyAppointmentsView(appointmentService: appointmentService),
                 const ProfileView(),
               ],
             ),

@@ -620,11 +620,71 @@ abstract class AppLocalizations {
   /// **'My appointments'**
   String get myAppointmentsTitle;
 
-  /// Shown on My appointments when it's opened from the nav tab rather than from a specific appointment.
+  /// My appointments tab label for upcoming appointments.
   ///
   /// In en, this message translates to:
-  /// **'No appointment details to show yet.'**
-  String get noAppointmentDetails;
+  /// **'Upcoming'**
+  String get upcomingTabLabel;
+
+  /// My appointments tab label for past appointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get pastTabLabel;
+
+  /// Status badge on a past (completed) appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get appointmentStatusCompleted;
+
+  /// Button on an upcoming appointment card that opens the device's maps app.
+  ///
+  /// In en, this message translates to:
+  /// **'Get directions'**
+  String get getDirections;
+
+  /// Button on an upcoming appointment card that opens the Booking screen for that doctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule'**
+  String get reschedule;
+
+  /// Empty state on My appointments' Upcoming tab.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming appointments'**
+  String get noUpcomingAppointments;
+
+  /// Empty state on My appointments' Past tab.
+  ///
+  /// In en, this message translates to:
+  /// **'No past appointments'**
+  String get noPastAppointments;
+
+  /// Button on the Upcoming tab's empty state that switches to the Home tab to book one.
+  ///
+  /// In en, this message translates to:
+  /// **'Book now'**
+  String get bookNow;
+
+  /// Shown when fetching a My appointments tab's list fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load appointments. Please try again.'**
+  String get loadAppointmentsError;
+
+  /// Shown when "Reschedule" can't look up the appointment's doctor record.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t find that doctor. Please try again.'**
+  String get rescheduleDoctorNotFound;
+
+  /// Shown when "Get directions" fails to open the device's maps app.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open maps. Please try again.'**
+  String get couldNotOpenMaps;
 }
 
 class _AppLocalizationsDelegate

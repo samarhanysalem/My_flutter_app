@@ -24,6 +24,34 @@ class FakeAppointmentService implements AppointmentService {
   void emitUpcomingAppointment(Appointment? appointment) =>
       _upcomingAppointmentController.add(appointment);
 
+  /// Canned results for [getUpcomingAppointments]/[getPastAppointments] —
+  /// set by a test before pumping, since (unlike the streams above) these
+  /// are one-time fetches My appointments awaits during its first build.
+  List<Appointment> upcomingAppointments = const [];
+  List<Appointment> pastAppointments = const [];
+
+  /// Set to make the next [getUpcomingAppointments]/[getPastAppointments]
+  /// call fail with this error.
+  Object? getAppointmentsErrorToThrow;
+
+  @override
+  Future<List<Appointment>> getUpcomingAppointments(String patientId) async {
+    if (getAppointmentsErrorToThrow != null) throw getAppointmentsErrorToThrow!;
+    return upcomingAppointments;
+  }
+
+  @override
+  Future<List<Appointment>> getPastAppointments(String patientId) async {
+    if (getAppointmentsErrorToThrow != null) throw getAppointmentsErrorToThrow!;
+    return pastAppointments;
+  }
+
+  /// Canned result for [getDoctor] — set by a test exercising "Reschedule".
+  Doctor? doctorToReturn;
+
+  @override
+  Future<Doctor?> getDoctor(String doctorId) async => doctorToReturn;
+
   void dispose() {
     _controller.close();
     _upcomingAppointmentController.close();

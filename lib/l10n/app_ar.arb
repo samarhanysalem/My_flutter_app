@@ -97,5 +97,15 @@
   "appointmentStatusConfirmed": "مؤكد",
   "viewDetails": "عرض التفاصيل",
   "myAppointmentsTitle": "مواعيدي",
-  "noAppointmentDetails": "لا توجد تفاصيل موعد لعرضها بعد."
+  "upcomingTabLabel": "القادمة",
+  "pastTabLabel": "السابقة",
+  "appointmentStatusCompleted": "مكتمل",
+  "getDirections": "الحصول على الاتجاهات",
+  "reschedule": "إعادة الجدولة",
+  "noUpcomingAppointments": "لا توجد مواعيد قادمة",
+  "noPastAppointments": "لا توجد مواعيد سابقة",
+  "bookNow": "احجز الآن",
+  "loadAppointmentsError": "تعذّر تحميل المواعيد. حاول مرة أخرى.",
+  "rescheduleDoctorNotFound": "تعذّر العثور على هذا الطبيب. حاول مرة أخرى.",
+  "couldNotOpenMaps": "تعذّر فتح الخرائط. حاول مرة أخرى."
 }

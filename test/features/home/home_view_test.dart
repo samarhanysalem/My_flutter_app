@@ -255,7 +255,6 @@ void main() {
       await tester.pump();
 
       expect(navController.selectedTab, MainTab.appointments);
-      expect(navController.appointmentToShow, _upcomingAppointment);
 
       appointmentService.dispose();
     },

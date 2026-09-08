@@ -21,7 +21,10 @@ const _upcomingAppointment = Appointment(
   status: 'confirmed',
 );
 
-Future<FakeAppointmentService> _pumpShell(WidgetTester tester) async {
+Future<FakeAppointmentService> _pumpShell(
+  WidgetTester tester, {
+  List<Appointment> upcomingAppointments = const [],
+}) async {
   // The default 800x600 test surface is too short to fit the greeting,
   // search bar, upcoming-appointment card, and specialty shortcuts above
   // the fold — see widget_test.dart's _pumpAuthApp for the same fix.
@@ -44,7 +47,8 @@ Future<FakeAppointmentService> _pumpShell(WidgetTester tester) async {
   // HomeProvider is created (Provider's `create` only runs once) — see
   // home_view_test.dart's `_signedInAuthProvider` for the same fix.
   await tester.pump();
-  final appointmentService = FakeAppointmentService();
+  final appointmentService = FakeAppointmentService()
+    ..upcomingAppointments = upcomingAppointments;
   addTearDown(appointmentService.dispose);
   await tester.pumpWidget(
     ChangeNotifierProvider<AuthProvider>.value(
@@ -85,7 +89,13 @@ void main() {
   testWidgets(
     'View details on the upcoming appointment card switches to Appointments and shows it',
     (tester) async {
-      final appointmentService = await _pumpShell(tester);
+      // My appointments fetches its own Upcoming list (independent of
+      // Home's upcoming-card stream below), so the fake needs it primed
+      // before the shell — and therefore MyAppointmentsProvider — is built.
+      final appointmentService = await _pumpShell(
+        tester,
+        upcomingAppointments: [_upcomingAppointment],
+      );
 
       appointmentService.emitUpcomingAppointment(_upcomingAppointment);
       await tester.pumpAndSettle();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/models/appointment.dart';
 import '../../../common/models/doctor.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
@@ -26,6 +27,7 @@ class DoctorProfileView extends StatelessWidget {
     required this.doctor,
     this.availabilityService,
     this.bookingService,
+    this.reschedulingAppointment,
     DateTime? today,
   }) : today = _dateOnly(today ?? DateTime.now());
 
@@ -34,6 +36,10 @@ class DoctorProfileView extends StatelessWidget {
   /// Injectable for tests, so they never talk to real Firestore.
   final AvailabilityService? availabilityService;
   final BookingService? bookingService;
+
+  /// When set, picking a slot here moves *this* appointment to it instead
+  /// of booking a new one alongside it — see My appointments' "Reschedule".
+  final Appointment? reschedulingAppointment;
 
   /// Overridable so tests get a deterministic "today" instead of depending
   /// on the real wall-clock date.
@@ -56,6 +62,7 @@ class DoctorProfileView extends StatelessWidget {
         doctorNameAr: doctor.nameAr,
         patientId: patientId,
         initialDate: today,
+        reschedulingAppointment: reschedulingAppointment,
       ),
       child: Scaffold(
         backgroundColor: AppTheme.screenGround,

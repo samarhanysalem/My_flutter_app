@@ -192,14 +192,17 @@ Future<void> _openDirections(BuildContext context, String address) async {
 }
 
 /// Looks up the appointment's doctor and, if found, pushes
-/// `DoctorProfileView` for them — mirroring `HomeView._openDoctorProfile`'s
-/// pop-with-a-confirmation-message flow, so a reschedule that completes
-/// shows its confirmation here rather than on the (about to be popped)
-/// profile screen.
+/// `DoctorProfileView` in reschedule mode for it — picking a slot there
+/// moves this same appointment rather than booking a new one alongside it
+/// (see `AvailabilityProvider.isRescheduling`). Mirrors
+/// `HomeView._openDoctorProfile`'s pop-with-a-confirmation-message flow, so
+/// a reschedule that completes shows its confirmation here rather than on
+/// the (about to be popped) profile screen — and refreshes both tabs here,
+/// since they're one-time fetches that wouldn't otherwise pick up the
+/// appointment's new date/slot.
 Future<void> _openReschedule(BuildContext context, Appointment appointment) async {
-  final doctor = await context
-      .read<MyAppointmentsProvider>()
-      .getDoctor(appointment.doctorId);
+  final provider = context.read<MyAppointmentsProvider>();
+  final doctor = await provider.getDoctor(appointment.doctorId);
   if (!context.mounted) return;
   if (doctor == null) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -210,9 +213,15 @@ Future<void> _openReschedule(BuildContext context, Appointment appointment) asyn
     return;
   }
   final confirmationMessage = await Navigator.of(context).push<String>(
-    MaterialPageRoute(builder: (_) => DoctorProfileView(doctor: doctor)),
+    MaterialPageRoute(
+      builder: (_) => DoctorProfileView(
+        doctor: doctor,
+        reschedulingAppointment: appointment,
+      ),
+    ),
   );
   if (confirmationMessage == null || !context.mounted) return;
+  provider.refresh();
   ScaffoldMessenger.of(
     context,
   ).showSnackBar(SnackBar(content: Text(confirmationMessage)));

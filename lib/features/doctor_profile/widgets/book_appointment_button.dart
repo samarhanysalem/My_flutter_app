@@ -27,19 +27,22 @@ class BookAppointmentButton extends StatelessWidget {
   ) async {
     final date = provider.selectedDate;
     final slot = provider.selectedSlot!;
+    final isRescheduling = provider.isRescheduling;
     final success = await provider.bookSelectedSlot();
     if (!context.mounted) return;
     if (success) {
+      final formattedDate = DateFormat.MMMEd(locale.toLanguageTag()).format(date);
       Navigator.of(context).pop(
-        loc.appointmentBooked(
-          DateFormat.MMMEd(locale.toLanguageTag()).format(date),
-          slot,
-        ),
+        isRescheduling
+            ? loc.appointmentRescheduled(formattedDate, slot)
+            : loc.appointmentBooked(formattedDate, slot),
       );
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(loc.bookingFailed)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isRescheduling ? loc.reschedulingFailed : loc.bookingFailed),
+        ),
+      );
     }
   }
 
@@ -74,7 +77,10 @@ class BookAppointmentButton extends StatelessWidget {
                   color: AppTheme.onPrimary,
                 ),
               )
-            : Text(loc.bookAppointment, style: AppTheme.buttonLabel),
+            : Text(
+                provider.isRescheduling ? loc.confirmReschedule : loc.bookAppointment,
+                style: AppTheme.buttonLabel,
+              ),
       ),
     );
   }

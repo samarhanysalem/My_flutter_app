@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../common/models/appointment.dart';
 import '../services/availability_service.dart';
 import '../services/booking_service.dart';
 
@@ -17,6 +18,7 @@ class AvailabilityProvider extends ChangeNotifier {
     String? doctorNameAr,
     required String? patientId,
     required DateTime initialDate,
+    Appointment? reschedulingAppointment,
   }) : _availabilityService = availabilityService,
        _bookingService = bookingService,
        _doctorId = doctorId,
@@ -24,7 +26,8 @@ class AvailabilityProvider extends ChangeNotifier {
        _doctorSpecialty = doctorSpecialty,
        _doctorNameAr = doctorNameAr,
        _patientId = patientId,
-       _selectedDate = initialDate {
+       _selectedDate = initialDate,
+       _reschedulingAppointment = reschedulingAppointment {
     _load();
   }
 
@@ -34,6 +37,15 @@ class AvailabilityProvider extends ChangeNotifier {
   final String _doctorName;
   final String _doctorSpecialty;
   final String? _doctorNameAr;
+
+  /// The appointment being moved to a new date/slot, if this session is a
+  /// reschedule rather than a fresh booking — see [isRescheduling].
+  final Appointment? _reschedulingAppointment;
+
+  /// Whether [bookSelectedSlot] moves an existing appointment to the newly
+  /// selected date/slot (true) or books a brand-new one (false). Read by
+  /// `BookAppointmentButton` to vary its label and confirmation copy.
+  bool get isRescheduling => _reschedulingAppointment != null;
 
   /// Null when nobody is signed in, which shouldn't happen on this
   /// (already-authenticated) screen — [bookSelectedSlot] just fails safely
@@ -105,15 +117,30 @@ class AvailabilityProvider extends ChangeNotifier {
     notifyListeners();
     var success = false;
     try {
-      await _bookingService.bookAppointment(
-        patientId: patientId,
-        doctorId: _doctorId,
-        doctorName: _doctorName,
-        doctorSpecialty: _doctorSpecialty,
-        doctorNameAr: _doctorNameAr,
-        date: _selectedDate,
-        slot: slot,
-      );
+      final rescheduling = _reschedulingAppointment;
+      if (rescheduling != null) {
+        await _bookingService.rescheduleAppointment(
+          appointmentId: rescheduling.id,
+          doctorId: _doctorId,
+          doctorName: _doctorName,
+          doctorSpecialty: _doctorSpecialty,
+          doctorNameAr: _doctorNameAr,
+          previousDate: rescheduling.date,
+          previousSlot: rescheduling.slot,
+          date: _selectedDate,
+          slot: slot,
+        );
+      } else {
+        await _bookingService.bookAppointment(
+          patientId: patientId,
+          doctorId: _doctorId,
+          doctorName: _doctorName,
+          doctorSpecialty: _doctorSpecialty,
+          doctorNameAr: _doctorNameAr,
+          date: _selectedDate,
+          slot: slot,
+        );
+      }
       _slots = List.of(_slots)..remove(slot);
       _selectedSlotIndex = _slots.isEmpty ? null : 0;
       success = true;

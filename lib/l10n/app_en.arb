@@ -338,6 +338,26 @@
   "@bookingFailed": {
     "description": "Shown when booking an appointment fails, e.g. the slot was booked by someone else first."
   },
+  "confirmReschedule": "Confirm reschedule",
+  "@confirmReschedule": {
+    "description": "Book appointment button label when rescheduling an existing appointment instead of booking a new one."
+  },
+  "appointmentRescheduled": "Appointment rescheduled to {date} at {slot}.",
+  "@appointmentRescheduled": {
+    "description": "Confirmation snackbar shown after successfully rescheduling an appointment.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "slot": {
+        "type": "String"
+      }
+    }
+  },
+  "reschedulingFailed": "Couldn't reschedule — that slot may have just been taken. Please choose another.",
+  "@reschedulingFailed": {
+    "description": "Shown when rescheduling an appointment fails, e.g. the new slot was booked by someone else first."
+  },
   "aboutSectionTitle": "About",
   "@aboutSectionTitle": {
     "description": "Doctor profile About section title."

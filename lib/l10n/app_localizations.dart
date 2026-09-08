@@ -536,6 +536,24 @@ abstract class AppLocalizations {
   /// **'Couldn\'t book that slot — it may have just been taken. Please choose another.'**
   String get bookingFailed;
 
+  /// Book appointment button label when rescheduling an existing appointment instead of booking a new one.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm reschedule'**
+  String get confirmReschedule;
+
+  /// Confirmation snackbar shown after successfully rescheduling an appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment rescheduled to {date} at {slot}.'**
+  String appointmentRescheduled(String date, String slot);
+
+  /// Shown when rescheduling an appointment fails, e.g. the new slot was booked by someone else first.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t reschedule — that slot may have just been taken. Please choose another.'**
+  String get reschedulingFailed;
+
   /// Doctor profile About section title.
   ///
   /// In en, this message translates to:

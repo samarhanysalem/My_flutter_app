@@ -30,6 +30,27 @@ abstract class BookingService {
     required DateTime date,
     required String slot,
   });
+
+  /// Moves [appointmentId] — the same doctor and patient, previously booked
+  /// for [previousDate] at [previousSlot] — to [slot] on [date], updating
+  /// that *same* appointment document rather than creating a second one
+  /// alongside it. In the same transaction, releases [previousSlot] back
+  /// into availability and removes the new [slot]. Also refreshes the
+  /// denormalized doctor fields to their current values, so a reschedule
+  /// incidentally fixes a stale/missing `doctorNameAr` too (see
+  /// `Appointment.doctorNameAr`'s doc comment). Throws [BookingException]
+  /// if the new slot is no longer available.
+  Future<void> rescheduleAppointment({
+    required String appointmentId,
+    required String doctorId,
+    required String doctorName,
+    required String doctorSpecialty,
+    String? doctorNameAr,
+    required String previousDate,
+    required String previousSlot,
+    required DateTime date,
+    required String slot,
+  });
 }
 
 class FirestoreBookingService implements BookingService {
@@ -83,6 +104,65 @@ class FirestoreBookingService implements BookingService {
         'slot': slot,
         'status': 'confirmed',
         'createdAt': FieldValue.serverTimestamp(),
+      });
+    });
+  }
+
+  @override
+  Future<void> rescheduleAppointment({
+    required String appointmentId,
+    required String doctorId,
+    required String doctorName,
+    required String doctorSpecialty,
+    String? doctorNameAr,
+    required String previousDate,
+    required String previousSlot,
+    required DateTime date,
+    required String slot,
+  }) async {
+    final newDateId = dateId(date);
+    final doctorRef = _firestore.collection('doctors').doc(doctorId);
+    final newAvailabilityRef = doctorRef.collection('availability').doc(newDateId);
+    final previousAvailabilityRef = doctorRef
+        .collection('availability')
+        .doc(previousDate);
+    final appointmentRef = _firestore.collection('appointments').doc(appointmentId);
+    final sameDay = newDateId == previousDate;
+
+    await _firestore.runTransaction((transaction) async {
+      final newSnapshot = await transaction.get(newAvailabilityRef);
+      final newSlots =
+          (newSnapshot.data()?['slots'] as List?)?.whereType<String>().toList() ??
+          <String>[];
+      if (!newSlots.contains(slot)) {
+        throw const BookingException('slot-unavailable');
+      }
+
+      if (sameDay) {
+        // The previous slot never left this document, so re-adding it and
+        // removing the new one both apply to the one snapshot already read
+        // above — a transaction only keeps the *last* write per document,
+        // so two separate arrayRemove/arrayUnion calls on the same
+        // document here would silently drop the first one. Combining them
+        // into a single plain-list update avoids that.
+        newSlots.remove(slot);
+        if (!newSlots.contains(previousSlot)) newSlots.add(previousSlot);
+        transaction.update(newAvailabilityRef, {'slots': newSlots});
+      } else {
+        transaction.update(newAvailabilityRef, {
+          'slots': FieldValue.arrayRemove([slot]),
+        });
+        transaction.update(previousAvailabilityRef, {
+          'slots': FieldValue.arrayUnion([previousSlot]),
+        });
+      }
+
+      transaction.update(appointmentRef, {
+        'doctorName': doctorName,
+        'doctorSpecialty': doctorSpecialty,
+        if (doctorNameAr != null) 'doctorNameAr': doctorNameAr,
+        'date': newDateId,
+        'slot': slot,
       });
     });
   }

@@ -172,6 +172,13 @@ void main() {
 
     expect(find.text('Doctor profile'), findsOneWidget);
     expect(find.text('Available today'), findsOneWidget);
+    // Confirms the tapped appointment reached DoctorProfileView as
+    // `reschedulingAppointment` (not observable directly, but this label
+    // only renders when it did — see book_appointment_button.dart) — the
+    // regression guard for "Reschedule creates a new appointment instead
+    // of editing the existing one".
+    expect(find.text('Confirm reschedule'), findsOneWidget);
+    expect(find.text('Book appointment'), findsNothing);
   });
 
   testWidgets(

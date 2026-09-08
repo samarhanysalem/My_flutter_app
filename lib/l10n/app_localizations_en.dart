@@ -246,6 +246,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t book that slot — it may have just been taken. Please choose another.';
 
   @override
+  String get confirmReschedule => 'Confirm reschedule';
+
+  @override
+  String appointmentRescheduled(String date, String slot) {
+    return 'Appointment rescheduled to $date at $slot.';
+  }
+
+  @override
+  String get reschedulingFailed =>
+      'Couldn\'t reschedule — that slot may have just been taken. Please choose another.';
+
+  @override
   String get aboutSectionTitle => 'About';
 
   @override

@@ -245,6 +245,18 @@ class AppLocalizationsAr extends AppLocalizations {
       'تعذّر حجز هذا الموعد، فقد يكون حُجز للتو. الرجاء اختيار موعد آخر.';
 
   @override
+  String get confirmReschedule => 'تأكيد إعادة الجدولة';
+
+  @override
+  String appointmentRescheduled(String date, String slot) {
+    return 'تمت إعادة جدولة الموعد إلى $date الساعة $slot.';
+  }
+
+  @override
+  String get reschedulingFailed =>
+      'تعذّرت إعادة الجدولة، فقد يكون هذا الموعد حُجز للتو. الرجاء اختيار موعد آخر.';
+
+  @override
   String get aboutSectionTitle => 'نبذة';
 
   @override

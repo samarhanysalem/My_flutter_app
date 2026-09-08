@@ -1,3 +1,4 @@
+import 'package:doctor_appointment_app/common/models/appointment.dart';
 import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
@@ -41,11 +42,13 @@ DoctorProfileView _profileView(
   Doctor doctor, {
   FakeAvailabilityService? availabilityService,
   FakeBookingService? bookingService,
+  Appointment? reschedulingAppointment,
 }) {
   return DoctorProfileView(
     doctor: doctor,
     availabilityService: availabilityService ?? FakeAvailabilityService(const {}),
     bookingService: bookingService ?? FakeBookingService(),
+    reschedulingAppointment: reschedulingAppointment,
     today: _today,
   );
 }
@@ -202,6 +205,107 @@ void main() {
     expect(find.text('Doctor profile'), findsNothing);
     expect(confirmationMessage, contains('Appointment booked'));
     expect(bookingService.bookedSlots, ['10:30 AM']);
+  });
+
+  testWidgets(
+    'rescheduling updates the existing appointment instead of creating a new one',
+    (tester) async {
+      const originalAppointment = Appointment(
+        id: 'appt-1',
+        patientId: 'patient-1',
+        doctorId: '1',
+        doctorName: 'Dr. Sara Whitmore',
+        doctorSpecialty: 'Cardiologist',
+        date: '2024-01-01',
+        slot: '9:00 AM',
+        status: 'confirmed',
+      );
+      String? confirmationMessage;
+      final bookingService = FakeBookingService();
+      await tester.pumpWidget(
+        _wrap(
+          Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () async {
+                confirmationMessage = await Navigator.of(context).push<String>(
+                  MaterialPageRoute(
+                    builder: (_) => _profileView(
+                      _doctorWithBio,
+                      availabilityService: FakeAvailabilityService({
+                        _today: ['10:30 AM', '1:00 PM'],
+                      }),
+                      bookingService: bookingService,
+                      reschedulingAppointment: originalAppointment,
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      // Rescheduling shows different copy than a fresh booking, so a
+      // patient doesn't think they've just booked a second appointment.
+      expect(find.widgetWithText(ElevatedButton, 'Book appointment'), findsNothing);
+      expect(find.widgetWithText(ElevatedButton, 'Confirm reschedule'), findsOneWidget);
+
+      // The first slot is selected by default.
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Confirm reschedule'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Doctor profile'), findsNothing);
+      expect(confirmationMessage, contains('rescheduled'));
+      // rescheduleAppointment (which updates the same doc) was called, not
+      // bookAppointment (which would create a second one) — the exact bug
+      // this test guards against.
+      expect(bookingService.rescheduledAppointmentId, 'appt-1');
+      expect(bookingService.reschedulePreviousDate, '2024-01-01');
+      expect(bookingService.reschedulePreviousSlot, '9:00 AM');
+      expect(bookingService.bookedSlots, ['10:30 AM']);
+    },
+  );
+
+  testWidgets('shows an error notice when rescheduling fails', (tester) async {
+    const originalAppointment = Appointment(
+      id: 'appt-1',
+      patientId: 'patient-1',
+      doctorId: '1',
+      doctorName: 'Dr. Sara Whitmore',
+      doctorSpecialty: 'Cardiologist',
+      date: '2024-01-01',
+      slot: '9:00 AM',
+      status: 'confirmed',
+    );
+    final bookingService = FakeBookingService()
+      ..errorToThrow = Exception('slot taken');
+    await tester.pumpWidget(
+      _wrap(
+        _profileView(
+          _doctorWithBio,
+          availabilityService: FakeAvailabilityService({
+            _today: ['10:30 AM'],
+          }),
+          bookingService: bookingService,
+          reschedulingAppointment: originalAppointment,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Confirm reschedule'));
+    await tester.pump();
+
+    expect(
+      find.text(
+        'Couldn\'t reschedule — that slot may have just been taken. Please choose another.',
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('shows an error notice when booking fails', (tester) async {

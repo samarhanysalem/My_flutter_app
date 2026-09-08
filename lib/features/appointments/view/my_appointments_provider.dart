@@ -15,7 +15,8 @@ class MyAppointmentsProvider extends ChangeNotifier {
   MyAppointmentsProvider({
     required AppointmentService appointmentService,
     required String? patientId,
-  }) : _appointmentService = appointmentService {
+  }) : _appointmentService = appointmentService,
+       _patientId = patientId {
     // Null when nobody is signed in, which shouldn't happen on this
     // (already-authenticated) screen — just show both tabs empty rather
     // than assuming a user.
@@ -29,6 +30,7 @@ class MyAppointmentsProvider extends ChangeNotifier {
   }
 
   final AppointmentService _appointmentService;
+  final String? _patientId;
 
   AppointmentsTab _selectedTab = AppointmentsTab.upcoming;
   AppointmentsTab get selectedTab => _selectedTab;
@@ -75,6 +77,20 @@ class MyAppointmentsProvider extends ChangeNotifier {
       _isLoadingPast = false;
       notifyListeners();
     }
+  }
+
+  /// Re-fetches both tabs — call after an action elsewhere (e.g.
+  /// "Reschedule") changes the signed-in patient's appointments, since both
+  /// lists are one-time fetches rather than live streams and otherwise
+  /// wouldn't pick up the change.
+  void refresh() {
+    final patientId = _patientId;
+    if (patientId == null) return;
+    _isLoadingUpcoming = true;
+    _isLoadingPast = true;
+    notifyListeners();
+    _loadUpcoming(patientId);
+    _loadPast(patientId);
   }
 
   /// Looks up the full doctor record for [doctorId]. Used by two things

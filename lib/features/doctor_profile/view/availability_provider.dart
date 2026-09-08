@@ -13,12 +13,16 @@ class AvailabilityProvider extends ChangeNotifier {
     required BookingService bookingService,
     required String doctorId,
     required String doctorName,
+    required String doctorSpecialty,
+    String? doctorNameAr,
     required String? patientId,
     required DateTime initialDate,
   }) : _availabilityService = availabilityService,
        _bookingService = bookingService,
        _doctorId = doctorId,
        _doctorName = doctorName,
+       _doctorSpecialty = doctorSpecialty,
+       _doctorNameAr = doctorNameAr,
        _patientId = patientId,
        _selectedDate = initialDate {
     _load();
@@ -28,6 +32,8 @@ class AvailabilityProvider extends ChangeNotifier {
   final BookingService _bookingService;
   final String _doctorId;
   final String _doctorName;
+  final String _doctorSpecialty;
+  final String? _doctorNameAr;
 
   /// Null when nobody is signed in, which shouldn't happen on this
   /// (already-authenticated) screen — [bookSelectedSlot] just fails safely
@@ -103,6 +109,8 @@ class AvailabilityProvider extends ChangeNotifier {
         patientId: patientId,
         doctorId: _doctorId,
         doctorName: _doctorName,
+        doctorSpecialty: _doctorSpecialty,
+        doctorNameAr: _doctorNameAr,
         date: _selectedDate,
         slot: slot,
       );

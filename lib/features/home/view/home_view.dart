@@ -3,16 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/models/appointment.dart';
 import '../../../common/models/doctor.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../navigation/nav_shell_controller.dart';
 import '../../../theme/app_theme.dart';
 import '../../auth/view/auth_provider.dart';
+import '../../auth/view/confirm_sign_out.dart';
 import '../../doctor_profile/view/doctor_profile_view.dart';
 import '../services/appointment_service.dart';
 import '../widgets/doctor_list.dart';
 import '../widgets/home_greeting_header.dart';
 import '../widgets/home_search_bar.dart';
 import '../widgets/specialty_shortcuts_row.dart';
+import '../widgets/upcoming_appointment_card.dart';
 import 'home_provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -52,49 +56,24 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
   }
 
-  Future<void> _confirmSignOut(BuildContext context) async {
-    final authProvider = context.read<AuthProvider>();
-    final loc = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(loc.signOutQuestion),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(loc.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(loc.signOut),
-          ),
-        ],
-      ),
+  Future<void> _openDoctorProfile(BuildContext context, Doctor doctor) async {
+    final confirmationMessage = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (_) => DoctorProfileView(doctor: doctor)),
     );
-    if (confirmed ?? false) {
-      try {
-        await authProvider.signOut();
-      } catch (_) {
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(loc.signOutFailed)));
-      }
-    }
-  }
-
-  void _openDoctorProfile(BuildContext context, Doctor doctor) {
-    Navigator.of(
+    if (confirmationMessage == null || !context.mounted) return;
+    ScaffoldMessenger.of(
       context,
-    ).push(MaterialPageRoute(builder: (_) => DoctorProfileView(doctor: doctor)));
+    ).showSnackBar(SnackBar(content: Text(confirmationMessage)));
   }
 
   @override
   Widget build(BuildContext context) {
+    final patientId = context.read<AuthProvider>().user?.uid;
     return ChangeNotifierProvider<HomeProvider>(
       create: (_) => HomeProvider(
         appointmentService: widget._appointmentService ??
             FirestoreAppointmentService(),
+        patientId: patientId,
       ),
       child: Builder(
         builder: (context) {
@@ -125,7 +104,7 @@ class _HomeViewState extends State<HomeView> {
                             children: [
                               HomeGreetingHeader(
                                 user: authProvider.user,
-                                onAvatarTap: () => _confirmSignOut(context),
+                                onAvatarTap: () => confirmSignOut(context),
                               ),
                               const SizedBox(height: AppTheme.spacing20),
                               // Each section below is scoped to just the
@@ -142,6 +121,30 @@ class _HomeViewState extends State<HomeView> {
                                           .read<HomeProvider>()
                                           .setSearchQuery,
                                     ),
+                              ),
+                              Selector<HomeProvider, Appointment?>(
+                                selector: (_, provider) =>
+                                    provider.upcomingAppointment,
+                                builder: (context, appointment, _) {
+                                  // Hidden entirely with no upcoming
+                                  // appointment — the layout collapses
+                                  // straight from the search bar to the
+                                  // specialty shortcuts below.
+                                  if (appointment == null) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: AppTheme.spacing20,
+                                    ),
+                                    child: UpcomingAppointmentCard(
+                                      appointment: appointment,
+                                      onViewDetails: () => context
+                                          .read<NavShellController>()
+                                          .showAppointmentDetails(appointment),
+                                    ),
+                                  );
+                                },
                               ),
                               const SizedBox(height: AppTheme.spacing20),
                               Selector<HomeProvider, String?>(

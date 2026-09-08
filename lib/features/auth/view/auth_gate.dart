@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../navigation/main_nav_shell.dart';
 import '../../home/services/appointment_service.dart';
-import '../../home/view/home_view.dart';
 import 'auth_provider.dart';
 import 'login_view.dart';
 
@@ -26,7 +26,7 @@ class AuthGate extends StatelessWidget {
           case AuthStatus.unauthenticated:
             return const LoginView();
           case AuthStatus.authenticated:
-            return HomeView(appointmentService: _appointmentService);
+            return MainNavShell(appointmentService: _appointmentService);
         }
       },
     );

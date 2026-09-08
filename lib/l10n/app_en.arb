@@ -370,5 +370,39 @@
   "loadAvailabilityError": "Couldn't load availability. Please try again.",
   "@loadAvailabilityError": {
     "description": "Shown when fetching a day's time slots fails."
+  },
+
+  "navHome": "Home",
+  "@navHome": {
+    "description": "Bottom navigation tab label for the Home screen."
+  },
+  "navAppointments": "Appointments",
+  "@navAppointments": {
+    "description": "Bottom navigation tab label for the appointments screen."
+  },
+  "navProfile": "Profile",
+  "@navProfile": {
+    "description": "Bottom navigation tab label for the profile screen; also used as that screen's title."
+  },
+
+  "upcomingAppointmentLabel": "Upcoming appointment",
+  "@upcomingAppointmentLabel": {
+    "description": "Eyebrow label on Home's upcoming-appointment card (shown upper-case)."
+  },
+  "appointmentStatusConfirmed": "Confirmed",
+  "@appointmentStatusConfirmed": {
+    "description": "Status badge on a confirmed appointment."
+  },
+  "viewDetails": "View details",
+  "@viewDetails": {
+    "description": "Button on the upcoming-appointment card that opens My appointments."
+  },
+  "myAppointmentsTitle": "My appointments",
+  "@myAppointmentsTitle": {
+    "description": "Title of the My appointments screen."
+  },
+  "noAppointmentDetails": "No appointment details to show yet.",
+  "@noAppointmentDetails": {
+    "description": "Shown on My appointments when it's opened from the nav tab rather than from a specific appointment."
   }
 }

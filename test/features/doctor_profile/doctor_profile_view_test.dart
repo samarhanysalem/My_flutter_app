@@ -161,32 +161,47 @@ void main() {
   testWidgets('booking the selected slot shows a confirmation', (
     tester,
   ) async {
+    // On success, BookAppointmentButton pops the route and hands the
+    // confirmation message back to whoever pushed it (see
+    // book_appointment_button.dart) rather than showing a local SnackBar —
+    // so, like the "back button pops the route" test, this pushes
+    // DoctorProfileView from a launcher screen and observes the popped
+    // result there instead of asserting text inside the profile screen.
+    String? confirmationMessage;
     final bookingService = FakeBookingService();
     await tester.pumpWidget(
       _wrap(
-        _profileView(
-          _doctorWithBio,
-          availabilityService: FakeAvailabilityService({
-            _today: ['10:30 AM', '1:00 PM'],
-          }),
-          bookingService: bookingService,
+        Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () async {
+              confirmationMessage = await Navigator.of(context).push<String>(
+                MaterialPageRoute(
+                  builder: (_) => _profileView(
+                    _doctorWithBio,
+                    availabilityService: FakeAvailabilityService({
+                      _today: ['10:30 AM', '1:00 PM'],
+                    }),
+                    bookingService: bookingService,
+                  ),
+                ),
+              );
+            },
+            child: const Text('Open'),
+          ),
         ),
       ),
     );
-    await tester.pump();
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
 
     // The first slot is selected by default.
     await tester.tap(find.widgetWithText(ElevatedButton, 'Book appointment'));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(
-      find.textContaining('Appointment booked'),
-      findsOneWidget,
-    );
+    expect(find.text('Doctor profile'), findsNothing);
+    expect(confirmationMessage, contains('Appointment booked'));
     expect(bookingService.bookedSlots, ['10:30 AM']);
-    // The booked slot is no longer offered.
-    expect(find.text('10:30 AM'), findsNothing);
-    expect(find.text('1:00 PM'), findsOneWidget);
   });
 
   testWidgets('shows an error notice when booking fails', (tester) async {

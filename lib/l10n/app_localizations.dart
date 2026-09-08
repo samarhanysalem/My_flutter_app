@@ -577,6 +577,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t load availability. Please try again.'**
   String get loadAvailabilityError;
+
+  /// Bottom navigation tab label for the Home screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// Bottom navigation tab label for the appointments screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments'**
+  String get navAppointments;
+
+  /// Bottom navigation tab label for the profile screen; also used as that screen's title.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navProfile;
+
+  /// Eyebrow label on Home's upcoming-appointment card (shown upper-case).
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming appointment'**
+  String get upcomingAppointmentLabel;
+
+  /// Status badge on a confirmed appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get appointmentStatusConfirmed;
+
+  /// Button on the upcoming-appointment card that opens My appointments.
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get viewDetails;
+
+  /// Title of the My appointments screen.
+  ///
+  /// In en, this message translates to:
+  /// **'My appointments'**
+  String get myAppointmentsTitle;
+
+  /// Shown on My appointments when it's opened from the nav tab rather than from a specific appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'No appointment details to show yet.'**
+  String get noAppointmentDetails;
 }
 
 class _AppLocalizationsDelegate

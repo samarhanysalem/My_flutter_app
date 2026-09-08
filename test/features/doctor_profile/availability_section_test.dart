@@ -29,6 +29,7 @@ Widget _wrap(
           bookingService: FakeBookingService(),
           doctorId: 'doc-1',
           doctorName: 'Dr. Test',
+          doctorSpecialty: 'Cardiologist',
           patientId: 'patient-1',
           initialDate: today,
         ),

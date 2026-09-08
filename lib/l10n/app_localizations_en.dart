@@ -268,4 +268,28 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get loadAvailabilityError =>
       'Couldn\'t load availability. Please try again.';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navAppointments => 'Appointments';
+
+  @override
+  String get navProfile => 'Profile';
+
+  @override
+  String get upcomingAppointmentLabel => 'Upcoming appointment';
+
+  @override
+  String get appointmentStatusConfirmed => 'Confirmed';
+
+  @override
+  String get viewDetails => 'View details';
+
+  @override
+  String get myAppointmentsTitle => 'My appointments';
+
+  @override
+  String get noAppointmentDetails => 'No appointment details to show yet.';
 }

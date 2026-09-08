@@ -87,5 +87,15 @@
   "availableOn": "متاح في {date}",
   "selectDate": "اختر التاريخ",
   "noSlotsAvailable": "لا توجد مواعيد متاحة في هذا اليوم.",
-  "loadAvailabilityError": "تعذّر تحميل المواعيد المتاحة. حاول مرة أخرى."
+  "loadAvailabilityError": "تعذّر تحميل المواعيد المتاحة. حاول مرة أخرى.",
+
+  "navHome": "الرئيسية",
+  "navAppointments": "المواعيد",
+  "navProfile": "الملف الشخصي",
+
+  "upcomingAppointmentLabel": "الموعد القادم",
+  "appointmentStatusConfirmed": "مؤكد",
+  "viewDetails": "عرض التفاصيل",
+  "myAppointmentsTitle": "مواعيدي",
+  "noAppointmentDetails": "لا توجد تفاصيل موعد لعرضها بعد."
 }

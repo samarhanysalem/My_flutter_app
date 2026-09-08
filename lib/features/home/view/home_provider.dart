@@ -2,20 +2,32 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import '../../../common/models/appointment.dart';
 import '../../../common/models/doctor.dart';
 import '../services/appointment_service.dart';
 
 class HomeProvider extends ChangeNotifier {
-  HomeProvider({required AppointmentService appointmentService})
-    : _appointmentService = appointmentService {
+  HomeProvider({
+    required AppointmentService appointmentService,
+    String? patientId,
+  }) : _appointmentService = appointmentService {
     _doctorsSubscription = _appointmentService.watchDoctors().listen(
       _onDoctors,
       onError: _onError,
     );
+    // Null when nobody is signed in, which shouldn't happen on this
+    // (already-authenticated) screen — just skip the subscription rather
+    // than assuming a user.
+    if (patientId != null) {
+      _upcomingAppointmentSubscription = _appointmentService
+          .watchUpcomingAppointment(patientId)
+          .listen(_onUpcomingAppointment);
+    }
   }
 
   final AppointmentService _appointmentService;
   late final StreamSubscription<List<Doctor>> _doctorsSubscription;
+  StreamSubscription<Appointment?>? _upcomingAppointmentSubscription;
 
   bool _isLoading = true;
   bool get isLoading => _isLoading;
@@ -42,6 +54,12 @@ class HomeProvider extends ChangeNotifier {
 
   bool get hasActiveFilter =>
       _selectedSpecialty != null || _searchQuery.trim().isNotEmpty;
+
+  /// The signed-in patient's nearest upcoming appointment, or null if they
+  /// don't have one — drives whether Home's upcoming-appointment card
+  /// renders at all.
+  Appointment? _upcomingAppointment;
+  Appointment? get upcomingAppointment => _upcomingAppointment;
 
   /// [_doctors] narrowed by the current search text and specialty filter —
   /// both client-side, matched case-insensitively as a substring.
@@ -85,9 +103,15 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _onUpcomingAppointment(Appointment? appointment) {
+    _upcomingAppointment = appointment;
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     _doctorsSubscription.cancel();
+    _upcomingAppointmentSubscription?.cancel();
     super.dispose();
   }
 }

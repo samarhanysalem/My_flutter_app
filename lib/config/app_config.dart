@@ -34,6 +34,15 @@ class AppConfig {
   static String companyNameFor(Locale locale) =>
       locale.languageCode == 'ar' ? companyNameAr : companyName;
 
+  /// The clinic's physical address, shown on an appointment card/details.
+  /// Single-location only — see [multipleClinicLocationsEnabled].
+  static const String clinicAddress = '123 Lakeside Ave, Springfield, IL 62701';
+  static const String clinicAddressAr = '١٢٣ شارع ليكسايد، سبرينغفيلد، إلينوي ٦٢٧٠١';
+
+  /// [clinicAddress], localized for [locale].
+  static String clinicAddressFor(Locale locale) =>
+      locale.languageCode == 'ar' ? clinicAddressAr : clinicAddress;
+
   /// Primary brand color: CTAs, links, active/selected states.
   static const Color primaryColor = Color(0xFF4C6FD4);
 

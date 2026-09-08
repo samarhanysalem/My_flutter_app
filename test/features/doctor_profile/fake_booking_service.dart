@@ -12,6 +12,8 @@ class FakeBookingService implements BookingService {
     required String patientId,
     required String doctorId,
     required String doctorName,
+    required String doctorSpecialty,
+    String? doctorNameAr,
     required DateTime date,
     required String slot,
   }) async {

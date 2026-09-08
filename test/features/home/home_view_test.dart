@@ -1,14 +1,27 @@
+import 'package:doctor_appointment_app/common/models/appointment.dart';
 import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
 import 'package:doctor_appointment_app/features/home/view/home_view.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
+import 'package:doctor_appointment_app/navigation/nav_shell_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
 import '../auth/fake_auth_repository.dart';
 import 'fake_appointment_service.dart';
+
+const _upcomingAppointment = Appointment(
+  id: 'a1',
+  patientId: 'u1',
+  doctorId: '1',
+  doctorName: 'Dr. Sara Whitmore',
+  doctorSpecialty: 'Cardiologist',
+  date: '2024-01-02',
+  slot: '10:30 AM',
+  status: 'confirmed',
+);
 
 const _doctors = [
   Doctor(
@@ -189,4 +202,62 @@ void main() {
 
     appointmentService.dispose();
   });
+
+  testWidgets(
+    'hides the upcoming appointment card when there is none, shows it once one arrives',
+    (tester) async {
+      final authProvider = await _signedInAuthProvider(tester);
+      final appointmentService = FakeAppointmentService();
+      await _pumpHome(tester, authProvider, appointmentService);
+
+      // No upcoming appointment yet — the layout collapses straight from
+      // the search bar to the specialty shortcuts.
+      expect(find.text('UPCOMING APPOINTMENT'), findsNothing);
+
+      appointmentService.emitUpcomingAppointment(_upcomingAppointment);
+      await tester.pump();
+
+      expect(find.text('UPCOMING APPOINTMENT'), findsOneWidget);
+      expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
+      expect(find.text('Confirmed'), findsOneWidget);
+      expect(find.text('View details'), findsOneWidget);
+
+      appointmentService.dispose();
+    },
+  );
+
+  testWidgets(
+    '"View details" on the upcoming appointment card switches to the Appointments tab',
+    (tester) async {
+      final authProvider = await _signedInAuthProvider(tester);
+      final appointmentService = FakeAppointmentService();
+      final navController = NavShellController();
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<AuthProvider>.value(
+          value: authProvider,
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: ChangeNotifierProvider<NavShellController>.value(
+              value: navController,
+              child: HomeView(appointmentService: appointmentService),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      appointmentService.emitUpcomingAppointment(_upcomingAppointment);
+      await tester.pump();
+
+      await tester.tap(find.text('View details'));
+      await tester.pump();
+
+      expect(navController.selectedTab, MainTab.appointments);
+      expect(navController.appointmentToShow, _upcomingAppointment);
+
+      appointmentService.dispose();
+    },
+  );
 }

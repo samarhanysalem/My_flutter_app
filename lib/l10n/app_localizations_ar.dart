@@ -267,4 +267,28 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get loadAvailabilityError =>
       'تعذّر تحميل المواعيد المتاحة. حاول مرة أخرى.';
+
+  @override
+  String get navHome => 'الرئيسية';
+
+  @override
+  String get navAppointments => 'المواعيد';
+
+  @override
+  String get navProfile => 'الملف الشخصي';
+
+  @override
+  String get upcomingAppointmentLabel => 'الموعد القادم';
+
+  @override
+  String get appointmentStatusConfirmed => 'مؤكد';
+
+  @override
+  String get viewDetails => 'عرض التفاصيل';
+
+  @override
+  String get myAppointmentsTitle => 'مواعيدي';
+
+  @override
+  String get noAppointmentDetails => 'لا توجد تفاصيل موعد لعرضها بعد.';
 }

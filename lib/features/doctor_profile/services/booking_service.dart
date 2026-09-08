@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'availability_date_id.dart';
+import '../../../common/utils/date_id.dart';
 
 /// Thrown when a booking can't be completed — most notably when the slot
 /// was booked by someone else between being shown and being confirmed.
@@ -17,11 +17,16 @@ class BookingException implements Exception {
 /// unit tested with a fake instead of talking to real Firestore.
 abstract class BookingService {
   /// Books [slot] on [date] for [doctorId], on behalf of [patientId].
+  /// [doctorName]/[doctorSpecialty]/[doctorNameAr] are denormalized onto
+  /// the appointment record (same reasoning as Doctor's own fields) so
+  /// screens that list appointments don't need a second read per doctor.
   /// Throws [BookingException] if the slot is no longer available.
   Future<void> bookAppointment({
     required String patientId,
     required String doctorId,
     required String doctorName,
+    required String doctorSpecialty,
+    String? doctorNameAr,
     required DateTime date,
     required String slot,
   });
@@ -42,6 +47,8 @@ class FirestoreBookingService implements BookingService {
     required String patientId,
     required String doctorId,
     required String doctorName,
+    required String doctorSpecialty,
+    String? doctorNameAr,
     required DateTime date,
     required String slot,
   }) async {
@@ -49,7 +56,7 @@ class FirestoreBookingService implements BookingService {
         .collection('doctors')
         .doc(doctorId)
         .collection('availability')
-        .doc(availabilityDateId(date));
+        .doc(dateId(date));
     final appointmentRef = _firestore.collection('appointments').doc();
 
     // A transaction so two patients racing for the same slot can't both
@@ -70,7 +77,9 @@ class FirestoreBookingService implements BookingService {
         'patientId': patientId,
         'doctorId': doctorId,
         'doctorName': doctorName,
-        'date': availabilityDateId(date),
+        'doctorSpecialty': doctorSpecialty,
+        if (doctorNameAr != null) 'doctorNameAr': doctorNameAr,
+        'date': dateId(date),
         'slot': slot,
         'status': 'confirmed',
         'createdAt': FieldValue.serverTimestamp(),

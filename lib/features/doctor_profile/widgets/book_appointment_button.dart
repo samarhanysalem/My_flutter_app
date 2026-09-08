@@ -10,6 +10,12 @@ import '../view/availability_provider.dart';
 /// AvailabilitySection — both read the same `AvailabilityProvider`,
 /// provided by `DoctorProfileView` above them both. Disabled until a slot
 /// is selected, and while a booking is in flight.
+///
+/// On success, pops this screen and hands the confirmation message back to
+/// whoever pushed it (see `HomeView._openDoctorProfile`), which shows it —
+/// the patient should land back on Home and see the new appointment there,
+/// not stay on this screen. On failure, shows the error here instead and
+/// stays, since the user still needs to pick another slot.
 class BookAppointmentButton extends StatelessWidget {
   const BookAppointmentButton({super.key});
 
@@ -23,13 +29,18 @@ class BookAppointmentButton extends StatelessWidget {
     final slot = provider.selectedSlot!;
     final success = await provider.bookSelectedSlot();
     if (!context.mounted) return;
-    final message = success
-        ? loc.appointmentBooked(
-            DateFormat.MMMEd(locale.toLanguageTag()).format(date),
-            slot,
-          )
-        : loc.bookingFailed;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    if (success) {
+      Navigator.of(context).pop(
+        loc.appointmentBooked(
+          DateFormat.MMMEd(locale.toLanguageTag()).format(date),
+          slot,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.bookingFailed)));
+    }
   }
 
   @override

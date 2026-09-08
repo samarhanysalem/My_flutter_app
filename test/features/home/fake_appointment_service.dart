@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:doctor_appointment_app/common/models/appointment.dart';
 import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/home/services/appointment_service.dart';
 
 /// Hand-written test double so Home tests never touch real Firestore.
 class FakeAppointmentService implements AppointmentService {
   final _controller = StreamController<List<Doctor>>.broadcast();
+  final _upcomingAppointmentController =
+      StreamController<Appointment?>.broadcast();
 
   @override
   Stream<List<Doctor>> watchDoctors() => _controller.stream;
@@ -14,5 +17,15 @@ class FakeAppointmentService implements AppointmentService {
 
   void emitError(Object error) => _controller.addError(error);
 
-  void dispose() => _controller.close();
+  @override
+  Stream<Appointment?> watchUpcomingAppointment(String patientId) =>
+      _upcomingAppointmentController.stream;
+
+  void emitUpcomingAppointment(Appointment? appointment) =>
+      _upcomingAppointmentController.add(appointment);
+
+  void dispose() {
+    _controller.close();
+    _upcomingAppointmentController.close();
+  }
 }

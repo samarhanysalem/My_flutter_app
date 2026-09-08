@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'availability_date_id.dart';
+import '../../../common/utils/date_id.dart';
 
 /// Abstraction over the availability backend, so `AvailabilityProvider` can
 /// be unit tested with a fake instead of talking to real Firestore.
@@ -37,7 +37,7 @@ class FirestoreAvailabilityService implements AvailabilityService {
         .collection('doctors')
         .doc(doctorId)
         .collection('availability')
-        .doc(availabilityDateId(date))
+        .doc(dateId(date))
         .get();
     final slots = snapshot.data()?['slots'];
     if (slots is! List) return const [];

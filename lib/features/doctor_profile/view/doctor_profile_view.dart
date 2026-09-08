@@ -52,6 +52,8 @@ class DoctorProfileView extends StatelessWidget {
         bookingService: bookingService ?? FirestoreBookingService(),
         doctorId: doctor.id,
         doctorName: doctor.name,
+        doctorSpecialty: doctor.specialty,
+        doctorNameAr: doctor.nameAr,
         patientId: patientId,
         initialDate: today,
       ),

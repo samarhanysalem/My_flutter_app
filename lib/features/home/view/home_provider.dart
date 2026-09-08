@@ -108,6 +108,21 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Looks up the full doctor record for [doctorId] — used as a fallback
+  /// when the upcoming-appointment card's denormalized `doctorNameAr` is
+  /// missing (most likely because the doctor's Arabic name was added to
+  /// their record only *after* this appointment was booked), so the live
+  /// record's Arabic name can still be shown instead of English forever.
+  /// See `Appointment.doctorNameAr`'s doc comment. Returns `null` if the
+  /// doctor can't be found or the lookup fails.
+  Future<Doctor?> getDoctor(String doctorId) async {
+    try {
+      return await _appointmentService.getDoctor(doctorId);
+    } catch (_) {
+      return null;
+    }
+  }
+
   @override
   void dispose() {
     _doctorsSubscription.cancel();

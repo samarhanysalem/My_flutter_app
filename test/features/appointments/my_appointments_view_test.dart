@@ -39,6 +39,7 @@ Future<void> _pumpView(
   WidgetTester tester,
   FakeAppointmentService appointmentService, {
   NavShellController? navController,
+  Locale? locale,
 }) async {
   final authProvider = AuthProvider(
     authRepository: FakeAuthRepository(
@@ -63,6 +64,7 @@ Future<void> _pumpView(
     ChangeNotifierProvider<AuthProvider>.value(
       value: authProvider,
       child: MaterialApp(
+        locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: child,
@@ -217,6 +219,32 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Couldn\'t open maps. Please try again.'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'falls back to a live doctor lookup for the Arabic name when the '
+    'appointment\'s own doctorNameAr is missing',
+    (tester) async {
+      // _upcoming has no doctorNameAr — e.g. it was booked before the
+      // doctor's Arabic name was added to their record.
+      final appointmentService = FakeAppointmentService()
+        ..upcomingAppointments = [_upcoming]
+        ..doctorToReturn = const Doctor(
+          id: '1',
+          name: 'Dr. Sara Whitmore',
+          nameAr: 'د. سارة ويتمور',
+          specialty: 'Cardiologist',
+          rating: 4.9,
+        );
+      addTearDown(appointmentService.dispose);
+
+      await _pumpView(tester, appointmentService, locale: const Locale('ar'));
+      await tester.pump();
+      // The lookup resolves one microtask after the card first builds.
+      await tester.pump();
+
+      expect(find.text('د. سارة ويتمور'), findsOneWidget);
     },
   );
 }

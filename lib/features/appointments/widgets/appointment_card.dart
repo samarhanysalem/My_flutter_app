@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../common/models/appointment.dart';
+import '../../../common/models/doctor.dart';
 import '../../../common/widgets/icon_text_row.dart';
+import '../../../common/widgets/localized_doctor_name.dart';
 import '../../../common/widgets/status_badge.dart';
 import '../../../config/app_config.dart';
 import '../../../l10n/app_localizations.dart';
@@ -16,12 +18,16 @@ class AppointmentCard extends StatelessWidget {
     super.key,
     required this.appointment,
     required this.isPast,
+    required this.lookupDoctor,
     this.onGetDirections,
     this.onReschedule,
   });
 
   final Appointment appointment;
   final bool isPast;
+
+  /// See `LocalizedDoctorName`.
+  final Future<Doctor?> Function(String doctorId) lookupDoctor;
 
   /// Only rendered (and required) for an upcoming appointment — see
   /// [isPast].
@@ -74,8 +80,9 @@ class AppointmentCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      appointment.localizedDoctorName(locale),
+                    LocalizedDoctorName(
+                      appointment: appointment,
+                      lookupDoctor: lookupDoctor,
                       style: AppTheme.cardTitle,
                       overflow: TextOverflow.ellipsis,
                     ),

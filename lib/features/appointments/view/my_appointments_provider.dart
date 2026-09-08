@@ -77,11 +77,15 @@ class MyAppointmentsProvider extends ChangeNotifier {
     }
   }
 
-  /// Looks up the full doctor record for [doctorId] so "Reschedule" can
-  /// open `DoctorProfileView`, which needs more than an appointment's
-  /// denormalized doctor fields (name/specialty) carry — notably `rating`.
+  /// Looks up the full doctor record for [doctorId]. Used by two things
+  /// that need more than an appointment's denormalized doctor fields
+  /// carry: "Reschedule" (which needs `rating` to open
+  /// `DoctorProfileView`), and a card's Arabic doctor name when the
+  /// appointment's own `doctorNameAr` is missing — most likely because the
+  /// doctor's Arabic name was added to their record only *after* this
+  /// appointment was booked (see `Appointment.doctorNameAr`'s doc comment).
   /// Returns `null` if the doctor can't be found or the lookup fails.
-  Future<Doctor?> getDoctorForReschedule(String doctorId) async {
+  Future<Doctor?> getDoctor(String doctorId) async {
     try {
       return await _appointmentService.getDoctor(doctorId);
     } catch (_) {

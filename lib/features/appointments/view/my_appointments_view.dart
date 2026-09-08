@@ -116,6 +116,7 @@ class _UpcomingList extends StatelessWidget {
             return AppointmentCard(
               appointment: appointment,
               isPast: false,
+              lookupDoctor: context.read<MyAppointmentsProvider>().getDoctor,
               onGetDirections: () => _openDirections(
                 context,
                 AppConfig.clinicAddressFor(locale),
@@ -158,8 +159,11 @@ class _PastList extends StatelessWidget {
         return ListView.separated(
           itemCount: past.length,
           separatorBuilder: (_, _) => const SizedBox(height: AppTheme.spacing12),
-          itemBuilder: (context, index) =>
-              AppointmentCard(appointment: past[index], isPast: true),
+          itemBuilder: (context, index) => AppointmentCard(
+            appointment: past[index],
+            isPast: true,
+            lookupDoctor: context.read<MyAppointmentsProvider>().getDoctor,
+          ),
         );
       },
     );
@@ -195,7 +199,7 @@ Future<void> _openDirections(BuildContext context, String address) async {
 Future<void> _openReschedule(BuildContext context, Appointment appointment) async {
   final doctor = await context
       .read<MyAppointmentsProvider>()
-      .getDoctorForReschedule(appointment.doctorId);
+      .getDoctor(appointment.doctorId);
   if (!context.mounted) return;
   if (doctor == null) {
     ScaffoldMessenger.of(context).showSnackBar(

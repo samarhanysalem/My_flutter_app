@@ -101,7 +101,7 @@ void main() {
     service.dispose();
   });
 
-  test('getDoctorForReschedule returns the looked-up doctor', () async {
+  test('getDoctor returns the looked-up doctor', () async {
     const doctor = Doctor(
       id: '1',
       name: 'Dr. Sara Whitmore',
@@ -114,19 +114,19 @@ void main() {
       patientId: 'u1',
     );
 
-    expect(await provider.getDoctorForReschedule('1'), doctor);
+    expect(await provider.getDoctor('1'), doctor);
 
     service.dispose();
   });
 
-  test('getDoctorForReschedule returns null when the doctor is not found', () async {
+  test('getDoctor returns null when the doctor is not found', () async {
     final service = FakeAppointmentService();
     final provider = MyAppointmentsProvider(
       appointmentService: service,
       patientId: 'u1',
     );
 
-    expect(await provider.getDoctorForReschedule('missing'), isNull);
+    expect(await provider.getDoctor('missing'), isNull);
 
     service.dispose();
   });

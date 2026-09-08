@@ -50,8 +50,9 @@ Future<AuthProvider> _signedInAuthProvider(WidgetTester tester) async {
 Future<void> _pumpHome(
   WidgetTester tester,
   AuthProvider authProvider,
-  FakeAppointmentService appointmentService,
-) async {
+  FakeAppointmentService appointmentService, {
+  Locale? locale,
+}) async {
   await tester.pumpWidget(
     // The AuthProvider is provided above MaterialApp (not inside `home:`)
     // so it's still reachable from routes HomeView pushes via Navigator —
@@ -61,6 +62,7 @@ Future<void> _pumpHome(
     ChangeNotifierProvider<AuthProvider>.value(
       value: authProvider,
       child: MaterialApp(
+        locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: HomeView(appointmentService: appointmentService),
@@ -255,6 +257,39 @@ void main() {
       await tester.pump();
 
       expect(navController.selectedTab, MainTab.appointments);
+
+      appointmentService.dispose();
+    },
+  );
+
+  testWidgets(
+    'falls back to a live doctor lookup for the Arabic name when the '
+    'appointment\'s own doctorNameAr is missing',
+    (tester) async {
+      final authProvider = await _signedInAuthProvider(tester);
+      // _upcomingAppointment has no doctorNameAr — e.g. it was booked
+      // before the doctor's Arabic name was added to their record.
+      final appointmentService = FakeAppointmentService()
+        ..doctorToReturn = const Doctor(
+          id: '1',
+          name: 'Dr. Sara Whitmore',
+          nameAr: 'د. سارة ويتمور',
+          specialty: 'Cardiologist',
+          rating: 4.9,
+        );
+      await _pumpHome(
+        tester,
+        authProvider,
+        appointmentService,
+        locale: const Locale('ar'),
+      );
+
+      appointmentService.emitUpcomingAppointment(_upcomingAppointment);
+      await tester.pump();
+      // The lookup resolves one microtask after the card first builds.
+      await tester.pump();
+
+      expect(find.text('د. سارة ويتمور'), findsOneWidget);
 
       appointmentService.dispose();
     },

@@ -142,6 +142,9 @@ class _HomeViewState extends State<HomeView> {
                                       onViewDetails: () => context
                                           .read<NavShellController>()
                                           .selectTab(MainTab.appointments),
+                                      lookupDoctor: context
+                                          .read<HomeProvider>()
+                                          .getDoctor,
                                     ),
                                   );
                                 },

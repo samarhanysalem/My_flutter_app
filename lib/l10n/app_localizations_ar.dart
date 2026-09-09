@@ -257,6 +257,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'تعذّرت إعادة الجدولة، فقد يكون هذا الموعد حُجز للتو. الرجاء اختيار موعد آخر.';
 
   @override
+  String get unexpectedBookingError => 'حدث خطأ ما. الرجاء المحاولة مرة أخرى.';
+
+  @override
   String get aboutSectionTitle => 'نبذة';
 
   @override

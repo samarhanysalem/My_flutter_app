@@ -358,6 +358,10 @@
   "@reschedulingFailed": {
     "description": "Shown when rescheduling an appointment fails, e.g. the new slot was booked by someone else first."
   },
+  "unexpectedBookingError": "Something went wrong. Please try again.",
+  "@unexpectedBookingError": {
+    "description": "Shown when booking or rescheduling fails for a reason other than the slot being taken (e.g. a permissions or network error), so the message doesn't wrongly imply the slot is unavailable."
+  },
   "aboutSectionTitle": "About",
   "@aboutSectionTitle": {
     "description": "Doctor profile About section title."

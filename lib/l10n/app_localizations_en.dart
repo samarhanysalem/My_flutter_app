@@ -258,6 +258,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t reschedule — that slot may have just been taken. Please choose another.';
 
   @override
+  String get unexpectedBookingError =>
+      'Something went wrong. Please try again.';
+
+  @override
   String get aboutSectionTitle => 'About';
 
   @override

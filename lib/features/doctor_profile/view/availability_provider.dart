@@ -73,6 +73,16 @@ class AvailabilityProvider extends ChangeNotifier {
   bool _isBooking = false;
   bool get isBooking => _isBooking;
 
+  /// Whether the *last* failed [bookSelectedSlot] call failed for some
+  /// reason other than the slot genuinely being taken (a [BookingException])
+  /// — e.g. a Firestore permission error. `BookAppointmentButton` uses this
+  /// to avoid telling the patient "that slot may have just been taken" when
+  /// it demonstrably wasn't (they can see it's still offered), which would
+  /// send them retrying the same doomed action forever instead of the
+  /// actual problem getting noticed and fixed.
+  bool _lastFailureWasUnexpected = false;
+  bool get lastFailureWasUnexpected => _lastFailureWasUnexpected;
+
   void selectSlot(int index) {
     _selectedSlotIndex = index;
     notifyListeners();
@@ -114,6 +124,7 @@ class AvailabilityProvider extends ChangeNotifier {
     if (slot == null || patientId == null) return false;
 
     _isBooking = true;
+    _lastFailureWasUnexpected = false;
     notifyListeners();
     var success = false;
     try {
@@ -144,8 +155,18 @@ class AvailabilityProvider extends ChangeNotifier {
       _slots = List.of(_slots)..remove(slot);
       _selectedSlotIndex = _slots.isEmpty ? null : 0;
       success = true;
-    } catch (_) {
+    } on BookingException {
       success = false;
+    } catch (e) {
+      // Anything other than BookingException (the slot genuinely being
+      // gone) is unexpected — most likely a Firestore permission error
+      // (e.g. security rules allow creating an appointment but not
+      // updating one) or a network failure. Logged here since that's the
+      // only diagnostic available on a deployed build with no crash
+      // reporter wired up.
+      success = false;
+      _lastFailureWasUnexpected = true;
+      debugPrint('Unexpected booking/reschedule failure: $e');
     } finally {
       _isBooking = false;
       notifyListeners();

@@ -2,6 +2,7 @@ import 'package:doctor_appointment_app/common/models/appointment.dart';
 import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
+import 'package:doctor_appointment_app/features/doctor_profile/services/booking_service.dart';
 import 'package:doctor_appointment_app/features/doctor_profile/view/doctor_profile_view.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -282,7 +283,7 @@ void main() {
       status: 'confirmed',
     );
     final bookingService = FakeBookingService()
-      ..errorToThrow = Exception('slot taken');
+      ..errorToThrow = const BookingException('slot-unavailable');
     await tester.pumpWidget(
       _wrap(
         _profileView(
@@ -310,7 +311,7 @@ void main() {
 
   testWidgets('shows an error notice when booking fails', (tester) async {
     final bookingService = FakeBookingService()
-      ..errorToThrow = Exception('slot taken');
+      ..errorToThrow = const BookingException('slot-unavailable');
     await tester.pumpWidget(
       _wrap(
         _profileView(
@@ -336,4 +337,40 @@ void main() {
     // A failed booking doesn't remove the slot.
     expect(find.text('10:30 AM'), findsOneWidget);
   });
+
+  testWidgets(
+    'shows a generic error, not "slot may have been taken", when booking '
+    'fails for an unrelated reason (e.g. a permissions error)',
+    (tester) async {
+      // Anything other than BookingException — e.g. Firestore denying the
+      // write — shouldn't tell the patient the slot they can still see is
+      // unavailable; that's misleading and sends them retrying a doomed
+      // action instead of the real problem getting noticed.
+      final bookingService = FakeBookingService()
+        ..errorToThrow = Exception('permission-denied');
+      await tester.pumpWidget(
+        _wrap(
+          _profileView(
+            _doctorWithBio,
+            availabilityService: FakeAvailabilityService({
+              _today: ['10:30 AM'],
+            }),
+            bookingService: bookingService,
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Book appointment'));
+      await tester.pump();
+
+      expect(find.text('Something went wrong. Please try again.'), findsOneWidget);
+      expect(
+        find.text(
+          'Couldn\'t book that slot — it may have just been taken. Please choose another.',
+        ),
+        findsNothing,
+      );
+    },
+  );
 }

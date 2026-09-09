@@ -38,11 +38,12 @@ class BookAppointmentButton extends StatelessWidget {
             : loc.appointmentBooked(formattedDate, slot),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(isRescheduling ? loc.reschedulingFailed : loc.bookingFailed),
-        ),
-      );
+      final message = provider.lastFailureWasUnexpected
+          ? loc.unexpectedBookingError
+          : (isRescheduling ? loc.reschedulingFailed : loc.bookingFailed);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 

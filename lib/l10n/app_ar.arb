@@ -84,6 +84,7 @@
   "confirmReschedule": "تأكيد إعادة الجدولة",
   "appointmentRescheduled": "تمت إعادة جدولة الموعد إلى {date} الساعة {slot}.",
   "reschedulingFailed": "تعذّرت إعادة الجدولة، فقد يكون هذا الموعد حُجز للتو. الرجاء اختيار موعد آخر.",
+  "unexpectedBookingError": "حدث خطأ ما. الرجاء المحاولة مرة أخرى.",
   "aboutSectionTitle": "نبذة",
   "noBioAvailable": "لا تتوفر نبذة عن هذا الطبيب حتى الآن.",
   "availableToday": "متاح اليوم",

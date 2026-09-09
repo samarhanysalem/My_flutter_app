@@ -554,6 +554,12 @@ abstract class AppLocalizations {
   /// **'Couldn\'t reschedule — that slot may have just been taken. Please choose another.'**
   String get reschedulingFailed;
 
+  /// Shown when booking or rescheduling fails for a reason other than the slot being taken (e.g. a permissions or network error), so the message doesn't wrongly imply the slot is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get unexpectedBookingError;
+
   /// Doctor profile About section title.
   ///
   /// In en, this message translates to:

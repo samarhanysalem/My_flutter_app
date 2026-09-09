@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../auth_validators.dart';
 import '../widgets/auth_error_text.dart';
@@ -54,6 +55,7 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppTheme.screenGround,
       body: SafeArea(
@@ -70,11 +72,13 @@ class _RegisterViewState extends State<RegisterView> {
                     SizedBox(
                       height: 44,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: AlignmentDirectional.centerStart,
                         child: IconButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          icon: const Icon(
-                            Icons.chevron_left,
+                          icon: Icon(
+                            Directionality.of(context) == TextDirection.rtl
+                                ? Icons.chevron_right
+                                : Icons.chevron_left,
                             color: AppTheme.ink,
                             size: 28,
                           ),
@@ -86,10 +90,10 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                       ),
                     ),
-                    Text('Create your account', style: AppTheme.heading),
+                    Text(loc.createYourAccount, style: AppTheme.heading),
                     const SizedBox(height: AppTheme.spacing6),
                     Text(
-                      'Takes a minute. You will pay at the clinic, so no card needed.',
+                      loc.registerSubtitle,
                       style: AppTheme.subtitle,
                     ),
                     const SizedBox(height: AppTheme.spacing24),
@@ -97,57 +101,62 @@ class _RegisterViewState extends State<RegisterView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         AuthTextField(
-                          label: 'Full name',
+                          fieldKey: 'fullName',
+                          label: loc.fullNameLabel,
                           controller: _fullNameController,
                           autofillHints: const [AutofillHints.name],
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Enter your full name';
+                              return loc.enterYourFullName;
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: AppTheme.spacing14),
                         AuthTextField(
-                          label: 'Email',
+                          fieldKey: 'email',
+                          label: loc.emailLabel,
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           autofillHints: const [AutofillHints.email],
-                          validator: AuthValidators.email,
+                          validator: (value) =>
+                              AuthValidators.email(value, loc),
                         ),
                         const SizedBox(height: AppTheme.spacing14),
                         AuthTextField(
-                          label: 'Phone',
+                          fieldKey: 'phone',
+                          label: loc.phoneLabel,
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
                           autofillHints: const [AutofillHints.telephoneNumber],
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Enter your phone number';
+                              return loc.enterYourPhoneNumber;
                             }
                             final digits = value.replaceAll(
                               RegExp(r'[^0-9]'),
                               '',
                             );
                             if (digits.length < 7) {
-                              return 'Enter a valid phone number';
+                              return loc.enterAValidPhoneNumber;
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: AppTheme.spacing14),
                         AuthTextField(
-                          label: 'Password',
+                          fieldKey: 'password',
+                          label: loc.passwordLabel,
                           controller: _passwordController,
                           obscureText: true,
                           autofillHints: const [AutofillHints.newPassword],
                           validator: (value) {
                             if (value == null || value.length < 8) {
-                              return 'Password must be at least 8 characters';
+                              return loc.passwordTooShort;
                             }
                             if (!RegExp(r'[A-Za-z]').hasMatch(value) ||
                                 !RegExp(r'[0-9]').hasMatch(value)) {
-                              return 'Include at least one letter and one number';
+                              return loc.passwordNeedsLetterAndNumber;
                             }
                             return null;
                           },
@@ -166,7 +175,7 @@ class _RegisterViewState extends State<RegisterView> {
                     ],
                     const SizedBox(height: AppTheme.spacing22),
                     AuthPrimaryButton(
-                      label: 'Create account',
+                      label: loc.createAccount,
                       isLoading: authProvider.isLoading,
                       onPressed: _termsAccepted
                           ? () => _submit(authProvider)
@@ -178,12 +187,12 @@ class _RegisterViewState extends State<RegisterView> {
                         alignment: WrapAlignment.center,
                         children: [
                           Text(
-                            'Already registered? ',
+                            loc.alreadyRegisteredQuestion,
                             style: AppTheme.subtitle,
                           ),
                           GestureDetector(
                             onTap: () => Navigator.of(context).pop(),
-                            child: Text('Sign in', style: AppTheme.linkAccent),
+                            child: Text(loc.signIn, style: AppTheme.linkAccent),
                           ),
                         ],
                       ),

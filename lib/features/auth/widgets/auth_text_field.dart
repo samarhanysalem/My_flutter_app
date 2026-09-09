@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// Labeled input matching the design handoff's field spec: 12px secondary
@@ -9,6 +10,7 @@ import '../../../theme/app_theme.dart';
 class AuthTextField extends StatefulWidget {
   const AuthTextField({
     super.key,
+    required this.fieldKey,
     required this.label,
     required this.controller,
     this.obscureText = false,
@@ -17,6 +19,10 @@ class AuthTextField extends StatefulWidget {
     this.validator,
   });
 
+  /// A stable, non-localized identifier for this field (e.g. 'email'),
+  /// used to build a widget [Key] that stays the same across languages —
+  /// unlike [label], which is user-facing, localized text.
+  final String fieldKey;
   final String label;
   final TextEditingController controller;
   final bool obscureText;
@@ -45,7 +51,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         Text(widget.label, style: AppTheme.fieldLabel),
         const SizedBox(height: AppTheme.spacing6),
         TextFormField(
-          key: Key('authField_${widget.label}'),
+          key: Key('authField_${widget.fieldKey}'),
           controller: widget.controller,
           obscureText: _obscured,
           keyboardType: widget.keyboardType,
@@ -72,7 +78,9 @@ class _AuthTextFieldState extends State<AuthTextField> {
                       size: 20,
                       color: AppTheme.textSecondary,
                     ),
-                    tooltip: _obscured ? 'Show password' : 'Hide password',
+                    tooltip: _obscured
+                        ? AppLocalizations.of(context)!.showPassword
+                        : AppLocalizations.of(context)!.hidePassword,
                     onPressed: () => setState(() => _obscured = !_obscured),
                   )
                 : null,

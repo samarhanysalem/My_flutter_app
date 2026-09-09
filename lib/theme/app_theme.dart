@@ -41,17 +41,37 @@ class AppTheme {
   static const Color disabledFill = Color(0xFFDCDCE0);
   static const Color checkboxBorder = Color(0xFFD3D3DA);
 
+  /// Rating-star color. A conventional amber/gold across virtually every
+  /// app's rating UI, not a brand color — but still centralized here rather
+  /// than hardcoded in a widget, per the white-label rules.
+  static const Color ratingStar = Color(0xFFF5A623);
+
+  /// Placeholder avatar background tints, cycled by list index for doctor
+  /// cards that don't have a real photo.
+  static const List<Color> avatarPalette = [
+    Color(0xFFFDE8E8),
+    Color(0xFFE6EFFE),
+    Color(0xFFEAF6EC),
+    Color(0xFFF3E8FD),
+  ];
+
   // --- Corner radius -----------------------------------------------------
   static const double radiusXs = 5; // custom checkboxes
   static const double radiusSmall = 8; // fields, buttons
   static const double radiusMedium = 12; // cards (Home/Booking/etc.)
   static const double radiusLarge = 13; // the app mark badge
+  static const double radiusTile = 14; // specialty shortcut tiles
 
   // --- Spacing scale, from the design spec's gap rhythm -------------------
+  static const double spacing2 = 2;
+  static const double spacing3 = 3;
+  static const double spacing4 = 4;
   static const double spacing6 = 6;
   static const double spacing8 = 8;
+  static const double spacing10 = 10;
   static const double spacing12 = 12;
   static const double spacing14 = 14;
+  static const double spacing16 = 16;
   static const double spacing18 = 18;
   static const double spacing20 = 20;
   static const double spacing22 = 22;
@@ -100,6 +120,27 @@ class AppTheme {
 
   static TextStyle get caption =>
       _font(fontSize: 11, color: textPlaceholder);
+
+  static TextStyle get captionSecondary =>
+      _font(fontSize: 11, color: textSecondary);
+
+  static TextStyle get greeting =>
+      _font(fontSize: 18, fontWeight: FontWeight.w500, color: ink);
+
+  static TextStyle get sectionTitle =>
+      _font(fontSize: 14, fontWeight: FontWeight.w500, color: ink);
+
+  static TextStyle get cardTitle =>
+      _font(fontSize: 14, fontWeight: FontWeight.w500, color: ink);
+
+  static TextStyle get screenTitle =>
+      _font(fontSize: 17, fontWeight: FontWeight.w500, color: ink);
+
+  /// Longer-form paragraph text (e.g. a doctor's bio) — same secondary
+  /// color as [subtitle], but with line spacing so multi-line text reads
+  /// comfortably.
+  static TextStyle get proseSecondary =>
+      _font(fontSize: 13, height: 1.5, color: textSecondary);
 
   static TextStyle get termsText =>
       _font(fontSize: 12, height: 1.45, color: textSecondary);

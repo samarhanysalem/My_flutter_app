@@ -25,6 +25,24 @@ class AppConfig {
   /// screens, and copy like "Sign in to book with the [companyName] team."
   static const String companyName = 'Lakeside Clinic';
 
+  /// Arabic form of [companyName]. Not a literal translation — it's a
+  /// brand/proper name — but the Arabic rendering this customer's own
+  /// marketing would use, shown wherever the app's locale is Arabic.
+  static const String companyNameAr = 'عيادة ليكسايد';
+
+  /// [companyName], localized for [locale].
+  static String companyNameFor(Locale locale) =>
+      locale.languageCode == 'ar' ? companyNameAr : companyName;
+
+  /// The clinic's physical address, shown on an appointment card/details.
+  /// Single-location only — see [multipleClinicLocationsEnabled].
+  static const String clinicAddress = '123 Lakeside Ave, Springfield, IL 62701';
+  static const String clinicAddressAr = '١٢٣ شارع ليكسايد، سبرينغفيلد، إلينوي ٦٢٧٠١';
+
+  /// [clinicAddress], localized for [locale].
+  static String clinicAddressFor(Locale locale) =>
+      locale.languageCode == 'ar' ? clinicAddressAr : clinicAddress;
+
   /// Primary brand color: CTAs, links, active/selected states.
   static const Color primaryColor = Color(0xFF4C6FD4);
 

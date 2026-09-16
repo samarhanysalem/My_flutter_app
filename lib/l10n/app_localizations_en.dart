@@ -316,6 +316,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appointmentStatusCompleted => 'Completed';
 
   @override
+  String get appointmentStatusCancelled => 'Cancelled';
+
+  @override
   String get cancelAppointment => 'Cancel appointment';
 
   @override

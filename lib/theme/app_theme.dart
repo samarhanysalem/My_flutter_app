@@ -46,6 +46,16 @@ class AppTheme {
   /// than hardcoded in a widget, per the white-label rules.
   static const Color ratingStar = Color(0xFFF5A623);
 
+  /// Destructive-action color (cancel/delete) and its light tint for a
+  /// badge/chip background — a conventional red, like [ratingStar]'s
+  /// amber, not a brand color. Centralized here rather than reached for ad
+  /// hoc via `Theme.of(context).colorScheme.error` in a widget, which
+  /// (since `materialTheme` below only seeds `primary`) would otherwise
+  /// render Material's own default error hue instead of a token this
+  /// design system actually owns.
+  static const Color error = Color(0xFFD64545);
+  static const Color errorTint = Color(0xFFFBE9E9);
+
   /// Placeholder avatar background tints, cycled by list index for doctor
   /// cards that don't have a real photo.
   static const List<Color> avatarPalette = [

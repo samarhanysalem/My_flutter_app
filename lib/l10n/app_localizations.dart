@@ -656,11 +656,17 @@ abstract class AppLocalizations {
   /// **'Past'**
   String get pastTabLabel;
 
-  /// Status badge on a past (completed) appointment.
+  /// Status badge on a past, completed (not cancelled) appointment.
   ///
   /// In en, this message translates to:
   /// **'Completed'**
   String get appointmentStatusCompleted;
+
+  /// Status badge on a cancelled appointment, shown on the Past tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get appointmentStatusCancelled;
 
   /// Button on an upcoming appointment card that cancels it; also the confirming action label in its confirmation dialog.
   ///

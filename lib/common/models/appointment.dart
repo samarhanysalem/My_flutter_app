@@ -41,7 +41,8 @@ class Appointment {
   /// slot string.
   final String slot;
 
-  /// Currently always `'confirmed'` — there's no cancellation flow yet.
+  /// `'confirmed'` or `'cancelled'`. There's no *completion* status — a
+  /// confirmed appointment is treated as past once its date has gone by.
   final String status;
 
   factory Appointment.fromFirestore(String id, Map<String, dynamic> data) {

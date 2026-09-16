@@ -314,6 +314,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appointmentStatusCompleted => 'مكتمل';
 
   @override
+  String get appointmentStatusCancelled => 'ملغى';
+
+  @override
   String get cancelAppointment => 'إلغاء الموعد';
 
   @override

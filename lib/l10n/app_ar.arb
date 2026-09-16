@@ -104,6 +104,7 @@
   "upcomingTabLabel": "القادمة",
   "pastTabLabel": "السابقة",
   "appointmentStatusCompleted": "مكتمل",
+  "appointmentStatusCancelled": "ملغى",
   "cancelAppointment": "إلغاء الموعد",
   "cancelAppointmentQuestion": "هل تريد إلغاء هذا الموعد؟",
   "appointmentCancelled": "تم إلغاء الموعد.",

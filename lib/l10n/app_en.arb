@@ -435,7 +435,11 @@
   },
   "appointmentStatusCompleted": "Completed",
   "@appointmentStatusCompleted": {
-    "description": "Status badge on a past (completed) appointment."
+    "description": "Status badge on a past, completed (not cancelled) appointment."
+  },
+  "appointmentStatusCancelled": "Cancelled",
+  "@appointmentStatusCancelled": {
+    "description": "Status badge on a cancelled appointment, shown on the Past tab."
   },
   "cancelAppointment": "Cancel appointment",
   "@cancelAppointment": {

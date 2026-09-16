@@ -35,6 +35,17 @@ const _past = Appointment(
   status: 'confirmed',
 );
 
+const _cancelled = Appointment(
+  id: 'a3',
+  patientId: 'u1',
+  doctorId: '3',
+  doctorName: 'Dr. Priya Nair',
+  doctorSpecialty: 'Dermatologist',
+  date: '2099-03-01',
+  slot: '2:00 PM',
+  status: 'cancelled',
+);
+
 Future<void> _pumpView(
   WidgetTester tester,
   FakeAppointmentService appointmentService, {
@@ -122,7 +133,7 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
     expect(find.text('Confirmed'), findsOneWidget);
-    expect(find.text('Cancel appointment'), findsOneWidget);
+    expect(find.text('Cancel'), findsOneWidget);
     expect(find.text('Reschedule'), findsOneWidget);
   });
 
@@ -160,9 +171,33 @@ void main() {
 
       expect(find.text('Dr. Marcus Cole'), findsOneWidget);
       expect(find.text('Completed'), findsOneWidget);
-      expect(find.text('Cancel appointment'), findsNothing);
+      expect(find.text('Cancel'), findsNothing);
       expect(find.text('Reschedule'), findsNothing);
       expect(find.byType(Opacity), findsWidgets);
+    },
+  );
+
+  testWidgets(
+    'a cancelled appointment on the Past tab shows a distinct Cancelled badge',
+    (tester) async {
+      // Cancelled appointments live in the Past tab regardless of date (see
+      // getPastAppointments) rather than a separate tab — a still-future
+      // date on _cancelled confirms that's date-independent.
+      final appointmentService = FakeAppointmentService()
+        ..pastAppointments = [_cancelled];
+      addTearDown(appointmentService.dispose);
+
+      await _pumpView(tester, appointmentService);
+      await tester.pump();
+
+      await tester.tap(find.text('Past'));
+      await tester.pump();
+
+      expect(find.text('Dr. Priya Nair'), findsOneWidget);
+      expect(find.text('Cancelled'), findsOneWidget);
+      expect(find.text('Completed'), findsNothing);
+      expect(find.text('Cancel'), findsNothing);
+      expect(find.text('Reschedule'), findsNothing);
     },
   );
 
@@ -241,7 +276,7 @@ void main() {
       await _pumpView(tester, appointmentService, bookingService: bookingService);
       await tester.pump();
 
-      await tester.tap(find.text('Cancel appointment'));
+      await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
 
       expect(find.text('Cancel this appointment?'), findsOneWidget);
@@ -274,7 +309,7 @@ void main() {
     await _pumpView(tester, appointmentService, bookingService: bookingService);
     await tester.pump();
 
-    await tester.tap(find.text('Cancel appointment'));
+    await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
@@ -296,7 +331,7 @@ void main() {
     await _pumpView(tester, appointmentService, bookingService: bookingService);
     await tester.pump();
 
-    await tester.tap(find.text('Cancel appointment'));
+    await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(TextButton, 'Cancel appointment'));
     await tester.pumpAndSettle();

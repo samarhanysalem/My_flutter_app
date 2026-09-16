@@ -45,6 +45,23 @@ class AppointmentCard extends StatelessWidget {
         ? appointment.slot
         : '${DateFormat.MMMEd(locale.toLanguageTag()).format(date)} · ${appointment.slot}';
 
+    final String statusLabel;
+    final Color? statusBackground;
+    final Color? statusTextColor;
+    if (appointment.status == 'cancelled') {
+      statusLabel = loc.appointmentStatusCancelled;
+      statusBackground = AppTheme.errorTint;
+      statusTextColor = AppTheme.error;
+    } else if (isPast) {
+      statusLabel = loc.appointmentStatusCompleted;
+      statusBackground = null;
+      statusTextColor = null;
+    } else {
+      statusLabel = loc.appointmentStatusConfirmed;
+      statusBackground = null;
+      statusTextColor = null;
+    }
+
     final card = Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.spacing16),
@@ -56,16 +73,11 @@ class AppointmentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: StatusBadge(
-              label: isPast
-                  ? loc.appointmentStatusCompleted
-                  : loc.appointmentStatusConfirmed,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacing14),
           Row(
+            // Top-aligned so the badge sits at the card's top-right corner
+            // even when the doctor name/specialty wrap to two lines,
+            // rather than centering against the taller text block.
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 48,
@@ -95,6 +107,12 @@ class AppointmentCard extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(width: AppTheme.spacing8),
+              StatusBadge(
+                label: statusLabel,
+                backgroundColor: statusBackground,
+                textColor: statusTextColor,
+              ),
             ],
           ),
           const SizedBox(height: AppTheme.spacing14),
@@ -112,16 +130,14 @@ class AppointmentCard extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: onCancel,
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Theme.of(context).colorScheme.error),
+                      side: const BorderSide(color: AppTheme.error),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
                       ),
                     ),
                     child: Text(
-                      loc.cancelAppointment,
-                      style: AppTheme.buttonLabel.copyWith(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
+                      loc.cancel,
+                      style: AppTheme.buttonLabel.copyWith(color: AppTheme.error),
                     ),
                   ),
                 ),

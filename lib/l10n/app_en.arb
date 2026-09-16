@@ -437,9 +437,21 @@
   "@appointmentStatusCompleted": {
     "description": "Status badge on a past (completed) appointment."
   },
-  "getDirections": "Get directions",
-  "@getDirections": {
-    "description": "Button on an upcoming appointment card that opens the device's maps app."
+  "cancelAppointment": "Cancel appointment",
+  "@cancelAppointment": {
+    "description": "Button on an upcoming appointment card that cancels it; also the confirming action label in its confirmation dialog."
+  },
+  "cancelAppointmentQuestion": "Cancel this appointment?",
+  "@cancelAppointmentQuestion": {
+    "description": "Title of the confirmation dialog shown before cancelling an appointment."
+  },
+  "appointmentCancelled": "Appointment cancelled.",
+  "@appointmentCancelled": {
+    "description": "Confirmation snackbar shown after successfully cancelling an appointment."
+  },
+  "cancelAppointmentFailed": "Couldn't cancel the appointment. Please try again.",
+  "@cancelAppointmentFailed": {
+    "description": "Shown when cancelling an appointment fails."
   },
   "reschedule": "Reschedule",
   "@reschedule": {
@@ -464,9 +476,5 @@
   "rescheduleDoctorNotFound": "Couldn't find that doctor. Please try again.",
   "@rescheduleDoctorNotFound": {
     "description": "Shown when \"Reschedule\" can't look up the appointment's doctor record."
-  },
-  "couldNotOpenMaps": "Couldn't open maps. Please try again.",
-  "@couldNotOpenMaps": {
-    "description": "Shown when \"Get directions\" fails to open the device's maps app."
   }
 }

@@ -46,4 +46,24 @@ class FakeBookingService implements BookingService {
     reschedulePreviousSlot = previousSlot;
     bookedSlots.add(slot);
   }
+
+  /// Set by [cancelAppointment] with the args it was called with.
+  String? cancelledAppointmentId;
+  String? cancelledDoctorId;
+  String? cancelledDate;
+  String? cancelledSlot;
+
+  @override
+  Future<void> cancelAppointment({
+    required String appointmentId,
+    required String doctorId,
+    required String date,
+    required String slot,
+  }) async {
+    if (errorToThrow != null) throw errorToThrow!;
+    cancelledAppointmentId = appointmentId;
+    cancelledDoctorId = doctorId;
+    cancelledDate = date;
+    cancelledSlot = slot;
+  }
 }

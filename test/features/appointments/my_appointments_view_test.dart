@@ -6,11 +6,11 @@ import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
 import 'package:doctor_appointment_app/navigation/nav_shell_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
 import '../auth/fake_auth_repository.dart';
+import '../doctor_profile/fake_booking_service.dart';
 import '../home/fake_appointment_service.dart';
 
 const _upcoming = Appointment(
@@ -38,6 +38,7 @@ const _past = Appointment(
 Future<void> _pumpView(
   WidgetTester tester,
   FakeAppointmentService appointmentService, {
+  FakeBookingService? bookingService,
   NavShellController? navController,
   Locale? locale,
 }) async {
@@ -58,7 +59,10 @@ Future<void> _pumpView(
   // unconditionally reads it) find one.
   final child = ChangeNotifierProvider<NavShellController>.value(
     value: navController ?? NavShellController(),
-    child: MyAppointmentsView(appointmentService: appointmentService),
+    child: MyAppointmentsView(
+      appointmentService: appointmentService,
+      bookingService: bookingService ?? FakeBookingService(),
+    ),
   );
 
   await tester.pumpWidget(
@@ -118,7 +122,7 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
     expect(find.text('Confirmed'), findsOneWidget);
-    expect(find.text('Get directions'), findsOneWidget);
+    expect(find.text('Cancel appointment'), findsOneWidget);
     expect(find.text('Reschedule'), findsOneWidget);
   });
 
@@ -156,7 +160,7 @@ void main() {
 
       expect(find.text('Dr. Marcus Cole'), findsOneWidget);
       expect(find.text('Completed'), findsOneWidget);
-      expect(find.text('Get directions'), findsNothing);
+      expect(find.text('Cancel appointment'), findsNothing);
       expect(find.text('Reschedule'), findsNothing);
       expect(find.byType(Opacity), findsWidgets);
     },
@@ -227,35 +231,81 @@ void main() {
   );
 
   testWidgets(
-    'Get directions surfaces an error notice when it can\'t open maps',
+    'Cancel appointment asks for confirmation, then cancels and refreshes',
     (tester) async {
-      // url_launcher has no real platform implementation in a widget test —
-      // its method channel is mocked to return false (can't launch) rather
-      // than left unimplemented, since an unmocked call never resolves
-      // inside a widget test (unlike the MissingPluginException it throws
-      // outside one), which would hang this test instead of exercising the
-      // try/catch fallback below.
-      const channel = MethodChannel('plugins.flutter.io/url_launcher');
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (call) async => false);
-      addTearDown(() {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(channel, null);
-      });
-
       final appointmentService = FakeAppointmentService()
         ..upcomingAppointments = [_upcoming];
       addTearDown(appointmentService.dispose);
+      final bookingService = FakeBookingService();
 
-      await _pumpView(tester, appointmentService);
+      await _pumpView(tester, appointmentService, bookingService: bookingService);
       await tester.pump();
 
-      await tester.tap(find.text('Get directions'));
+      await tester.tap(find.text('Cancel appointment'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Couldn\'t open maps. Please try again.'), findsOneWidget);
+      expect(find.text('Cancel this appointment?'), findsOneWidget);
+      expect(bookingService.cancelledAppointmentId, isNull);
+
+      // The dialog's "Cancel appointment" is the confirming action; its
+      // "Cancel" is the dismiss action that backs out without cancelling.
+      appointmentService.upcomingAppointments = const [];
+      await tester.tap(find.widgetWithText(TextButton, 'Cancel appointment'));
+      await tester.pumpAndSettle();
+
+      expect(bookingService.cancelledAppointmentId, 'a1');
+      expect(bookingService.cancelledDoctorId, '1');
+      expect(bookingService.cancelledDate, '2099-01-02');
+      expect(bookingService.cancelledSlot, '10:30 AM');
+      expect(find.text('Appointment cancelled.'), findsOneWidget);
+      // refresh() picked up the appointment no longer being upcoming.
+      expect(find.text('Dr. Sara Whitmore'), findsNothing);
     },
   );
+
+  testWidgets('Dismissing the cancel confirmation dialog cancels nothing', (
+    tester,
+  ) async {
+    final appointmentService = FakeAppointmentService()
+      ..upcomingAppointments = [_upcoming];
+    addTearDown(appointmentService.dispose);
+    final bookingService = FakeBookingService();
+
+    await _pumpView(tester, appointmentService, bookingService: bookingService);
+    await tester.pump();
+
+    await tester.tap(find.text('Cancel appointment'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    await tester.pumpAndSettle();
+
+    expect(bookingService.cancelledAppointmentId, isNull);
+    expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
+  });
+
+  testWidgets('Cancel appointment shows an error notice when it fails', (
+    tester,
+  ) async {
+    final appointmentService = FakeAppointmentService()
+      ..upcomingAppointments = [_upcoming];
+    addTearDown(appointmentService.dispose);
+    final bookingService = FakeBookingService()
+      ..errorToThrow = Exception('permission-denied');
+
+    await _pumpView(tester, appointmentService, bookingService: bookingService);
+    await tester.pump();
+
+    await tester.tap(find.text('Cancel appointment'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(TextButton, 'Cancel appointment'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Couldn\'t cancel the appointment. Please try again.'),
+      findsOneWidget,
+    );
+  });
 
   testWidgets(
     'falls back to a live doctor lookup for the Arabic name when the '

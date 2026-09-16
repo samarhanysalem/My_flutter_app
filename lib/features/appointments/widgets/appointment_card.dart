@@ -19,7 +19,7 @@ class AppointmentCard extends StatelessWidget {
     required this.appointment,
     required this.isPast,
     required this.lookupDoctor,
-    this.onGetDirections,
+    this.onCancel,
     this.onReschedule,
   });
 
@@ -31,7 +31,7 @@ class AppointmentCard extends StatelessWidget {
 
   /// Only rendered (and required) for an upcoming appointment — see
   /// [isPast].
-  final VoidCallback? onGetDirections;
+  final VoidCallback? onCancel;
   final VoidCallback? onReschedule;
 
   @override
@@ -110,16 +110,18 @@ class AppointmentCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: onGetDirections,
+                    onPressed: onCancel,
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppTheme.border),
+                      side: BorderSide(color: Theme.of(context).colorScheme.error),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
                       ),
                     ),
                     child: Text(
-                      loc.getDirections,
-                      style: AppTheme.buttonLabel.copyWith(color: AppTheme.ink),
+                      loc.cancelAppointment,
+                      style: AppTheme.buttonLabel.copyWith(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                     ),
                   ),
                 ),

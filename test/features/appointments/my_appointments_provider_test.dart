@@ -3,6 +3,7 @@ import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/appointments/view/my_appointments_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../doctor_profile/fake_booking_service.dart';
 import '../home/fake_appointment_service.dart';
 
 const _upcoming = Appointment(
@@ -34,6 +35,7 @@ void main() {
       ..pastAppointments = [_past];
     final provider = MyAppointmentsProvider(
       appointmentService: service,
+      bookingService: FakeBookingService(),
       patientId: 'u1',
     );
 
@@ -57,6 +59,7 @@ void main() {
     final service = FakeAppointmentService();
     final provider = MyAppointmentsProvider(
       appointmentService: service,
+      bookingService: FakeBookingService(),
       patientId: 'u1',
     );
     await Future<void>.value();
@@ -74,6 +77,7 @@ void main() {
       ..getAppointmentsErrorToThrow = Exception('boom');
     final provider = MyAppointmentsProvider(
       appointmentService: service,
+      bookingService: FakeBookingService(),
       patientId: 'u1',
     );
     await Future<void>.value();
@@ -90,6 +94,7 @@ void main() {
     final service = FakeAppointmentService();
     final provider = MyAppointmentsProvider(
       appointmentService: service,
+      bookingService: FakeBookingService(),
       patientId: null,
     );
 
@@ -111,6 +116,7 @@ void main() {
     final service = FakeAppointmentService()..doctorToReturn = doctor;
     final provider = MyAppointmentsProvider(
       appointmentService: service,
+      bookingService: FakeBookingService(),
       patientId: 'u1',
     );
 
@@ -123,10 +129,54 @@ void main() {
     final service = FakeAppointmentService();
     final provider = MyAppointmentsProvider(
       appointmentService: service,
+      bookingService: FakeBookingService(),
       patientId: 'u1',
     );
 
     expect(await provider.getDoctor('missing'), isNull);
+
+    service.dispose();
+  });
+
+  test('cancelAppointment cancels via BookingService and refreshes', () async {
+    final service = FakeAppointmentService()..upcomingAppointments = [_upcoming];
+    final bookingService = FakeBookingService();
+    final provider = MyAppointmentsProvider(
+      appointmentService: service,
+      bookingService: bookingService,
+      patientId: 'u1',
+    );
+    await Future<void>.value();
+    expect(provider.upcoming, [_upcoming]);
+
+    // Simulate the cancellation having taken effect server-side by the
+    // time refresh() re-fetches.
+    service.upcomingAppointments = const [];
+    final success = await provider.cancelAppointment(_upcoming);
+    await Future<void>.value();
+
+    expect(success, isTrue);
+    expect(bookingService.cancelledAppointmentId, 'a1');
+    expect(bookingService.cancelledDoctorId, '1');
+    expect(bookingService.cancelledDate, '2099-01-02');
+    expect(bookingService.cancelledSlot, '10:30 AM');
+    expect(provider.upcoming, isEmpty);
+
+    service.dispose();
+  });
+
+  test('cancelAppointment returns false when it fails', () async {
+    final service = FakeAppointmentService()..upcomingAppointments = [_upcoming];
+    final bookingService = FakeBookingService()
+      ..errorToThrow = Exception('permission-denied');
+    final provider = MyAppointmentsProvider(
+      appointmentService: service,
+      bookingService: bookingService,
+      patientId: 'u1',
+    );
+    await Future<void>.value();
+
+    expect(await provider.cancelAppointment(_upcoming), isFalse);
 
     service.dispose();
   });

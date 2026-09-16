@@ -104,12 +104,14 @@
   "upcomingTabLabel": "القادمة",
   "pastTabLabel": "السابقة",
   "appointmentStatusCompleted": "مكتمل",
-  "getDirections": "الحصول على الاتجاهات",
+  "cancelAppointment": "إلغاء الموعد",
+  "cancelAppointmentQuestion": "هل تريد إلغاء هذا الموعد؟",
+  "appointmentCancelled": "تم إلغاء الموعد.",
+  "cancelAppointmentFailed": "تعذّر إلغاء الموعد. حاول مرة أخرى.",
   "reschedule": "إعادة الجدولة",
   "noUpcomingAppointments": "لا توجد مواعيد قادمة",
   "noPastAppointments": "لا توجد مواعيد سابقة",
   "bookNow": "احجز الآن",
   "loadAppointmentsError": "تعذّر تحميل المواعيد. حاول مرة أخرى.",
-  "rescheduleDoctorNotFound": "تعذّر العثور على هذا الطبيب. حاول مرة أخرى.",
-  "couldNotOpenMaps": "تعذّر فتح الخرائط. حاول مرة أخرى."
+  "rescheduleDoctorNotFound": "تعذّر العثور على هذا الطبيب. حاول مرة أخرى."
 }

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../common/models/appointment.dart';
 import '../../../common/models/doctor.dart';
+import '../../doctor_profile/services/booking_service.dart';
 import '../../home/services/appointment_service.dart';
 
 enum AppointmentsTab { upcoming, past }
@@ -14,8 +15,10 @@ enum AppointmentsTab { upcoming, past }
 class MyAppointmentsProvider extends ChangeNotifier {
   MyAppointmentsProvider({
     required AppointmentService appointmentService,
+    required BookingService bookingService,
     required String? patientId,
   }) : _appointmentService = appointmentService,
+       _bookingService = bookingService,
        _patientId = patientId {
     // Null when nobody is signed in, which shouldn't happen on this
     // (already-authenticated) screen — just show both tabs empty rather
@@ -30,6 +33,7 @@ class MyAppointmentsProvider extends ChangeNotifier {
   }
 
   final AppointmentService _appointmentService;
+  final BookingService _bookingService;
   final String? _patientId;
 
   AppointmentsTab _selectedTab = AppointmentsTab.upcoming;
@@ -106,6 +110,25 @@ class MyAppointmentsProvider extends ChangeNotifier {
       return await _appointmentService.getDoctor(doctorId);
     } catch (_) {
       return null;
+    }
+  }
+
+  /// Cancels [appointment] — releasing its slot back into that doctor's
+  /// availability — then refreshes both tabs so it drops out of Upcoming.
+  /// Returns whether it succeeded; the caller shows confirmation/error
+  /// feedback based on the result rather than this class holding onto it.
+  Future<bool> cancelAppointment(Appointment appointment) async {
+    try {
+      await _bookingService.cancelAppointment(
+        appointmentId: appointment.id,
+        doctorId: appointment.doctorId,
+        date: appointment.date,
+        slot: appointment.slot,
+      );
+      refresh();
+      return true;
+    } catch (_) {
+      return false;
     }
   }
 }

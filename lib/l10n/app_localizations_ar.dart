@@ -314,7 +314,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appointmentStatusCompleted => 'مكتمل';
 
   @override
-  String get getDirections => 'الحصول على الاتجاهات';
+  String get cancelAppointment => 'إلغاء الموعد';
+
+  @override
+  String get cancelAppointmentQuestion => 'هل تريد إلغاء هذا الموعد؟';
+
+  @override
+  String get appointmentCancelled => 'تم إلغاء الموعد.';
+
+  @override
+  String get cancelAppointmentFailed => 'تعذّر إلغاء الموعد. حاول مرة أخرى.';
 
   @override
   String get reschedule => 'إعادة الجدولة';
@@ -334,7 +343,4 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get rescheduleDoctorNotFound =>
       'تعذّر العثور على هذا الطبيب. حاول مرة أخرى.';
-
-  @override
-  String get couldNotOpenMaps => 'تعذّر فتح الخرائط. حاول مرة أخرى.';
 }

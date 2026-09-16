@@ -662,11 +662,29 @@ abstract class AppLocalizations {
   /// **'Completed'**
   String get appointmentStatusCompleted;
 
-  /// Button on an upcoming appointment card that opens the device's maps app.
+  /// Button on an upcoming appointment card that cancels it; also the confirming action label in its confirmation dialog.
   ///
   /// In en, this message translates to:
-  /// **'Get directions'**
-  String get getDirections;
+  /// **'Cancel appointment'**
+  String get cancelAppointment;
+
+  /// Title of the confirmation dialog shown before cancelling an appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this appointment?'**
+  String get cancelAppointmentQuestion;
+
+  /// Confirmation snackbar shown after successfully cancelling an appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment cancelled.'**
+  String get appointmentCancelled;
+
+  /// Shown when cancelling an appointment fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t cancel the appointment. Please try again.'**
+  String get cancelAppointmentFailed;
 
   /// Button on an upcoming appointment card that opens the Booking screen for that doctor.
   ///
@@ -703,12 +721,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t find that doctor. Please try again.'**
   String get rescheduleDoctorNotFound;
-
-  /// Shown when "Get directions" fails to open the device's maps app.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn\'t open maps. Please try again.'**
-  String get couldNotOpenMaps;
 }
 
 class _AppLocalizationsDelegate

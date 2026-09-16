@@ -51,6 +51,16 @@ abstract class BookingService {
     required DateTime date,
     required String slot,
   });
+
+  /// Cancels [appointmentId] — previously booked for [doctorId] on [date]
+  /// at [slot] — by marking its status `cancelled` and releasing [slot]
+  /// back into that doctor's availability for other patients to book.
+  Future<void> cancelAppointment({
+    required String appointmentId,
+    required String doctorId,
+    required String date,
+    required String slot,
+  });
 }
 
 class FirestoreBookingService implements BookingService {
@@ -164,6 +174,30 @@ class FirestoreBookingService implements BookingService {
         'date': newDateId,
         'slot': slot,
       });
+    });
+  }
+
+  @override
+  Future<void> cancelAppointment({
+    required String appointmentId,
+    required String doctorId,
+    required String date,
+    required String slot,
+  }) async {
+    final availabilityRef = _firestore
+        .collection('doctors')
+        .doc(doctorId)
+        .collection('availability')
+        .doc(date);
+    final appointmentRef = _firestore.collection('appointments').doc(appointmentId);
+
+    // No prior read needed — unlike booking/rescheduling, releasing a
+    // slot back can't conflict with anything else.
+    await _firestore.runTransaction((transaction) async {
+      transaction.update(availabilityRef, {
+        'slots': FieldValue.arrayUnion([slot]),
+      });
+      transaction.update(appointmentRef, {'status': 'cancelled'});
     });
   }
 }

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/models/appointment.dart';
-import '../../../config/app_config.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../navigation/nav_shell_controller.dart';
 import '../../../theme/app_theme.dart';
 import '../../auth/view/auth_provider.dart';
+import '../../doctor_profile/services/booking_service.dart';
 import '../../doctor_profile/view/doctor_profile_view.dart';
 import '../../home/services/appointment_service.dart';
 import '../widgets/appointment_card.dart';
@@ -18,10 +17,11 @@ import 'my_appointments_provider.dart';
 /// My appointments: an Upcoming/Past toggle over the signed-in patient's
 /// appointments, fetched from Firestore via `AppointmentService`.
 class MyAppointmentsView extends StatelessWidget {
-  const MyAppointmentsView({super.key, this.appointmentService});
+  const MyAppointmentsView({super.key, this.appointmentService, this.bookingService});
 
   /// Injectable for tests, so they never talk to real Firestore.
   final AppointmentService? appointmentService;
+  final BookingService? bookingService;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +29,7 @@ class MyAppointmentsView extends StatelessWidget {
     return ChangeNotifierProvider<MyAppointmentsProvider>(
       create: (_) => MyAppointmentsProvider(
         appointmentService: appointmentService ?? FirestoreAppointmentService(),
+        bookingService: bookingService ?? FirestoreBookingService(),
         patientId: patientId,
       ),
       child: const _RefreshOnTabEnter(child: _MyAppointmentsScaffold()),
@@ -152,7 +153,6 @@ class _UpcomingList extends StatelessWidget {
                 context.read<NavShellController>().selectTab(MainTab.home),
           );
         }
-        final locale = Localizations.localeOf(context);
         return ListView.separated(
           itemCount: upcoming.length,
           separatorBuilder: (_, _) => const SizedBox(height: AppTheme.spacing12),
@@ -162,10 +162,7 @@ class _UpcomingList extends StatelessWidget {
               appointment: appointment,
               isPast: false,
               lookupDoctor: context.read<MyAppointmentsProvider>().getDoctor,
-              onGetDirections: () => _openDirections(
-                context,
-                AppConfig.clinicAddressFor(locale),
-              ),
+              onCancel: () => _confirmAndCancel(context, appointment),
               onReschedule: () => _openReschedule(context, appointment),
             );
           },
@@ -215,25 +212,40 @@ class _PastList extends StatelessWidget {
   }
 }
 
-/// Opens the device's maps app centered on [address] — a universal
-/// `google.com/maps` link so this works whether or not a native Maps app is
-/// installed, rather than a scheme (`geo:`/`maps:`) that isn't.
-Future<void> _openDirections(BuildContext context, String address) async {
-  final uri = Uri.https('www.google.com', '/maps/search/', {
-    'api': '1',
-    'query': address,
-  });
-  var launched = false;
-  try {
-    launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
-  } catch (_) {
-    launched = false;
-  }
-  if (!launched && context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.couldNotOpenMaps)),
-    );
-  }
+/// Confirms with the patient, then cancels [appointment] — releasing its
+/// slot back into that doctor's availability for other patients to book —
+/// and shows a confirmation or failure snackbar based on the result. The
+/// provider's own `refresh()` (called from `cancelAppointment` on success)
+/// takes care of dropping it from the Upcoming list.
+Future<void> _confirmAndCancel(BuildContext context, Appointment appointment) async {
+  final loc = AppLocalizations.of(context)!;
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: Text(loc.cancelAppointmentQuestion),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: Text(loc.cancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: Text(loc.cancelAppointment),
+        ),
+      ],
+    ),
+  );
+  if (!(confirmed ?? false) || !context.mounted) return;
+
+  final success = await context.read<MyAppointmentsProvider>().cancelAppointment(
+    appointment,
+  );
+  if (!context.mounted) return;
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(success ? loc.appointmentCancelled : loc.cancelAppointmentFailed),
+    ),
+  );
 }
 
 /// Looks up the appointment's doctor and, if found, pushes

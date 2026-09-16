@@ -316,7 +316,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appointmentStatusCompleted => 'Completed';
 
   @override
-  String get getDirections => 'Get directions';
+  String get cancelAppointment => 'Cancel appointment';
+
+  @override
+  String get cancelAppointmentQuestion => 'Cancel this appointment?';
+
+  @override
+  String get appointmentCancelled => 'Appointment cancelled.';
+
+  @override
+  String get cancelAppointmentFailed =>
+      'Couldn\'t cancel the appointment. Please try again.';
 
   @override
   String get reschedule => 'Reschedule';
@@ -337,7 +347,4 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rescheduleDoctorNotFound =>
       'Couldn\'t find that doctor. Please try again.';
-
-  @override
-  String get couldNotOpenMaps => 'Couldn\'t open maps. Please try again.';
 }

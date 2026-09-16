@@ -21,10 +21,12 @@ abstract class AppointmentService {
   /// subscribed, matching CLAUDE.md's async/await guidance.
   Future<List<Appointment>> getUpcomingAppointments(String patientId);
 
-  /// [patientId]'s appointments dated before today, most recent first.
-  /// There's no cancellation/completion flow yet, so nothing ever sets a
+  /// [patientId]'s non-cancelled appointments dated before today, most
+  /// recent first. There's no *completion* flow, so nothing ever sets a
   /// `completed` status — "past" is date-based instead, the same reasoning
-  /// [watchUpcomingAppointment] already uses for "upcoming".
+  /// [watchUpcomingAppointment] already uses for "upcoming" (cancelled ones
+  /// are excluded so a cancelled appointment that's since passed its date
+  /// never gets shown here looking like a normal completed one).
   Future<List<Appointment>> getPastAppointments(String patientId);
 
   /// A single doctor by id, or `null` if it no longer exists. Used by My
@@ -119,7 +121,11 @@ class FirestoreAppointmentService implements AppointmentService {
     final past =
         docs
             .map((data) => Appointment.fromFirestore(data['id'] as String, data))
-            .where((appointment) => appointment.date.compareTo(today) < 0)
+            .where(
+              (appointment) =>
+                  appointment.status != 'cancelled' &&
+                  appointment.date.compareTo(today) < 0,
+            )
             .toList()
           ..sort((a, b) => b.date.compareTo(a.date));
     return past;

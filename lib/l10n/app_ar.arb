@@ -114,5 +114,20 @@
   "noPastAppointments": "لا توجد مواعيد سابقة",
   "bookNow": "احجز الآن",
   "loadAppointmentsError": "تعذّر تحميل المواعيد. حاول مرة أخرى.",
-  "rescheduleDoctorNotFound": "تعذّر العثور على هذا الطبيب. حاول مرة أخرى."
+  "rescheduleDoctorNotFound": "تعذّر العثور على هذا الطبيب. حاول مرة أخرى.",
+
+  "save": "حفظ",
+  "profileUpdated": "تم تحديث الملف الشخصي.",
+  "profileUpdateFailed": "تعذّر تحديث ملفك الشخصي. حاول مرة أخرى.",
+  "loadProfileError": "تعذّر تحميل ملفك الشخصي. حاول مرة أخرى.",
+  "changePassword": "تغيير كلمة المرور",
+  "currentPasswordLabel": "كلمة المرور الحالية",
+  "newPasswordLabel": "كلمة المرور الجديدة",
+  "passwordChanged": "تم تغيير كلمة المرور.",
+  "passwordChangeFailed": "تعذّر تغيير كلمة المرور. حاول مرة أخرى.",
+  "deleteAccount": "حذف الحساب",
+  "deleteAccountQuestion": "هل تريد حذف حسابك؟",
+  "deleteAccountWarning": "سيؤدي هذا إلى حذف حسابك وجميع بياناتك نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+  "deleteAccountPasswordPrompt": "أدخل كلمة المرور للتأكيد.",
+  "deleteAccountFailed": "تعذّر حذف حسابك. حاول مرة أخرى."
 }

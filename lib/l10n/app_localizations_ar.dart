@@ -346,4 +346,47 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get rescheduleDoctorNotFound =>
       'تعذّر العثور على هذا الطبيب. حاول مرة أخرى.';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get profileUpdated => 'تم تحديث الملف الشخصي.';
+
+  @override
+  String get profileUpdateFailed => 'تعذّر تحديث ملفك الشخصي. حاول مرة أخرى.';
+
+  @override
+  String get loadProfileError => 'تعذّر تحميل ملفك الشخصي. حاول مرة أخرى.';
+
+  @override
+  String get changePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get currentPasswordLabel => 'كلمة المرور الحالية';
+
+  @override
+  String get newPasswordLabel => 'كلمة المرور الجديدة';
+
+  @override
+  String get passwordChanged => 'تم تغيير كلمة المرور.';
+
+  @override
+  String get passwordChangeFailed => 'تعذّر تغيير كلمة المرور. حاول مرة أخرى.';
+
+  @override
+  String get deleteAccount => 'حذف الحساب';
+
+  @override
+  String get deleteAccountQuestion => 'هل تريد حذف حسابك؟';
+
+  @override
+  String get deleteAccountWarning =>
+      'سيؤدي هذا إلى حذف حسابك وجميع بياناتك نهائيًا. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get deleteAccountPasswordPrompt => 'أدخل كلمة المرور للتأكيد.';
+
+  @override
+  String get deleteAccountFailed => 'تعذّر حذف حسابك. حاول مرة أخرى.';
 }

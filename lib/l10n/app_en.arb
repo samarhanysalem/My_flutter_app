@@ -480,5 +480,62 @@
   "rescheduleDoctorNotFound": "Couldn't find that doctor. Please try again.",
   "@rescheduleDoctorNotFound": {
     "description": "Shown when \"Reschedule\" can't look up the appointment's doctor record."
+  },
+
+  "save": "Save",
+  "@save": {
+    "description": "Button that saves the edited profile fields on the Profile screen."
+  },
+  "profileUpdated": "Profile updated.",
+  "@profileUpdated": {
+    "description": "Confirmation snackbar shown after successfully saving the Profile screen's editable fields."
+  },
+  "profileUpdateFailed": "Couldn't update your profile. Please try again.",
+  "@profileUpdateFailed": {
+    "description": "Shown when saving the Profile screen's editable fields fails."
+  },
+  "loadProfileError": "Couldn't load your profile. Please try again.",
+  "@loadProfileError": {
+    "description": "Shown when the Profile screen fails to fetch the signed-in patient's profile document."
+  },
+  "changePassword": "Change password",
+  "@changePassword": {
+    "description": "Profile screen action that opens the change-password dialog; also that dialog's title and confirming action label."
+  },
+  "currentPasswordLabel": "Current password",
+  "@currentPasswordLabel": {
+    "description": "Label for the change-password dialog's current-password field."
+  },
+  "newPasswordLabel": "New password",
+  "@newPasswordLabel": {
+    "description": "Label for the change-password dialog's new-password field."
+  },
+  "passwordChanged": "Password changed.",
+  "@passwordChanged": {
+    "description": "Confirmation snackbar shown after successfully changing the password."
+  },
+  "passwordChangeFailed": "Couldn't change your password. Please try again.",
+  "@passwordChangeFailed": {
+    "description": "Fallback shown when changing the password fails for a reason with no more specific message."
+  },
+  "deleteAccount": "Delete account",
+  "@deleteAccount": {
+    "description": "Profile screen action that opens the delete-account confirmation dialog; also that dialog's confirming action label."
+  },
+  "deleteAccountQuestion": "Delete your account?",
+  "@deleteAccountQuestion": {
+    "description": "Title of the delete-account confirmation dialog."
+  },
+  "deleteAccountWarning": "This will permanently delete your account and all your data. This can't be undone.",
+  "@deleteAccountWarning": {
+    "description": "Body text of the delete-account confirmation dialog, warning that it's irreversible."
+  },
+  "deleteAccountPasswordPrompt": "Enter your password to confirm.",
+  "@deleteAccountPasswordPrompt": {
+    "description": "Prompt above the password field on the delete-account confirmation dialog, explaining why it asks for one."
+  },
+  "deleteAccountFailed": "Couldn't delete your account. Please try again.",
+  "@deleteAccountFailed": {
+    "description": "Fallback shown when deleting the account fails for a reason with no more specific message."
   }
 }

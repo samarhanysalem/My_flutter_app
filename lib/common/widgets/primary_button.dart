@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../../theme/app_theme.dart';
+import '../../theme/app_theme.dart';
 
-/// The full-width 50px CTA used by both Sign in and Register, including the
-/// design's disabled-state colors when [onPressed] is null.
-class AuthPrimaryButton extends StatelessWidget {
-  const AuthPrimaryButton({
+/// The full-width 50px CTA used by the auth forms and Profile's Save/confirm
+/// actions, including the design's disabled-state colors when [onPressed]
+/// is null.
+class PrimaryButton extends StatelessWidget {
+  const PrimaryButton({
     super.key,
     required this.label,
     required this.onPressed,

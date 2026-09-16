@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../features/appointments/view/my_appointments_view.dart';
 import '../features/home/services/appointment_service.dart';
 import '../features/home/view/home_view.dart';
+import '../features/profile/services/profile_service.dart';
 import '../features/profile/view/profile_view.dart';
 import 'main_bottom_nav_bar.dart';
 import 'nav_shell_controller.dart';
@@ -14,10 +15,11 @@ import 'nav_shell_controller.dart';
 /// tabs (an `IndexedStack` also keeps each tab's state — e.g. Home's
 /// search/filters — alive when it's not the active one).
 class MainNavShell extends StatelessWidget {
-  const MainNavShell({super.key, this.appointmentService});
+  const MainNavShell({super.key, this.appointmentService, this.profileService});
 
-  /// Injectable for tests, so they never talk to real Firestore.
+  /// Injectable for tests, so they never talk to real Firestore/Firebase.
   final AppointmentService? appointmentService;
+  final ProfileService? profileService;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class MainNavShell extends StatelessWidget {
               children: [
                 HomeView(appointmentService: appointmentService),
                 MyAppointmentsView(appointmentService: appointmentService),
-                const ProfileView(),
+                ProfileView(profileService: profileService),
               ],
             ),
             bottomNavigationBar: MainBottomNavBar(

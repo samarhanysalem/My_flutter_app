@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../../l10n/app_localizations.dart';
-import '../../../theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
+import '../../theme/app_theme.dart';
 
 /// Labeled input matching the design handoff's field spec: 12px secondary
 /// label, 6px gap, 46px-tall input with an 8px-radius border that turns
 /// accent-colored on focus. When [obscureText] is true, shows a show/hide
-/// toggle rather than always hiding the input.
-class AuthTextField extends StatefulWidget {
-  const AuthTextField({
+/// toggle rather than always hiding the input. Shared by the auth forms and
+/// Profile's editable fields.
+class LabeledTextField extends StatefulWidget {
+  const LabeledTextField({
     super.key,
     required this.fieldKey,
     required this.label,
@@ -31,10 +32,10 @@ class AuthTextField extends StatefulWidget {
   final String? Function(String?)? validator;
 
   @override
-  State<AuthTextField> createState() => _AuthTextFieldState();
+  State<LabeledTextField> createState() => _LabeledTextFieldState();
 }
 
-class _AuthTextFieldState extends State<AuthTextField> {
+class _LabeledTextFieldState extends State<LabeledTextField> {
   late bool _obscured = widget.obscureText;
 
   OutlineInputBorder _border(Color color) => OutlineInputBorder(
@@ -69,8 +70,8 @@ class _AuthTextFieldState extends State<AuthTextField> {
             border: _border(AppTheme.border),
             enabledBorder: _border(AppTheme.border),
             focusedBorder: _border(AppTheme.primary),
-            errorBorder: _border(Theme.of(context).colorScheme.error),
-            focusedErrorBorder: _border(Theme.of(context).colorScheme.error),
+            errorBorder: _border(AppTheme.error),
+            focusedErrorBorder: _border(AppTheme.error),
             suffixIcon: widget.obscureText
                 ? IconButton(
                     icon: Icon(

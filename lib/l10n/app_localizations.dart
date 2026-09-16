@@ -727,6 +727,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t find that doctor. Please try again.'**
   String get rescheduleDoctorNotFound;
+
+  /// Button that saves the edited profile fields on the Profile screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Confirmation snackbar shown after successfully saving the Profile screen's editable fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated.'**
+  String get profileUpdated;
+
+  /// Shown when saving the Profile screen's editable fields fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update your profile. Please try again.'**
+  String get profileUpdateFailed;
+
+  /// Shown when the Profile screen fails to fetch the signed-in patient's profile document.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your profile. Please try again.'**
+  String get loadProfileError;
+
+  /// Profile screen action that opens the change-password dialog; also that dialog's title and confirming action label.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePassword;
+
+  /// Label for the change-password dialog's current-password field.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get currentPasswordLabel;
+
+  /// Label for the change-password dialog's new-password field.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPasswordLabel;
+
+  /// Confirmation snackbar shown after successfully changing the password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed.'**
+  String get passwordChanged;
+
+  /// Fallback shown when changing the password fails for a reason with no more specific message.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t change your password. Please try again.'**
+  String get passwordChangeFailed;
+
+  /// Profile screen action that opens the delete-account confirmation dialog; also that dialog's confirming action label.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// Title of the delete-account confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get deleteAccountQuestion;
+
+  /// Body text of the delete-account confirmation dialog, warning that it's irreversible.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete your account and all your data. This can\'t be undone.'**
+  String get deleteAccountWarning;
+
+  /// Prompt above the password field on the delete-account confirmation dialog, explaining why it asks for one.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password to confirm.'**
+  String get deleteAccountPasswordPrompt;
+
+  /// Fallback shown when deleting the account fails for a reason with no more specific message.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete your account. Please try again.'**
+  String get deleteAccountFailed;
 }
 
 class _AppLocalizationsDelegate

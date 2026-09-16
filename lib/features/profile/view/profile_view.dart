@@ -5,23 +5,44 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../auth/view/auth_provider.dart';
 import '../../auth/view/confirm_sign_out.dart';
+import '../services/profile_service.dart';
+import '../widgets/change_password_dialog.dart';
+import '../widgets/delete_account_dialog.dart';
+import '../widgets/profile_action_tile.dart';
+import '../widgets/profile_avatar_header.dart';
+import '../widgets/profile_edit_form.dart';
+import 'profile_provider.dart';
 
-/// Profile — a minimal placeholder: the signed-in patient's identity and a
-/// sign-out action. More (edit profile, settings, etc.) can come later.
+/// Profile: the signed-in patient's identity, editable name/phone, and the
+/// account actions (change password, delete account, log out).
 class ProfileView extends StatelessWidget {
-  const ProfileView({super.key});
+  const ProfileView({super.key, this.profileService});
+
+  /// Injectable for tests, so they never talk to real Firebase.
+  final ProfileService? profileService;
+
+  @override
+  Widget build(BuildContext context) {
+    final user = context.read<AuthProvider>().user;
+    return ChangeNotifierProvider<ProfileProvider>(
+      create: (_) => ProfileProvider(
+        profileService: profileService ?? FirestoreProfileService(),
+        uid: user?.uid,
+        email: user?.email,
+      ),
+      child: const _ProfileScaffold(),
+    );
+  }
+}
+
+class _ProfileScaffold extends StatelessWidget {
+  const _ProfileScaffold();
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final user = context.watch<AuthProvider>().user;
-    final displayName = user?.displayName?.trim();
-    final initialSource = (displayName != null && displayName.isNotEmpty)
-        ? displayName
-        : user?.email;
-    final initial = (initialSource == null || initialSource.isEmpty)
-        ? '?'
-        : initialSource[0].toUpperCase();
+    final profileProvider = context.watch<ProfileProvider>();
 
     return Scaffold(
       backgroundColor: AppTheme.screenGround,
@@ -36,55 +57,51 @@ class ProfileView extends StatelessWidget {
                 children: [
                   Text(loc.navProfile, style: AppTheme.screenTitle),
                   const SizedBox(height: AppTheme.spacing24),
-                  Center(
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 72,
-                          height: 72,
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                            color: AppTheme.accentTint,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            initial,
-                            style: AppTheme.heading.copyWith(
-                              color: AppTheme.primary,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: AppTheme.spacing12),
-                        if (displayName != null && displayName.isNotEmpty)
-                          Text(displayName, style: AppTheme.cardTitle),
-                        if (user?.email != null) ...[
-                          const SizedBox(height: AppTheme.spacing2),
-                          Text(user!.email!, style: AppTheme.subtitle),
-                        ],
-                      ],
-                    ),
+                  ProfileAvatarHeader(
+                    displayName: profileProvider.isLoading
+                        ? user?.displayName
+                        : profileProvider.fullName,
+                    email: user?.email,
                   ),
                   const SizedBox(height: AppTheme.spacing28),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 46,
-                    child: OutlinedButton.icon(
-                      onPressed: () => confirmSignOut(context),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AppTheme.border),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            AppTheme.radiusSmall,
-                          ),
-                        ),
+                  if (profileProvider.isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else if (profileProvider.hasLoadError)
+                    Center(
+                      child: Text(
+                        loc.loadProfileError,
+                        style: AppTheme.subtitle,
+                        textAlign: TextAlign.center,
                       ),
-                      icon: const Icon(
-                        Icons.logout,
-                        size: 18,
-                        color: AppTheme.ink,
-                      ),
-                      label: Text(loc.signOut, style: AppTheme.body),
+                    )
+                  else
+                    // Only ever built once loading has finished, so this is
+                    // the one and only construction of this State — a later
+                    // rebuild here (e.g. after a successful save changes
+                    // profileProvider.fullName/phone) updates its widget
+                    // without remounting, leaving the field controllers
+                    // (and whatever the patient is mid-typing) alone.
+                    ProfileEditForm(
+                      initialFullName: profileProvider.fullName,
+                      initialPhone: profileProvider.phone,
                     ),
+                  const SizedBox(height: AppTheme.spacing24),
+                  const Divider(color: AppTheme.divider, height: 1),
+                  ProfileActionTile(
+                    icon: Icons.lock_outline,
+                    label: loc.changePassword,
+                    onTap: () => showChangePasswordDialog(context, profileProvider),
+                  ),
+                  ProfileActionTile(
+                    icon: Icons.delete_outline,
+                    label: loc.deleteAccount,
+                    color: AppTheme.error,
+                    onTap: () => showDeleteAccountDialog(context, profileProvider),
+                  ),
+                  ProfileActionTile(
+                    icon: Icons.logout,
+                    label: loc.signOut,
+                    onTap: () => confirmSignOut(context),
                   ),
                 ],
               ),

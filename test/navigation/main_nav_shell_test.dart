@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../features/auth/fake_auth_repository.dart';
 import '../features/home/fake_appointment_service.dart';
+import '../features/profile/fake_profile_service.dart';
 
 const _upcomingAppointment = Appointment(
   id: 'a1',
@@ -56,7 +57,10 @@ Future<FakeAppointmentService> _pumpShell(
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: MainNavShell(appointmentService: appointmentService),
+        home: MainNavShell(
+          appointmentService: appointmentService,
+          profileService: FakeProfileService(),
+        ),
       ),
     ),
   );

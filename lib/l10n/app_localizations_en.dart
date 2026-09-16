@@ -350,4 +350,51 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rescheduleDoctorNotFound =>
       'Couldn\'t find that doctor. Please try again.';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get profileUpdated => 'Profile updated.';
+
+  @override
+  String get profileUpdateFailed =>
+      'Couldn\'t update your profile. Please try again.';
+
+  @override
+  String get loadProfileError =>
+      'Couldn\'t load your profile. Please try again.';
+
+  @override
+  String get changePassword => 'Change password';
+
+  @override
+  String get currentPasswordLabel => 'Current password';
+
+  @override
+  String get newPasswordLabel => 'New password';
+
+  @override
+  String get passwordChanged => 'Password changed.';
+
+  @override
+  String get passwordChangeFailed =>
+      'Couldn\'t change your password. Please try again.';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountQuestion => 'Delete your account?';
+
+  @override
+  String get deleteAccountWarning =>
+      'This will permanently delete your account and all your data. This can\'t be undone.';
+
+  @override
+  String get deleteAccountPasswordPrompt => 'Enter your password to confirm.';
+
+  @override
+  String get deleteAccountFailed =>
+      'Couldn\'t delete your account. Please try again.';
 }

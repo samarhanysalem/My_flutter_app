@@ -3,13 +3,13 @@ import 'package:provider/provider.dart';
 
 import '../../../common/utils/not_available_yet.dart';
 import '../../../common/widgets/app_logo_mark.dart';
+import '../../../common/widgets/inline_error_text.dart';
+import '../../../common/widgets/labeled_text_field.dart';
+import '../../../common/widgets/primary_button.dart';
 import '../../../config/app_config.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../auth_validators.dart';
-import '../widgets/auth_error_text.dart';
-import '../widgets/auth_primary_button.dart';
-import '../widgets/auth_text_field.dart';
 import '../widgets/language_toggle_button.dart';
 import 'auth_provider.dart';
 import 'register_view.dart';
@@ -83,7 +83,7 @@ class _LoginViewState extends State<LoginView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AuthTextField(
+                        LabeledTextField(
                           fieldKey: 'email',
                           label: loc.emailLabel,
                           controller: _emailController,
@@ -93,7 +93,7 @@ class _LoginViewState extends State<LoginView> {
                               AuthValidators.email(value, loc),
                         ),
                         const SizedBox(height: AppTheme.spacing14),
-                        AuthTextField(
+                        LabeledTextField(
                           fieldKey: 'password',
                           label: loc.passwordLabel,
                           controller: _passwordController,
@@ -124,10 +124,10 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     if (authProvider.errorMessage != null) ...[
                       const SizedBox(height: AppTheme.spacing12),
-                      AuthErrorText(message: authProvider.errorMessage!),
+                      InlineErrorText(message: authProvider.errorMessage!),
                     ],
                     const SizedBox(height: AppTheme.spacing24),
-                    AuthPrimaryButton(
+                    PrimaryButton(
                       label: loc.signIn,
                       isLoading: authProvider.isLoading,
                       onPressed: () => _submit(authProvider),

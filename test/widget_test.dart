@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'features/auth/fake_auth_repository.dart';
 import 'features/home/fake_appointment_service.dart';
+import 'features/profile/fake_profile_service.dart';
 
 /// The login/register forms are taller than the default 800x600 test
 /// surface; widgets below the fold fail to hit-test inside the
@@ -28,7 +29,14 @@ Future<FakeAppointmentService> _pumpAuthApp(
   final appointmentService = FakeAppointmentService();
   addTearDown(appointmentService.dispose);
   await tester.pumpWidget(
-    MyApp(authRepository: repository, appointmentService: appointmentService),
+    MyApp(
+      authRepository: repository,
+      appointmentService: appointmentService,
+      // MainNavShell's IndexedStack builds Profile eagerly alongside Home,
+      // even before the Profile tab is ever selected — so this is needed
+      // to keep these auth-flow tests off real Firebase too.
+      profileService: FakeProfileService(),
+    ),
   );
   await tester.pump();
   return appointmentService;

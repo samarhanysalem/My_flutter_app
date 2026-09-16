@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/widgets/inline_error_text.dart';
+import '../../../common/widgets/labeled_text_field.dart';
+import '../../../common/widgets/primary_button.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../auth_validators.dart';
-import '../widgets/auth_error_text.dart';
-import '../widgets/auth_primary_button.dart';
-import '../widgets/auth_text_field.dart';
 import '../widgets/terms_checkbox.dart';
 import 'auth_provider.dart';
 
@@ -100,20 +100,16 @@ class _RegisterViewState extends State<RegisterView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AuthTextField(
+                        LabeledTextField(
                           fieldKey: 'fullName',
                           label: loc.fullNameLabel,
                           controller: _fullNameController,
                           autofillHints: const [AutofillHints.name],
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return loc.enterYourFullName;
-                            }
-                            return null;
-                          },
+                          validator: (value) =>
+                              AuthValidators.fullName(value, loc),
                         ),
                         const SizedBox(height: AppTheme.spacing14),
-                        AuthTextField(
+                        LabeledTextField(
                           fieldKey: 'email',
                           label: loc.emailLabel,
                           controller: _emailController,
@@ -123,43 +119,24 @@ class _RegisterViewState extends State<RegisterView> {
                               AuthValidators.email(value, loc),
                         ),
                         const SizedBox(height: AppTheme.spacing14),
-                        AuthTextField(
+                        LabeledTextField(
                           fieldKey: 'phone',
                           label: loc.phoneLabel,
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
                           autofillHints: const [AutofillHints.telephoneNumber],
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return loc.enterYourPhoneNumber;
-                            }
-                            final digits = value.replaceAll(
-                              RegExp(r'[^0-9]'),
-                              '',
-                            );
-                            if (digits.length < 7) {
-                              return loc.enterAValidPhoneNumber;
-                            }
-                            return null;
-                          },
+                          validator: (value) =>
+                              AuthValidators.phone(value, loc),
                         ),
                         const SizedBox(height: AppTheme.spacing14),
-                        AuthTextField(
+                        LabeledTextField(
                           fieldKey: 'password',
                           label: loc.passwordLabel,
                           controller: _passwordController,
                           obscureText: true,
                           autofillHints: const [AutofillHints.newPassword],
-                          validator: (value) {
-                            if (value == null || value.length < 8) {
-                              return loc.passwordTooShort;
-                            }
-                            if (!RegExp(r'[A-Za-z]').hasMatch(value) ||
-                                !RegExp(r'[0-9]').hasMatch(value)) {
-                              return loc.passwordNeedsLetterAndNumber;
-                            }
-                            return null;
-                          },
+                          validator: (value) =>
+                              AuthValidators.password(value, loc),
                         ),
                       ],
                     ),
@@ -171,10 +148,10 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                     if (authProvider.errorMessage != null) ...[
                       const SizedBox(height: AppTheme.spacing12),
-                      AuthErrorText(message: authProvider.errorMessage!),
+                      InlineErrorText(message: authProvider.errorMessage!),
                     ],
                     const SizedBox(height: AppTheme.spacing22),
-                    AuthPrimaryButton(
+                    PrimaryButton(
                       label: loc.createAccount,
                       isLoading: authProvider.isLoading,
                       onPressed: _termsAccepted

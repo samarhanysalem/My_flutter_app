@@ -64,6 +64,10 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
         final error = widget.provider.deleteError;
         return AlertDialog(
           title: Text(loc.deleteAccountQuestion),
+          // See ChangePasswordDialog's identical fix: without this, the
+          // warning text plus the password field can overlap the actions
+          // row instead of scrolling when the keyboard is open on a phone.
+          scrollable: true,
           content: Form(
             key: _formKey,
             child: Column(

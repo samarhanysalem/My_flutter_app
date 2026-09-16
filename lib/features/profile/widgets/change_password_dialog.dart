@@ -68,6 +68,11 @@ class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
         final error = widget.provider.passwordError;
         return AlertDialog(
           title: Text(loc.changePassword),
+          // Without this, the content doesn't scroll, so on a phone with
+          // the keyboard open there isn't room for both fields plus the
+          // actions row below them — they render on top of each other
+          // instead of one being pushed off-screen and scrollable to.
+          scrollable: true,
           content: Form(
             key: _formKey,
             child: Column(

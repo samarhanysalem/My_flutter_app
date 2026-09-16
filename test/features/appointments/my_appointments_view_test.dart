@@ -52,13 +52,14 @@ Future<void> _pumpView(
   // `_signedInAuthProvider` for the same fix.
   await tester.pump();
 
-  Widget child = MyAppointmentsView(appointmentService: appointmentService);
-  if (navController != null) {
-    child = ChangeNotifierProvider<NavShellController>.value(
-      value: navController,
-      child: child,
-    );
-  }
+  // MyAppointmentsView always lives inside MainNavShell in production,
+  // which provides this above it — including a throwaway one here when a
+  // test doesn't care about tab-switching lets _RefreshOnTabEnter (which
+  // unconditionally reads it) find one.
+  final child = ChangeNotifierProvider<NavShellController>.value(
+    value: navController ?? NavShellController(),
+    child: MyAppointmentsView(appointmentService: appointmentService),
+  );
 
   await tester.pumpWidget(
     ChangeNotifierProvider<AuthProvider>.value(
@@ -74,6 +75,33 @@ Future<void> _pumpView(
 }
 
 void main() {
+  testWidgets(
+    'refreshes the Upcoming list when the Appointments tab becomes selected',
+    (tester) async {
+      // Simulates booking a new appointment from Home while this screen
+      // sits alive-but-unselected in MainNavShell's IndexedStack: nothing
+      // tells this already-constructed MyAppointmentsProvider about it
+      // directly, so switching to the Appointments tab is what has to
+      // pick up the change — the exact bug this guards against ("book a
+      // new appointment, it doesn't show up until I refresh the screen").
+      final appointmentService = FakeAppointmentService();
+      addTearDown(appointmentService.dispose);
+      final navController = NavShellController();
+
+      await _pumpView(tester, appointmentService, navController: navController);
+      await tester.pump();
+
+      expect(find.text('No upcoming appointments'), findsOneWidget);
+
+      appointmentService.upcomingAppointments = [_upcoming];
+      navController.selectTab(MainTab.appointments);
+      await tester.pump();
+
+      expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
+      expect(find.text('No upcoming appointments'), findsNothing);
+    },
+  );
+
   testWidgets('shows a loading indicator, then the Upcoming list', (
     tester,
   ) async {

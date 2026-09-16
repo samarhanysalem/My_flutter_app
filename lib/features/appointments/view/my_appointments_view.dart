@@ -31,9 +31,54 @@ class MyAppointmentsView extends StatelessWidget {
         appointmentService: appointmentService ?? FirestoreAppointmentService(),
         patientId: patientId,
       ),
-      child: const _MyAppointmentsScaffold(),
+      child: const _RefreshOnTabEnter(child: _MyAppointmentsScaffold()),
     );
   }
+}
+
+/// Re-fetches both tabs whenever the Appointments bottom-nav tab becomes
+/// selected — e.g. after booking a new appointment from Home and then
+/// switching here. `MainNavShell` keeps this screen alive in an
+/// `IndexedStack` rather than rebuilding it on every tab switch, and
+/// `MyAppointmentsProvider`'s lists are one-time fetches (see its doc
+/// comment), so without this they'd otherwise only ever reflect whatever
+/// was true when this screen was first built.
+class _RefreshOnTabEnter extends StatefulWidget {
+  const _RefreshOnTabEnter({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_RefreshOnTabEnter> createState() => _RefreshOnTabEnterState();
+}
+
+class _RefreshOnTabEnterState extends State<_RefreshOnTabEnter> {
+  NavShellController? _navController;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final navController = context.read<NavShellController>();
+    if (!identical(_navController, navController)) {
+      _navController?.removeListener(_onNavChanged);
+      _navController = navController..addListener(_onNavChanged);
+    }
+  }
+
+  @override
+  void dispose() {
+    _navController?.removeListener(_onNavChanged);
+    super.dispose();
+  }
+
+  void _onNavChanged() {
+    if (_navController?.selectedTab == MainTab.appointments) {
+      context.read<MyAppointmentsProvider>().refresh();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class _MyAppointmentsScaffold extends StatelessWidget {

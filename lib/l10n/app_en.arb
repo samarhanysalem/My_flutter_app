@@ -40,14 +40,6 @@
   "@signIn": {
     "description": "Sign-in button label."
   },
-  "orDivider": "or",
-  "@orDivider": {
-    "description": "Divider text between sign-in methods."
-  },
-  "continueWithPhone": "Continue with phone number",
-  "@continueWithPhone": {
-    "description": "Phone sign-in button label."
-  },
   "newHereQuestion": "New here? ",
   "@newHereQuestion": {
     "description": "Prompt before the create-account link on the login screen."
@@ -59,10 +51,6 @@
   "passwordResetFeature": "Password reset",
   "@passwordResetFeature": {
     "description": "Feature name used in the not-available-yet notice for forgot password."
-  },
-  "phoneSignInFeature": "Phone sign-in",
-  "@phoneSignInFeature": {
-    "description": "Feature name used in the not-available-yet notice for phone sign-in."
   },
 
   "createYourAccount": "Create your account",

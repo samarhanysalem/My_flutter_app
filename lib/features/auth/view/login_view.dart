@@ -132,50 +132,7 @@ class _LoginViewState extends State<LoginView> {
                       isLoading: authProvider.isLoading,
                       onPressed: () => _submit(authProvider),
                     ),
-                    const SizedBox(height: AppTheme.spacing22),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Divider(color: AppTheme.divider, height: 1),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Text(loc.orDivider, style: AppTheme.caption),
-                        ),
-                        const Expanded(
-                          child: Divider(color: AppTheme.divider, height: 1),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppTheme.spacing22),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 46,
-                      child: OutlinedButton.icon(
-                        onPressed: () => showNotAvailableYet(
-                          context,
-                          loc.phoneSignInFeature,
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: AppTheme.border),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              AppTheme.radiusSmall,
-                            ),
-                          ),
-                        ),
-                        icon: const Icon(
-                          Icons.phone,
-                          size: 15,
-                          color: AppTheme.textSecondary,
-                        ),
-                        label: Text(
-                          loc.continueWithPhone,
-                          style: AppTheme.body,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppTheme.spacing20),
+                    const SizedBox(height: AppTheme.spacing24),
                     Center(
                       child: Wrap(
                         alignment: WrapAlignment.center,

@@ -34,12 +34,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signIn => 'تسجيل الدخول';
 
   @override
-  String get orDivider => 'أو';
-
-  @override
-  String get continueWithPhone => 'المتابعة برقم الهاتف';
-
-  @override
   String get newHereQuestion => 'مستخدم جديد؟ ';
 
   @override
@@ -47,9 +41,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get passwordResetFeature => 'إعادة تعيين كلمة المرور';
-
-  @override
-  String get phoneSignInFeature => 'تسجيل الدخول بالهاتف';
 
   @override
   String get createYourAccount => 'أنشئ حسابك';

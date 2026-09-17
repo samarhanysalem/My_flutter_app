@@ -34,12 +34,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signIn => 'Sign in';
 
   @override
-  String get orDivider => 'or';
-
-  @override
-  String get continueWithPhone => 'Continue with phone number';
-
-  @override
   String get newHereQuestion => 'New here? ';
 
   @override
@@ -47,9 +41,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordResetFeature => 'Password reset';
-
-  @override
-  String get phoneSignInFeature => 'Phone sign-in';
 
   @override
   String get createYourAccount => 'Create your account';

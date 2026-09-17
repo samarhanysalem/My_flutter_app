@@ -9,12 +9,9 @@
   "passwordLabel": "كلمة المرور",
   "forgotPassword": "هل نسيت كلمة المرور؟",
   "signIn": "تسجيل الدخول",
-  "orDivider": "أو",
-  "continueWithPhone": "المتابعة برقم الهاتف",
   "newHereQuestion": "مستخدم جديد؟ ",
   "createAnAccount": "إنشاء حساب",
   "passwordResetFeature": "إعادة تعيين كلمة المرور",
-  "phoneSignInFeature": "تسجيل الدخول بالهاتف",
 
   "createYourAccount": "أنشئ حسابك",
   "registerSubtitle": "يستغرق الأمر دقيقة واحدة فقط. الدفع في العيادة، فلا حاجة لبطاقة.",

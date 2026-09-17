@@ -140,18 +140,6 @@ abstract class AppLocalizations {
   /// **'Sign in'**
   String get signIn;
 
-  /// Divider text between sign-in methods.
-  ///
-  /// In en, this message translates to:
-  /// **'or'**
-  String get orDivider;
-
-  /// Phone sign-in button label.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue with phone number'**
-  String get continueWithPhone;
-
   /// Prompt before the create-account link on the login screen.
   ///
   /// In en, this message translates to:
@@ -169,12 +157,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password reset'**
   String get passwordResetFeature;
-
-  /// Feature name used in the not-available-yet notice for phone sign-in.
-  ///
-  /// In en, this message translates to:
-  /// **'Phone sign-in'**
-  String get phoneSignInFeature;
 
   /// Register screen heading.
   ///

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../../../theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
+import '../../theme/app_theme.dart';
 
 /// Labeled input matching the design handoff's field spec: 12px secondary
 /// label, 6px gap, 46px-tall input with an 8px-radius border that turns
 /// accent-colored on focus. When [obscureText] is true, shows a show/hide
-/// toggle rather than always hiding the input.
-class AuthTextField extends StatefulWidget {
-  const AuthTextField({
+/// toggle rather than always hiding the input. Shared by the auth forms and
+/// Profile's editable fields.
+class LabeledTextField extends StatefulWidget {
+  const LabeledTextField({
     super.key,
+    required this.fieldKey,
     required this.label,
     required this.controller,
     this.obscureText = false,
@@ -17,6 +20,10 @@ class AuthTextField extends StatefulWidget {
     this.validator,
   });
 
+  /// A stable, non-localized identifier for this field (e.g. 'email'),
+  /// used to build a widget [Key] that stays the same across languages —
+  /// unlike [label], which is user-facing, localized text.
+  final String fieldKey;
   final String label;
   final TextEditingController controller;
   final bool obscureText;
@@ -25,10 +32,10 @@ class AuthTextField extends StatefulWidget {
   final String? Function(String?)? validator;
 
   @override
-  State<AuthTextField> createState() => _AuthTextFieldState();
+  State<LabeledTextField> createState() => _LabeledTextFieldState();
 }
 
-class _AuthTextFieldState extends State<AuthTextField> {
+class _LabeledTextFieldState extends State<LabeledTextField> {
   late bool _obscured = widget.obscureText;
 
   OutlineInputBorder _border(Color color) => OutlineInputBorder(
@@ -45,7 +52,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         Text(widget.label, style: AppTheme.fieldLabel),
         const SizedBox(height: AppTheme.spacing6),
         TextFormField(
-          key: Key('authField_${widget.label}'),
+          key: Key('authField_${widget.fieldKey}'),
           controller: widget.controller,
           obscureText: _obscured,
           keyboardType: widget.keyboardType,
@@ -63,8 +70,8 @@ class _AuthTextFieldState extends State<AuthTextField> {
             border: _border(AppTheme.border),
             enabledBorder: _border(AppTheme.border),
             focusedBorder: _border(AppTheme.primary),
-            errorBorder: _border(Theme.of(context).colorScheme.error),
-            focusedErrorBorder: _border(Theme.of(context).colorScheme.error),
+            errorBorder: _border(AppTheme.error),
+            focusedErrorBorder: _border(AppTheme.error),
             suffixIcon: widget.obscureText
                 ? IconButton(
                     icon: Icon(
@@ -72,7 +79,9 @@ class _AuthTextFieldState extends State<AuthTextField> {
                       size: 20,
                       color: AppTheme.textSecondary,
                     ),
-                    tooltip: _obscured ? 'Show password' : 'Hide password',
+                    tooltip: _obscured
+                        ? AppLocalizations.of(context)!.showPassword
+                        : AppLocalizations.of(context)!.hidePassword,
                     onPressed: () => setState(() => _obscured = !_obscured),
                   )
                 : null,

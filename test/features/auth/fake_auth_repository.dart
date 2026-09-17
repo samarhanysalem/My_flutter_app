@@ -59,7 +59,7 @@ class FakeAuthRepository implements AuthRepository {
     lastFullName = fullName;
     lastPhone = phone;
     if (errorToThrow != null) throw errorToThrow!;
-    _currentUser = AppUser(uid: 'test-uid', email: email);
+    _currentUser = AppUser(uid: 'test-uid', email: email, displayName: fullName);
     _controller.add(_currentUser);
   }
 

@@ -8,7 +8,7 @@ import '../view/availability_provider.dart';
 
 /// "Available today" time-slot chips, backed by real availability data from
 /// Firestore (`doctors/{doctorId}/availability/{yyyy-MM-dd}` — see
-/// `AvailabilityService`), with a calendar button to check a different day.
+/// `AvailabilityRepository`), with a calendar button to check a different day.
 /// Reads the `AvailabilityProvider` that `DoctorProfileView` provides above
 /// both this and `BookAppointmentButton`, so selecting a slot here is what
 /// that button books.

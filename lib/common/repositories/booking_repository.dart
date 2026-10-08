@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../common/utils/date_id.dart';
+import '../utils/date_id.dart';
 
 /// Thrown when a booking can't be completed — most notably when the slot
 /// was booked by someone else between being shown and being confirmed.
@@ -15,7 +15,7 @@ class BookingException implements Exception {
 
 /// Abstraction over the booking backend, so `AvailabilityProvider` can be
 /// unit tested with a fake instead of talking to real Firestore.
-abstract class BookingService {
+abstract class BookingRepository {
   /// Books [slot] on [date] for [doctorId], on behalf of [patientId].
   /// [doctorName]/[doctorSpecialty]/[doctorNameAr] are denormalized onto
   /// the appointment record (same reasoning as Doctor's own fields) so
@@ -63,13 +63,13 @@ abstract class BookingService {
   });
 }
 
-class FirestoreBookingService implements BookingService {
-  FirestoreBookingService({FirebaseFirestore? firestore})
+class FirestoreBookingRepository implements BookingRepository {
+  FirestoreBookingRepository({FirebaseFirestore? firestore})
     : _explicitFirestore = firestore;
 
   final FirebaseFirestore? _explicitFirestore;
 
-  // Resolved lazily for the same reason as FirestoreAvailabilityService —
+  // Resolved lazily for the same reason as FirestoreAvailabilityRepository —
   // see that class.
   FirebaseFirestore get _firestore => _explicitFirestore ?? FirebaseFirestore.instance;
 

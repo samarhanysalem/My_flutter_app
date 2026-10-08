@@ -3,21 +3,21 @@ import 'package:doctor_appointment_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'features/auth/fake_auth_repository.dart';
-import 'features/home/fake_appointment_service.dart';
-import 'features/profile/fake_profile_service.dart';
+import 'common/repositories/fake_auth_repository.dart';
+import 'common/repositories/fake_appointment_repository.dart';
+import 'common/repositories/fake_profile_repository.dart';
 
 /// The login/register forms are taller than the default 800x600 test
 /// surface; widgets below the fold fail to hit-test inside the
 /// SingleChildScrollView unless the surface is made tall enough to fit them.
 ///
-/// Returns the fake `AppointmentService` a signed-in user's Home screen
+/// Returns the fake `AppointmentRepository` a signed-in user's Home screen
 /// will fetch doctors from — swapped in so these auth-flow tests never
 /// touch real Firestore. Once a test reaches Home, it must call
 /// `emitDoctors(...)` on it (see `_settleOnHome`) before `pumpAndSettle()`:
 /// Home's loading spinner animates indefinitely until doctors arrive, and
 /// pumpAndSettle() never returns while something is still animating.
-Future<FakeAppointmentService> _pumpAuthApp(
+Future<FakeAppointmentRepository> _pumpAuthApp(
   WidgetTester tester,
   FakeAuthRepository repository,
 ) async {
@@ -26,30 +26,30 @@ Future<FakeAppointmentService> _pumpAuthApp(
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
 
-  final appointmentService = FakeAppointmentService();
-  addTearDown(appointmentService.dispose);
+  final appointmentRepository = FakeAppointmentRepository();
+  addTearDown(appointmentRepository.dispose);
   await tester.pumpWidget(
     MyApp(
       authRepository: repository,
-      appointmentService: appointmentService,
+      appointmentRepository: appointmentRepository,
       // MainNavShell's IndexedStack builds Profile eagerly alongside Home,
       // even before the Profile tab is ever selected — so this is needed
       // to keep these auth-flow tests off real Firebase too.
-      profileService: FakeProfileService(),
+      profileRepository: FakeProfileRepository(),
     ),
   );
   await tester.pump();
-  return appointmentService;
+  return appointmentRepository;
 }
 
 /// Call right after an action that lands on Home (sign in / sign up) and
 /// before asserting on it — see `_pumpAuthApp` for why.
 Future<void> _settleOnHome(
   WidgetTester tester,
-  FakeAppointmentService appointmentService,
+  FakeAppointmentRepository appointmentRepository,
 ) async {
   await tester.pump();
-  appointmentService.emitDoctors(const []);
+  appointmentRepository.emitDoctors(const []);
   await tester.pumpAndSettle();
 }
 
@@ -105,7 +105,7 @@ void main() {
   testWidgets(
     'Create account is disabled until terms are accepted, then signs up',
     (WidgetTester tester) async {
-      final appointmentService = await _pumpAuthApp(
+      final appointmentRepository = await _pumpAuthApp(
         tester,
         FakeAuthRepository(),
       );
@@ -147,7 +147,7 @@ void main() {
       );
 
       await tester.tap(createAccountButton);
-      await _settleOnHome(tester, appointmentService);
+      await _settleOnHome(tester, appointmentRepository);
 
       expect(find.text('Our doctors'), findsOneWidget);
     },
@@ -175,7 +175,7 @@ void main() {
   });
 
   testWidgets('Signing in reveals the home page', (WidgetTester tester) async {
-    final appointmentService = await _pumpAuthApp(
+    final appointmentRepository = await _pumpAuthApp(
       tester,
       FakeAuthRepository(),
     );
@@ -189,7 +189,7 @@ void main() {
       'password123',
     );
     await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));
-    await _settleOnHome(tester, appointmentService);
+    await _settleOnHome(tester, appointmentRepository);
 
     expect(find.text('Welcome back'), findsNothing);
     expect(find.text('Our doctors'), findsOneWidget);

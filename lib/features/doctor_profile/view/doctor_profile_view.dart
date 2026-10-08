@@ -6,8 +6,8 @@ import '../../../common/models/doctor.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../auth/view/auth_provider.dart';
-import '../services/availability_service.dart';
-import '../services/booking_service.dart';
+import '../../../common/repositories/availability_repository.dart';
+import '../../../common/repositories/booking_repository.dart';
 import '../view/availability_provider.dart';
 import '../widgets/availability_section.dart';
 import '../widgets/book_appointment_button.dart';
@@ -25,8 +25,8 @@ class DoctorProfileView extends StatelessWidget {
   DoctorProfileView({
     super.key,
     required this.doctor,
-    this.availabilityService,
-    this.bookingService,
+    this.availabilityRepository,
+    this.bookingRepository,
     this.reschedulingAppointment,
     DateTime? today,
   }) : today = _dateOnly(today ?? DateTime.now());
@@ -34,8 +34,8 @@ class DoctorProfileView extends StatelessWidget {
   final Doctor doctor;
 
   /// Injectable for tests, so they never talk to real Firestore.
-  final AvailabilityService? availabilityService;
-  final BookingService? bookingService;
+  final AvailabilityRepository? availabilityRepository;
+  final BookingRepository? bookingRepository;
 
   /// When set, picking a slot here moves *this* appointment to it instead
   /// of booking a new one alongside it — see My appointments' "Reschedule".
@@ -54,8 +54,8 @@ class DoctorProfileView extends StatelessWidget {
 
     return ChangeNotifierProvider<AvailabilityProvider>(
       create: (_) => AvailabilityProvider(
-        availabilityService: availabilityService ?? FirestoreAvailabilityService(),
-        bookingService: bookingService ?? FirestoreBookingService(),
+        availabilityRepository: availabilityRepository ?? FirestoreAvailabilityRepository(),
+        bookingRepository: bookingRepository ?? FirestoreBookingRepository(),
         doctorId: doctor.id,
         doctorName: doctor.name,
         doctorSpecialty: doctor.specialty,

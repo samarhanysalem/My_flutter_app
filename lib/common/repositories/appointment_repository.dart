@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../common/models/appointment.dart';
-import '../../../common/models/doctor.dart';
-import '../../../common/utils/date_id.dart';
+import '../models/appointment.dart';
+import '../models/doctor.dart';
+import '../utils/date_id.dart';
 
 /// Abstraction over the appointment/doctor backend, so `HomeProvider` can be
 /// unit tested with a fake instead of talking to real Firestore.
-abstract class AppointmentService {
+abstract class AppointmentRepository {
   /// Live doctor listing from the `doctors` collection.
   Stream<List<Doctor>> watchDoctors();
 
@@ -38,8 +38,8 @@ abstract class AppointmentService {
   Future<Doctor?> getDoctor(String doctorId);
 }
 
-class FirestoreAppointmentService implements AppointmentService {
-  FirestoreAppointmentService({FirebaseFirestore? firestore})
+class FirestoreAppointmentRepository implements AppointmentRepository {
+  FirestoreAppointmentRepository({FirebaseFirestore? firestore})
     : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;

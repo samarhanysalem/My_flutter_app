@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import '../models/app_user.dart';
-import '../services/auth_repository.dart';
+import '../../../common/models/app_user.dart';
+import '../../../common/repositories/auth_repository.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
 

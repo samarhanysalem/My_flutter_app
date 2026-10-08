@@ -5,7 +5,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../auth/view/auth_provider.dart';
 import '../../auth/view/confirm_sign_out.dart';
-import '../services/profile_service.dart';
+import '../../../common/repositories/profile_repository.dart';
 import '../widgets/change_password_dialog.dart';
 import '../widgets/delete_account_dialog.dart';
 import '../widgets/profile_action_tile.dart';
@@ -16,17 +16,17 @@ import 'profile_provider.dart';
 /// Profile: the signed-in patient's identity, editable name/phone, and the
 /// account actions (change password, delete account, log out).
 class ProfileView extends StatelessWidget {
-  const ProfileView({super.key, this.profileService});
+  const ProfileView({super.key, this.profileRepository});
 
   /// Injectable for tests, so they never talk to real Firebase.
-  final ProfileService? profileService;
+  final ProfileRepository? profileRepository;
 
   @override
   Widget build(BuildContext context) {
     final user = context.read<AuthProvider>().user;
     return ChangeNotifierProvider<ProfileProvider>(
       create: (_) => ProfileProvider(
-        profileService: profileService ?? FirestoreProfileService(),
+        profileRepository: profileRepository ?? FirestoreProfileRepository(),
         uid: user?.uid,
         email: user?.email,
       ),

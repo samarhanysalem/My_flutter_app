@@ -1,8 +1,8 @@
-import 'package:doctor_appointment_app/features/profile/models/user_profile.dart';
-import 'package:doctor_appointment_app/features/profile/services/profile_service.dart';
+import 'package:doctor_appointment_app/common/models/user_profile.dart';
+import 'package:doctor_appointment_app/common/repositories/profile_repository.dart';
 
 /// Hand-written test double so Profile tests never touch real Firebase.
-class FakeProfileService implements ProfileService {
+class FakeProfileRepository implements ProfileRepository {
   /// Canned result for [getProfile] — set by a test before pumping.
   UserProfile? profileToReturn;
 

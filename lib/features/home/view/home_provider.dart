@@ -4,14 +4,14 @@ import 'package:flutter/foundation.dart';
 
 import '../../../common/models/appointment.dart';
 import '../../../common/models/doctor.dart';
-import '../services/appointment_service.dart';
+import '../../../common/repositories/appointment_repository.dart';
 
 class HomeProvider extends ChangeNotifier {
   HomeProvider({
-    required AppointmentService appointmentService,
+    required AppointmentRepository appointmentRepository,
     String? patientId,
-  }) : _appointmentService = appointmentService {
-    _doctorsSubscription = _appointmentService.watchDoctors().listen(
+  }) : _appointmentRepository = appointmentRepository {
+    _doctorsSubscription = _appointmentRepository.watchDoctors().listen(
       _onDoctors,
       onError: _onError,
     );
@@ -19,13 +19,13 @@ class HomeProvider extends ChangeNotifier {
     // (already-authenticated) screen — just skip the subscription rather
     // than assuming a user.
     if (patientId != null) {
-      _upcomingAppointmentSubscription = _appointmentService
+      _upcomingAppointmentSubscription = _appointmentRepository
           .watchUpcomingAppointment(patientId)
           .listen(_onUpcomingAppointment);
     }
   }
 
-  final AppointmentService _appointmentService;
+  final AppointmentRepository _appointmentRepository;
   late final StreamSubscription<List<Doctor>> _doctorsSubscription;
   StreamSubscription<Appointment?>? _upcomingAppointmentSubscription;
 
@@ -117,7 +117,7 @@ class HomeProvider extends ChangeNotifier {
   /// doctor can't be found or the lookup fails.
   Future<Doctor?> getDoctor(String doctorId) async {
     try {
-      return await _appointmentService.getDoctor(doctorId);
+      return await _appointmentRepository.getDoctor(doctorId);
     } catch (_) {
       return null;
     }

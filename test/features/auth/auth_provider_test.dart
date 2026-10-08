@@ -1,9 +1,9 @@
-import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
-import 'package:doctor_appointment_app/features/auth/services/auth_repository.dart';
+import 'package:doctor_appointment_app/common/models/app_user.dart';
+import 'package:doctor_appointment_app/common/repositories/auth_repository.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'fake_auth_repository.dart';
+import '../../common/repositories/fake_auth_repository.dart';
 
 void main() {
   group('AuthProvider', () {

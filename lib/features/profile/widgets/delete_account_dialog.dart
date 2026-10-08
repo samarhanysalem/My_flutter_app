@@ -9,7 +9,7 @@ import '../view/profile_provider.dart';
 /// Shows the delete-account confirmation dialog — an irreversibility
 /// warning plus a password field, since Firebase requires a recently issued
 /// credential to delete an account (the same reauthentication
-/// `ProfileService.deleteAccount` needs for a password change). On success,
+/// `ProfileRepository.deleteAccount` needs for a password change). On success,
 /// deleting the Firebase Auth user fires `authStateChanges()` with `null`,
 /// which flips `AuthGate` to the sign-in screen on its own — the same
 /// mechanism sign-out relies on — so there's nothing further to do here.

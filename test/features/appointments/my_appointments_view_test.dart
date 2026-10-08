@@ -1,7 +1,7 @@
 import 'package:doctor_appointment_app/common/models/appointment.dart';
 import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/appointments/view/my_appointments_view.dart';
-import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
+import 'package:doctor_appointment_app/common/models/app_user.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
 import 'package:doctor_appointment_app/navigation/nav_shell_controller.dart';
@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import '../auth/fake_auth_repository.dart';
-import '../doctor_profile/fake_booking_service.dart';
-import '../home/fake_appointment_service.dart';
+import '../../common/repositories/fake_auth_repository.dart';
+import '../../common/repositories/fake_booking_repository.dart';
+import '../../common/repositories/fake_appointment_repository.dart';
 
 const _upcoming = Appointment(
   id: 'a1',
@@ -48,8 +48,8 @@ const _cancelled = Appointment(
 
 Future<void> _pumpView(
   WidgetTester tester,
-  FakeAppointmentService appointmentService, {
-  FakeBookingService? bookingService,
+  FakeAppointmentRepository appointmentRepository, {
+  FakeBookingRepository? bookingRepository,
   NavShellController? navController,
   Locale? locale,
 }) async {
@@ -71,8 +71,8 @@ Future<void> _pumpView(
   final child = ChangeNotifierProvider<NavShellController>.value(
     value: navController ?? NavShellController(),
     child: MyAppointmentsView(
-      appointmentService: appointmentService,
-      bookingService: bookingService ?? FakeBookingService(),
+      appointmentRepository: appointmentRepository,
+      bookingRepository: bookingRepository ?? FakeBookingRepository(),
     ),
   );
 
@@ -99,16 +99,16 @@ void main() {
       // directly, so switching to the Appointments tab is what has to
       // pick up the change — the exact bug this guards against ("book a
       // new appointment, it doesn't show up until I refresh the screen").
-      final appointmentService = FakeAppointmentService();
-      addTearDown(appointmentService.dispose);
+      final appointmentRepository = FakeAppointmentRepository();
+      addTearDown(appointmentRepository.dispose);
       final navController = NavShellController();
 
-      await _pumpView(tester, appointmentService, navController: navController);
+      await _pumpView(tester, appointmentRepository, navController: navController);
       await tester.pump();
 
       expect(find.text('No upcoming appointments'), findsOneWidget);
 
-      appointmentService.upcomingAppointments = [_upcoming];
+      appointmentRepository.upcomingAppointments = [_upcoming];
       navController.selectTab(MainTab.appointments);
       await tester.pump();
 
@@ -120,11 +120,11 @@ void main() {
   testWidgets('shows a loading indicator, then the Upcoming list', (
     tester,
   ) async {
-    final appointmentService = FakeAppointmentService()
+    final appointmentRepository = FakeAppointmentRepository()
       ..upcomingAppointments = [_upcoming];
-    addTearDown(appointmentService.dispose);
+    addTearDown(appointmentRepository.dispose);
 
-    await _pumpView(tester, appointmentService);
+    await _pumpView(tester, appointmentRepository);
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
@@ -140,11 +140,11 @@ void main() {
   testWidgets(
     'shows "No upcoming appointments" with a Book now button when empty',
     (tester) async {
-      final appointmentService = FakeAppointmentService();
-      addTearDown(appointmentService.dispose);
+      final appointmentRepository = FakeAppointmentRepository();
+      addTearDown(appointmentRepository.dispose);
       final navController = NavShellController();
 
-      await _pumpView(tester, appointmentService, navController: navController);
+      await _pumpView(tester, appointmentRepository, navController: navController);
       await tester.pump();
 
       expect(find.text('No upcoming appointments'), findsOneWidget);
@@ -159,11 +159,11 @@ void main() {
   testWidgets(
     'switching to the Past tab shows a dimmed, action-less Completed card',
     (tester) async {
-      final appointmentService = FakeAppointmentService()
+      final appointmentRepository = FakeAppointmentRepository()
         ..pastAppointments = [_past];
-      addTearDown(appointmentService.dispose);
+      addTearDown(appointmentRepository.dispose);
 
-      await _pumpView(tester, appointmentService);
+      await _pumpView(tester, appointmentRepository);
       await tester.pump();
 
       await tester.tap(find.text('Past'));
@@ -183,11 +183,11 @@ void main() {
       // Cancelled appointments live in the Past tab regardless of date (see
       // getPastAppointments) rather than a separate tab — a still-future
       // date on _cancelled confirms that's date-independent.
-      final appointmentService = FakeAppointmentService()
+      final appointmentRepository = FakeAppointmentRepository()
         ..pastAppointments = [_cancelled];
-      addTearDown(appointmentService.dispose);
+      addTearDown(appointmentRepository.dispose);
 
-      await _pumpView(tester, appointmentService);
+      await _pumpView(tester, appointmentRepository);
       await tester.pump();
 
       await tester.tap(find.text('Past'));
@@ -204,10 +204,10 @@ void main() {
   testWidgets('shows "No past appointments" on an empty Past tab', (
     tester,
   ) async {
-    final appointmentService = FakeAppointmentService();
-    addTearDown(appointmentService.dispose);
+    final appointmentRepository = FakeAppointmentRepository();
+    addTearDown(appointmentRepository.dispose);
 
-    await _pumpView(tester, appointmentService);
+    await _pumpView(tester, appointmentRepository);
     await tester.pump();
 
     await tester.tap(find.text('Past'));
@@ -221,7 +221,7 @@ void main() {
   testWidgets('Reschedule looks up the doctor and opens their profile', (
     tester,
   ) async {
-    final appointmentService = FakeAppointmentService()
+    final appointmentRepository = FakeAppointmentRepository()
       ..upcomingAppointments = [_upcoming]
       ..doctorToReturn = const Doctor(
         id: '1',
@@ -229,9 +229,9 @@ void main() {
         specialty: 'Cardiologist',
         rating: 4.9,
       );
-    addTearDown(appointmentService.dispose);
+    addTearDown(appointmentRepository.dispose);
 
-    await _pumpView(tester, appointmentService);
+    await _pumpView(tester, appointmentRepository);
     await tester.pump();
 
     await tester.tap(find.text('Reschedule'));
@@ -251,11 +251,11 @@ void main() {
   testWidgets(
     'Reschedule shows an error notice when the doctor can\'t be found',
     (tester) async {
-      final appointmentService = FakeAppointmentService()
+      final appointmentRepository = FakeAppointmentRepository()
         ..upcomingAppointments = [_upcoming];
-      addTearDown(appointmentService.dispose);
+      addTearDown(appointmentRepository.dispose);
 
-      await _pumpView(tester, appointmentService);
+      await _pumpView(tester, appointmentRepository);
       await tester.pump();
 
       await tester.tap(find.text('Reschedule'));
@@ -268,30 +268,30 @@ void main() {
   testWidgets(
     'Cancel appointment asks for confirmation, then cancels and refreshes',
     (tester) async {
-      final appointmentService = FakeAppointmentService()
+      final appointmentRepository = FakeAppointmentRepository()
         ..upcomingAppointments = [_upcoming];
-      addTearDown(appointmentService.dispose);
-      final bookingService = FakeBookingService();
+      addTearDown(appointmentRepository.dispose);
+      final bookingRepository = FakeBookingRepository();
 
-      await _pumpView(tester, appointmentService, bookingService: bookingService);
+      await _pumpView(tester, appointmentRepository, bookingRepository: bookingRepository);
       await tester.pump();
 
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
 
       expect(find.text('Cancel this appointment?'), findsOneWidget);
-      expect(bookingService.cancelledAppointmentId, isNull);
+      expect(bookingRepository.cancelledAppointmentId, isNull);
 
       // The dialog's "Cancel appointment" is the confirming action; its
       // "Cancel" is the dismiss action that backs out without cancelling.
-      appointmentService.upcomingAppointments = const [];
+      appointmentRepository.upcomingAppointments = const [];
       await tester.tap(find.widgetWithText(TextButton, 'Cancel appointment'));
       await tester.pumpAndSettle();
 
-      expect(bookingService.cancelledAppointmentId, 'a1');
-      expect(bookingService.cancelledDoctorId, '1');
-      expect(bookingService.cancelledDate, '2099-01-02');
-      expect(bookingService.cancelledSlot, '10:30 AM');
+      expect(bookingRepository.cancelledAppointmentId, 'a1');
+      expect(bookingRepository.cancelledDoctorId, '1');
+      expect(bookingRepository.cancelledDate, '2099-01-02');
+      expect(bookingRepository.cancelledSlot, '10:30 AM');
       expect(find.text('Appointment cancelled.'), findsOneWidget);
       // refresh() picked up the appointment no longer being upcoming.
       expect(find.text('Dr. Sara Whitmore'), findsNothing);
@@ -301,12 +301,12 @@ void main() {
   testWidgets('Dismissing the cancel confirmation dialog cancels nothing', (
     tester,
   ) async {
-    final appointmentService = FakeAppointmentService()
+    final appointmentRepository = FakeAppointmentRepository()
       ..upcomingAppointments = [_upcoming];
-    addTearDown(appointmentService.dispose);
-    final bookingService = FakeBookingService();
+    addTearDown(appointmentRepository.dispose);
+    final bookingRepository = FakeBookingRepository();
 
-    await _pumpView(tester, appointmentService, bookingService: bookingService);
+    await _pumpView(tester, appointmentRepository, bookingRepository: bookingRepository);
     await tester.pump();
 
     await tester.tap(find.text('Cancel'));
@@ -315,20 +315,20 @@ void main() {
     await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
     await tester.pumpAndSettle();
 
-    expect(bookingService.cancelledAppointmentId, isNull);
+    expect(bookingRepository.cancelledAppointmentId, isNull);
     expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
   });
 
   testWidgets('Cancel appointment shows an error notice when it fails', (
     tester,
   ) async {
-    final appointmentService = FakeAppointmentService()
+    final appointmentRepository = FakeAppointmentRepository()
       ..upcomingAppointments = [_upcoming];
-    addTearDown(appointmentService.dispose);
-    final bookingService = FakeBookingService()
+    addTearDown(appointmentRepository.dispose);
+    final bookingRepository = FakeBookingRepository()
       ..errorToThrow = Exception('permission-denied');
 
-    await _pumpView(tester, appointmentService, bookingService: bookingService);
+    await _pumpView(tester, appointmentRepository, bookingRepository: bookingRepository);
     await tester.pump();
 
     await tester.tap(find.text('Cancel'));
@@ -348,7 +348,7 @@ void main() {
     (tester) async {
       // _upcoming has no doctorNameAr — e.g. it was booked before the
       // doctor's Arabic name was added to their record.
-      final appointmentService = FakeAppointmentService()
+      final appointmentRepository = FakeAppointmentRepository()
         ..upcomingAppointments = [_upcoming]
         ..doctorToReturn = const Doctor(
           id: '1',
@@ -357,9 +357,9 @@ void main() {
           specialty: 'Cardiologist',
           rating: 4.9,
         );
-      addTearDown(appointmentService.dispose);
+      addTearDown(appointmentRepository.dispose);
 
-      await _pumpView(tester, appointmentService, locale: const Locale('ar'));
+      await _pumpView(tester, appointmentRepository, locale: const Locale('ar'));
       await tester.pump();
       // The lookup resolves one microtask after the card first builds.
       await tester.pump();

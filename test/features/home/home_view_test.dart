@@ -1,6 +1,6 @@
 import 'package:doctor_appointment_app/common/models/appointment.dart';
 import 'package:doctor_appointment_app/common/models/doctor.dart';
-import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
+import 'package:doctor_appointment_app/common/models/app_user.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
 import 'package:doctor_appointment_app/features/home/view/home_view.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import '../auth/fake_auth_repository.dart';
-import 'fake_appointment_service.dart';
+import '../../common/repositories/fake_auth_repository.dart';
+import '../../common/repositories/fake_appointment_repository.dart';
 
 const _upcomingAppointment = Appointment(
   id: 'a1',
@@ -50,7 +50,7 @@ Future<AuthProvider> _signedInAuthProvider(WidgetTester tester) async {
 Future<void> _pumpHome(
   WidgetTester tester,
   AuthProvider authProvider,
-  FakeAppointmentService appointmentService, {
+  FakeAppointmentRepository appointmentRepository, {
   Locale? locale,
 }) async {
   await tester.pumpWidget(
@@ -65,7 +65,7 @@ Future<void> _pumpHome(
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: HomeView(appointmentService: appointmentService),
+        home: HomeView(appointmentRepository: appointmentRepository),
       ),
     ),
   );
@@ -77,54 +77,54 @@ void main() {
     tester,
   ) async {
     final authProvider = await _signedInAuthProvider(tester);
-    final appointmentService = FakeAppointmentService();
-    await _pumpHome(tester, authProvider, appointmentService);
+    final appointmentRepository = FakeAppointmentRepository();
+    await _pumpHome(tester, authProvider, appointmentRepository);
 
     expect(find.textContaining('Alex'), findsOneWidget);
 
-    appointmentService.dispose();
+    appointmentRepository.dispose();
   });
 
   testWidgets('shows a loading indicator, then the fetched doctors', (
     tester,
   ) async {
     final authProvider = await _signedInAuthProvider(tester);
-    final appointmentService = FakeAppointmentService();
-    await _pumpHome(tester, authProvider, appointmentService);
+    final appointmentRepository = FakeAppointmentRepository();
+    await _pumpHome(tester, authProvider, appointmentRepository);
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-    appointmentService.emitDoctors(_doctors);
+    appointmentRepository.emitDoctors(_doctors);
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
     expect(find.text('Dr. Marcus Cole'), findsOneWidget);
 
-    appointmentService.dispose();
+    appointmentRepository.dispose();
   });
 
   testWidgets('shows an empty state when there are no doctors', (
     tester,
   ) async {
     final authProvider = await _signedInAuthProvider(tester);
-    final appointmentService = FakeAppointmentService();
-    await _pumpHome(tester, authProvider, appointmentService);
+    final appointmentRepository = FakeAppointmentRepository();
+    await _pumpHome(tester, authProvider, appointmentRepository);
 
-    appointmentService.emitDoctors(const []);
+    appointmentRepository.emitDoctors(const []);
     await tester.pump();
 
     expect(find.text('No doctors available yet.'), findsOneWidget);
 
-    appointmentService.dispose();
+    appointmentRepository.dispose();
   });
 
   testWidgets('search bar filters the doctor list by name', (tester) async {
     final authProvider = await _signedInAuthProvider(tester);
-    final appointmentService = FakeAppointmentService();
-    await _pumpHome(tester, authProvider, appointmentService);
+    final appointmentRepository = FakeAppointmentRepository();
+    await _pumpHome(tester, authProvider, appointmentRepository);
 
-    appointmentService.emitDoctors(_doctors);
+    appointmentRepository.emitDoctors(_doctors);
     await tester.pump();
 
     await tester.enterText(find.byType(TextField), 'Cole');
@@ -139,17 +139,17 @@ void main() {
     expect(find.text('Dr. Marcus Cole'), findsOneWidget);
     expect(find.text('Dr. Sara Whitmore'), findsNothing);
 
-    appointmentService.dispose();
+    appointmentRepository.dispose();
   });
 
   testWidgets('tapping a specialty shortcut filters the doctor list', (
     tester,
   ) async {
     final authProvider = await _signedInAuthProvider(tester);
-    final appointmentService = FakeAppointmentService();
-    await _pumpHome(tester, authProvider, appointmentService);
+    final appointmentRepository = FakeAppointmentRepository();
+    await _pumpHome(tester, authProvider, appointmentRepository);
 
-    appointmentService.emitDoctors(_doctors);
+    appointmentRepository.emitDoctors(_doctors);
     await tester.pump();
 
     await tester.tap(find.text('Cardio'));
@@ -158,17 +158,17 @@ void main() {
     expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
     expect(find.text('Dr. Marcus Cole'), findsNothing);
 
-    appointmentService.dispose();
+    appointmentRepository.dispose();
   });
 
   testWidgets('tapping All clears an active specialty filter', (
     tester,
   ) async {
     final authProvider = await _signedInAuthProvider(tester);
-    final appointmentService = FakeAppointmentService();
-    await _pumpHome(tester, authProvider, appointmentService);
+    final appointmentRepository = FakeAppointmentRepository();
+    await _pumpHome(tester, authProvider, appointmentRepository);
 
-    appointmentService.emitDoctors(_doctors);
+    appointmentRepository.emitDoctors(_doctors);
     await tester.pump();
 
     await tester.tap(find.text('Cardio'));
@@ -181,15 +181,15 @@ void main() {
     expect(find.text('Dr. Sara Whitmore'), findsOneWidget);
     expect(find.text('Dr. Marcus Cole'), findsOneWidget);
 
-    appointmentService.dispose();
+    appointmentRepository.dispose();
   });
 
   testWidgets('tapping a doctor card opens their profile', (tester) async {
     final authProvider = await _signedInAuthProvider(tester);
-    final appointmentService = FakeAppointmentService();
-    await _pumpHome(tester, authProvider, appointmentService);
+    final appointmentRepository = FakeAppointmentRepository();
+    await _pumpHome(tester, authProvider, appointmentRepository);
 
-    appointmentService.emitDoctors(_doctors);
+    appointmentRepository.emitDoctors(_doctors);
     await tester.pump();
 
     await tester.tap(find.text('Dr. Sara Whitmore'));
@@ -202,21 +202,21 @@ void main() {
     ); // now the hero's name, not the list card
     expect(find.text('Available today'), findsOneWidget);
 
-    appointmentService.dispose();
+    appointmentRepository.dispose();
   });
 
   testWidgets(
     'hides the upcoming appointment card when there is none, shows it once one arrives',
     (tester) async {
       final authProvider = await _signedInAuthProvider(tester);
-      final appointmentService = FakeAppointmentService();
-      await _pumpHome(tester, authProvider, appointmentService);
+      final appointmentRepository = FakeAppointmentRepository();
+      await _pumpHome(tester, authProvider, appointmentRepository);
 
       // No upcoming appointment yet — the layout collapses straight from
       // the search bar to the specialty shortcuts.
       expect(find.text('UPCOMING APPOINTMENT'), findsNothing);
 
-      appointmentService.emitUpcomingAppointment(_upcomingAppointment);
+      appointmentRepository.emitUpcomingAppointment(_upcomingAppointment);
       await tester.pump();
 
       expect(find.text('UPCOMING APPOINTMENT'), findsOneWidget);
@@ -224,7 +224,7 @@ void main() {
       expect(find.text('Confirmed'), findsOneWidget);
       expect(find.text('View details'), findsOneWidget);
 
-      appointmentService.dispose();
+      appointmentRepository.dispose();
     },
   );
 
@@ -232,7 +232,7 @@ void main() {
     '"View details" on the upcoming appointment card switches to the Appointments tab',
     (tester) async {
       final authProvider = await _signedInAuthProvider(tester);
-      final appointmentService = FakeAppointmentService();
+      final appointmentRepository = FakeAppointmentRepository();
       final navController = NavShellController();
 
       await tester.pumpWidget(
@@ -243,14 +243,14 @@ void main() {
             supportedLocales: AppLocalizations.supportedLocales,
             home: ChangeNotifierProvider<NavShellController>.value(
               value: navController,
-              child: HomeView(appointmentService: appointmentService),
+              child: HomeView(appointmentRepository: appointmentRepository),
             ),
           ),
         ),
       );
       await tester.pump();
 
-      appointmentService.emitUpcomingAppointment(_upcomingAppointment);
+      appointmentRepository.emitUpcomingAppointment(_upcomingAppointment);
       await tester.pump();
 
       await tester.tap(find.text('View details'));
@@ -258,7 +258,7 @@ void main() {
 
       expect(navController.selectedTab, MainTab.appointments);
 
-      appointmentService.dispose();
+      appointmentRepository.dispose();
     },
   );
 
@@ -269,7 +269,7 @@ void main() {
       final authProvider = await _signedInAuthProvider(tester);
       // _upcomingAppointment has no doctorNameAr — e.g. it was booked
       // before the doctor's Arabic name was added to their record.
-      final appointmentService = FakeAppointmentService()
+      final appointmentRepository = FakeAppointmentRepository()
         ..doctorToReturn = const Doctor(
           id: '1',
           name: 'Dr. Sara Whitmore',
@@ -280,18 +280,18 @@ void main() {
       await _pumpHome(
         tester,
         authProvider,
-        appointmentService,
+        appointmentRepository,
         locale: const Locale('ar'),
       );
 
-      appointmentService.emitUpcomingAppointment(_upcomingAppointment);
+      appointmentRepository.emitUpcomingAppointment(_upcomingAppointment);
       await tester.pump();
       // The lookup resolves one microtask after the card first builds.
       await tester.pump();
 
       expect(find.text('د. سارة ويتمور'), findsOneWidget);
 
-      appointmentService.dispose();
+      appointmentRepository.dispose();
     },
   );
 }

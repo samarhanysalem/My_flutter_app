@@ -1,9 +1,9 @@
-import 'package:doctor_appointment_app/features/doctor_profile/services/availability_service.dart';
+import 'package:doctor_appointment_app/common/repositories/availability_repository.dart';
 
 /// Hand-written test double so AvailabilitySection tests never touch real
 /// Firestore. Slots are keyed by date-only (year/month/day) `DateTime`s.
-class FakeAvailabilityService implements AvailabilityService {
-  FakeAvailabilityService(this._slotsByDate);
+class FakeAvailabilityRepository implements AvailabilityRepository {
+  FakeAvailabilityRepository(this._slotsByDate);
 
   final Map<DateTime, List<String>> _slotsByDate;
 

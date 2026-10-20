@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 
 import '../../../common/models/appointment.dart';
 import '../../../common/models/doctor.dart';
-import '../../doctor_profile/services/booking_service.dart';
-import '../../home/services/appointment_service.dart';
+import '../../../common/repositories/booking_repository.dart';
+import '../../../common/repositories/appointment_repository.dart';
 
 enum AppointmentsTab { upcoming, past }
 
@@ -14,11 +14,11 @@ enum AppointmentsTab { upcoming, past }
 /// guidance, rather than staying subscribed like Home's upcoming-card does.
 class MyAppointmentsProvider extends ChangeNotifier {
   MyAppointmentsProvider({
-    required AppointmentService appointmentService,
-    required BookingService bookingService,
+    required AppointmentRepository appointmentRepository,
+    required BookingRepository bookingRepository,
     required String? patientId,
-  }) : _appointmentService = appointmentService,
-       _bookingService = bookingService,
+  }) : _appointmentRepository = appointmentRepository,
+       _bookingRepository = bookingRepository,
        _patientId = patientId {
     // Null when nobody is signed in, which shouldn't happen on this
     // (already-authenticated) screen — just show both tabs empty rather
@@ -32,8 +32,8 @@ class MyAppointmentsProvider extends ChangeNotifier {
     }
   }
 
-  final AppointmentService _appointmentService;
-  final BookingService _bookingService;
+  final AppointmentRepository _appointmentRepository;
+  final BookingRepository _bookingRepository;
   final String? _patientId;
 
   AppointmentsTab _selectedTab = AppointmentsTab.upcoming;
@@ -61,7 +61,7 @@ class MyAppointmentsProvider extends ChangeNotifier {
 
   Future<void> _loadUpcoming(String patientId) async {
     try {
-      _upcoming = await _appointmentService.getUpcomingAppointments(patientId);
+      _upcoming = await _appointmentRepository.getUpcomingAppointments(patientId);
       _hasUpcomingError = false;
     } catch (_) {
       _hasUpcomingError = true;
@@ -73,7 +73,7 @@ class MyAppointmentsProvider extends ChangeNotifier {
 
   Future<void> _loadPast(String patientId) async {
     try {
-      _past = await _appointmentService.getPastAppointments(patientId);
+      _past = await _appointmentRepository.getPastAppointments(patientId);
       _hasPastError = false;
     } catch (_) {
       _hasPastError = true;
@@ -107,7 +107,7 @@ class MyAppointmentsProvider extends ChangeNotifier {
   /// Returns `null` if the doctor can't be found or the lookup fails.
   Future<Doctor?> getDoctor(String doctorId) async {
     try {
-      return await _appointmentService.getDoctor(doctorId);
+      return await _appointmentRepository.getDoctor(doctorId);
     } catch (_) {
       return null;
     }
@@ -119,7 +119,7 @@ class MyAppointmentsProvider extends ChangeNotifier {
   /// feedback based on the result rather than this class holding onto it.
   Future<bool> cancelAppointment(Appointment appointment) async {
     try {
-      await _bookingService.cancelAppointment(
+      await _bookingRepository.cancelAppointment(
         appointmentId: appointment.id,
         doctorId: appointment.doctorId,
         date: appointment.date,

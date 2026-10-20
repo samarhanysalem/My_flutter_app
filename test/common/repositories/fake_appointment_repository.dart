@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:doctor_appointment_app/common/models/appointment.dart';
 import 'package:doctor_appointment_app/common/models/doctor.dart';
-import 'package:doctor_appointment_app/features/home/services/appointment_service.dart';
+import 'package:doctor_appointment_app/common/repositories/appointment_repository.dart';
 
 /// Hand-written test double so Home tests never touch real Firestore.
-class FakeAppointmentService implements AppointmentService {
+class FakeAppointmentRepository implements AppointmentRepository {
   final _controller = StreamController<List<Doctor>>.broadcast();
   final _upcomingAppointmentController =
       StreamController<Appointment?>.broadcast();

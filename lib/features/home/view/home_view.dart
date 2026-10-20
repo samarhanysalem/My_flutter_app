@@ -11,7 +11,7 @@ import '../../../theme/app_theme.dart';
 import '../../auth/view/auth_provider.dart';
 import '../../auth/view/confirm_sign_out.dart';
 import '../../doctor_profile/view/doctor_profile_view.dart';
-import '../services/appointment_service.dart';
+import '../../../common/repositories/appointment_repository.dart';
 import '../widgets/doctor_list.dart';
 import '../widgets/home_greeting_header.dart';
 import '../widgets/home_search_bar.dart';
@@ -20,10 +20,10 @@ import '../widgets/upcoming_appointment_card.dart';
 import 'home_provider.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key, AppointmentService? appointmentService})
-    : _appointmentService = appointmentService;
+  const HomeView({super.key, AppointmentRepository? appointmentRepository})
+    : _appointmentRepository = appointmentRepository;
 
-  final AppointmentService? _appointmentService;
+  final AppointmentRepository? _appointmentRepository;
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -71,8 +71,8 @@ class _HomeViewState extends State<HomeView> {
     final patientId = context.read<AuthProvider>().user?.uid;
     return ChangeNotifierProvider<HomeProvider>(
       create: (_) => HomeProvider(
-        appointmentService: widget._appointmentService ??
-            FirestoreAppointmentService(),
+        appointmentRepository: widget._appointmentRepository ??
+            FirestoreAppointmentRepository(),
         patientId: patientId,
       ),
       child: Builder(

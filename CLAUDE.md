@@ -5,23 +5,39 @@ reviewing code here.
 
 ## Project structure
 
-Feature-first, not layer-first. Each feature owns its own view, widgets,
-models, and services:
+Feature-first for the UI, with one shared data layer underneath it. A
+feature owns its screens, its widgets, and any model that only it uses; the
+classes that talk to Firebase are shared and live under `lib/common/`:
 
 ```
 lib/
   features/
     <feature>/
-      view/
-      widgets/
-      models/
-      services/
+      view/        # the screen, plus its ChangeNotifier (the view model)
+      widgets/     # sub-widgets of that screen
+      models/      # models used only by this feature
+  common/
+    repositories/  # the data layer: one per backend concern
+    models/        # domain models crossing feature boundaries
+    widgets/
+    utils/
 ```
 
 Don't create top-level `lib/views/`, `lib/models/`, `lib/services/`
-directories that span multiple features — each feature is self-contained.
-Code shared across features (common widgets, utilities) lives under
-`lib/common/` or `lib/shared/`, not inside a feature folder.
+directories that span multiple features — each feature's UI is
+self-contained. Code shared across features (the repositories, domain
+models, common widgets, utilities) lives under `lib/common/`, not inside
+one feature's folder: a shared class parked in `features/<feature>/` makes
+every other feature reach into that feature to get at it.
+
+The data layer is repositories, not services, and `lib/common/repositories/`
+is where all of them go. A repository is the source of truth for a slice of
+data: it owns the Firebase calls, returns domain models rather than raw
+`DocumentSnapshot`s, and translates backend exceptions into the app's own
+(`AuthException`, `BookingException`). Each one is an abstract class with a
+`Firestore…`/`Firebase…` implementation, so a provider can be unit tested
+against a fake. There is no separate service layer — the Firebase SDKs fill
+that role — so don't add a `services/` folder back.
 
 ## State management
 
@@ -133,7 +149,7 @@ a new customer a small, safe change instead of a re-audit of the codebase.
   define colors or text styles inline in widgets.
 - Any new asset (logo, icons, images) that could vary per customer goes in
   `assets/branding/`, not `assets/images/` or similar generic folders.
-- Business logic (`AuthService`, `AppointmentService`, Firestore structure,
+- Business logic (`AuthRepository`, `AppointmentRepository`, Firestore structure,
   Firebase config) is shared code and must stay separate from branding —
   never add customer-specific conditionals into service/logic files.
 - Before adding any new screen, check `app_config.dart` and `app_theme.dart`

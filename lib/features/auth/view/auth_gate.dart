@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../navigation/main_nav_shell.dart';
-import '../../home/services/appointment_service.dart';
-import '../../profile/services/profile_service.dart';
+import '../../../common/repositories/appointment_repository.dart';
+import '../../../common/repositories/profile_repository.dart';
 import 'auth_provider.dart';
 import 'login_view.dart';
 
@@ -11,13 +11,13 @@ import 'login_view.dart';
 class AuthGate extends StatelessWidget {
   const AuthGate({
     super.key,
-    AppointmentService? appointmentService,
-    ProfileService? profileService,
-  }) : _appointmentService = appointmentService,
-       _profileService = profileService;
+    AppointmentRepository? appointmentRepository,
+    ProfileRepository? profileRepository,
+  }) : _appointmentRepository = appointmentRepository,
+       _profileRepository = profileRepository;
 
-  final AppointmentService? _appointmentService;
-  final ProfileService? _profileService;
+  final AppointmentRepository? _appointmentRepository;
+  final ProfileRepository? _profileRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +33,8 @@ class AuthGate extends StatelessWidget {
             return const LoginView();
           case AuthStatus.authenticated:
             return MainNavShell(
-              appointmentService: _appointmentService,
-              profileService: _profileService,
+              appointmentRepository: _appointmentRepository,
+              profileRepository: _profileRepository,
             );
         }
       },

@@ -1,7 +1,7 @@
-import 'package:doctor_appointment_app/features/doctor_profile/services/booking_service.dart';
+import 'package:doctor_appointment_app/common/repositories/booking_repository.dart';
 
 /// Hand-written test double so booking tests never touch real Firestore.
-class FakeBookingService implements BookingService {
+class FakeBookingRepository implements BookingRepository {
   /// Set to make the next [bookAppointment] call fail with this error.
   Object? errorToThrow;
 

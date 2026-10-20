@@ -4,11 +4,11 @@ import 'package:provider/provider.dart';
 
 import 'config/app_config.dart';
 import 'config/locale_provider.dart';
-import 'features/auth/services/auth_repository.dart';
+import 'common/repositories/auth_repository.dart';
 import 'features/auth/view/auth_gate.dart';
 import 'features/auth/view/auth_provider.dart';
-import 'features/home/services/appointment_service.dart';
-import 'features/profile/services/profile_service.dart';
+import 'common/repositories/appointment_repository.dart';
+import 'common/repositories/profile_repository.dart';
 import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
@@ -23,15 +23,15 @@ class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
     AuthRepository? authRepository,
-    AppointmentService? appointmentService,
-    ProfileService? profileService,
+    AppointmentRepository? appointmentRepository,
+    ProfileRepository? profileRepository,
   }) : _authRepository = authRepository,
-       _appointmentService = appointmentService,
-       _profileService = profileService;
+       _appointmentRepository = appointmentRepository,
+       _profileRepository = profileRepository;
 
   final AuthRepository? _authRepository;
-  final AppointmentService? _appointmentService;
-  final ProfileService? _profileService;
+  final AppointmentRepository? _appointmentRepository;
+  final ProfileRepository? _profileRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +52,8 @@ class MyApp extends StatelessWidget {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: AuthGate(
-            appointmentService: _appointmentService,
-            profileService: _profileService,
+            appointmentRepository: _appointmentRepository,
+            profileRepository: _profileRepository,
           ),
         ),
       ),

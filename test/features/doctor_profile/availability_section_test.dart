@@ -1,4 +1,4 @@
-import 'package:doctor_appointment_app/features/doctor_profile/services/availability_service.dart';
+import 'package:doctor_appointment_app/common/repositories/availability_repository.dart';
 import 'package:doctor_appointment_app/features/doctor_profile/view/availability_provider.dart';
 import 'package:doctor_appointment_app/features/doctor_profile/widgets/availability_section.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'fake_availability_service.dart';
-import 'fake_booking_service.dart';
+import '../../common/repositories/fake_availability_repository.dart';
+import '../../common/repositories/fake_booking_repository.dart';
 
 // Fixed reference dates so tests don't depend on which real day the suite
 // runs on.
@@ -16,7 +16,7 @@ final _wednesday = DateTime(2024, 1, 3);
 final _sunday = DateTime(2024, 1, 7);
 
 Widget _wrap(
-  AvailabilityService availabilityService, {
+  AvailabilityRepository availabilityRepository, {
   required DateTime today,
 }) {
   return MaterialApp(
@@ -25,8 +25,8 @@ Widget _wrap(
     home: Scaffold(
       body: ChangeNotifierProvider<AvailabilityProvider>(
         create: (_) => AvailabilityProvider(
-          availabilityService: availabilityService,
-          bookingService: FakeBookingService(),
+          availabilityRepository: availabilityRepository,
+          bookingRepository: FakeBookingRepository(),
           doctorId: 'doc-1',
           doctorName: 'Dr. Test',
           doctorSpecialty: 'Cardiologist',
@@ -40,13 +40,13 @@ Widget _wrap(
 }
 
 void main() {
-  testWidgets('fetches and shows the selected day\'s slots from the service', (
+  testWidgets('fetches and shows the selected day\'s slots from the repository', (
     tester,
   ) async {
-    final service = FakeAvailabilityService({
+    final repository = FakeAvailabilityRepository({
       _tuesday: ['10:30 AM', '1:00 PM', '4:15 PM'],
     });
-    await tester.pumpWidget(_wrap(service, today: _tuesday));
+    await tester.pumpWidget(_wrap(repository, today: _tuesday));
     await tester.pump();
 
     expect(find.text('Available today'), findsOneWidget);
@@ -67,10 +67,10 @@ void main() {
   testWidgets('shows a loading indicator while the slots are being fetched', (
     tester,
   ) async {
-    final service = FakeAvailabilityService({
+    final repository = FakeAvailabilityRepository({
       _tuesday: ['10:30 AM'],
     });
-    await tester.pumpWidget(_wrap(service, today: _tuesday));
+    await tester.pumpWidget(_wrap(repository, today: _tuesday));
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
@@ -82,11 +82,11 @@ void main() {
   testWidgets('picking another day from the calendar fetches that day\'s slots', (
     tester,
   ) async {
-    final service = FakeAvailabilityService({
+    final repository = FakeAvailabilityRepository({
       _tuesday: ['10:30 AM', '4:15 PM'],
       _wednesday: ['9:00 AM', '5:30 PM'],
     });
-    await tester.pumpWidget(_wrap(service, today: _tuesday));
+    await tester.pumpWidget(_wrap(repository, today: _tuesday));
     await tester.pump();
 
     await tester.tap(find.byIcon(Icons.calendar_month_outlined));
@@ -111,8 +111,8 @@ void main() {
   testWidgets('shows a message instead of chips on a day with no slots', (
     tester,
   ) async {
-    final service = FakeAvailabilityService(const {});
-    await tester.pumpWidget(_wrap(service, today: _sunday));
+    final repository = FakeAvailabilityRepository(const {});
+    await tester.pumpWidget(_wrap(repository, today: _sunday));
     await tester.pump();
 
     expect(
@@ -124,9 +124,9 @@ void main() {
   testWidgets('shows an error message when fetching slots fails', (
     tester,
   ) async {
-    final service = FakeAvailabilityService(const {})
+    final repository = FakeAvailabilityRepository(const {})
       ..errorToThrow = Exception('boom');
-    await tester.pumpWidget(_wrap(service, today: _tuesday));
+    await tester.pumpWidget(_wrap(repository, today: _tuesday));
     await tester.pump();
 
     expect(

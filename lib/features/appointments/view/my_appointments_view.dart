@@ -6,30 +6,30 @@ import '../../../l10n/app_localizations.dart';
 import '../../../navigation/nav_shell_controller.dart';
 import '../../../theme/app_theme.dart';
 import '../../auth/view/auth_provider.dart';
-import '../../doctor_profile/services/booking_service.dart';
+import '../../../common/repositories/booking_repository.dart';
 import '../../doctor_profile/view/doctor_profile_view.dart';
-import '../../home/services/appointment_service.dart';
+import '../../../common/repositories/appointment_repository.dart';
 import '../widgets/appointment_card.dart';
 import '../widgets/appointments_empty_state.dart';
 import '../widgets/appointments_tab_toggle.dart';
 import 'my_appointments_provider.dart';
 
 /// My appointments: an Upcoming/Past toggle over the signed-in patient's
-/// appointments, fetched from Firestore via `AppointmentService`.
+/// appointments, fetched from Firestore via `AppointmentRepository`.
 class MyAppointmentsView extends StatelessWidget {
-  const MyAppointmentsView({super.key, this.appointmentService, this.bookingService});
+  const MyAppointmentsView({super.key, this.appointmentRepository, this.bookingRepository});
 
   /// Injectable for tests, so they never talk to real Firestore.
-  final AppointmentService? appointmentService;
-  final BookingService? bookingService;
+  final AppointmentRepository? appointmentRepository;
+  final BookingRepository? bookingRepository;
 
   @override
   Widget build(BuildContext context) {
     final patientId = context.read<AuthProvider>().user?.uid;
     return ChangeNotifierProvider<MyAppointmentsProvider>(
       create: (_) => MyAppointmentsProvider(
-        appointmentService: appointmentService ?? FirestoreAppointmentService(),
-        bookingService: bookingService ?? FirestoreBookingService(),
+        appointmentRepository: appointmentRepository ?? FirestoreAppointmentRepository(),
+        bookingRepository: bookingRepository ?? FirestoreBookingRepository(),
         patientId: patientId,
       ),
       child: const _RefreshOnTabEnter(child: _MyAppointmentsScaffold()),

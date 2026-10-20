@@ -2,7 +2,7 @@ import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/home/view/home_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'fake_appointment_service.dart';
+import '../../common/repositories/fake_appointment_repository.dart';
 
 void main() {
   group('HomeProvider', () {
@@ -22,11 +22,11 @@ void main() {
     ];
 
     test('starts loading then shows fetched doctors', () async {
-      final service = FakeAppointmentService();
-      final provider = HomeProvider(appointmentService: service);
+      final repository = FakeAppointmentRepository();
+      final provider = HomeProvider(appointmentRepository: repository);
       expect(provider.isLoading, isTrue);
 
-      service.emitDoctors(doctors);
+      repository.emitDoctors(doctors);
       await Future<void>.delayed(Duration.zero);
 
       expect(provider.isLoading, isFalse);
@@ -34,14 +34,14 @@ void main() {
       expect(provider.hasError, isFalse);
 
       provider.dispose();
-      service.dispose();
+      repository.dispose();
     });
 
     test('surfaces an error message on stream failure', () async {
-      final service = FakeAppointmentService();
-      final provider = HomeProvider(appointmentService: service);
+      final repository = FakeAppointmentRepository();
+      final provider = HomeProvider(appointmentRepository: repository);
 
-      service.emitError(Exception('boom'));
+      repository.emitError(Exception('boom'));
       await Future<void>.delayed(Duration.zero);
 
       expect(provider.isLoading, isFalse);
@@ -49,13 +49,13 @@ void main() {
       expect(provider.doctors, isEmpty);
 
       provider.dispose();
-      service.dispose();
+      repository.dispose();
     });
 
     test('search query filters by name or specialty, case-insensitively', () async {
-      final service = FakeAppointmentService();
-      final provider = HomeProvider(appointmentService: service);
-      service.emitDoctors(doctors);
+      final repository = FakeAppointmentRepository();
+      final provider = HomeProvider(appointmentRepository: repository);
+      repository.emitDoctors(doctors);
       await Future<void>.delayed(Duration.zero);
 
       provider.setSearchQuery('cole');
@@ -68,13 +68,13 @@ void main() {
       expect(provider.doctors, doctors);
 
       provider.dispose();
-      service.dispose();
+      repository.dispose();
     });
 
     test('selecting a specialty filters, and selecting null (All) clears it', () async {
-      final service = FakeAppointmentService();
-      final provider = HomeProvider(appointmentService: service);
-      service.emitDoctors(doctors);
+      final repository = FakeAppointmentRepository();
+      final provider = HomeProvider(appointmentRepository: repository);
+      repository.emitDoctors(doctors);
       await Future<void>.delayed(Duration.zero);
 
       provider.selectSpecialty('Cardiologist');
@@ -88,7 +88,7 @@ void main() {
       expect(provider.hasActiveFilter, isFalse);
 
       provider.dispose();
-      service.dispose();
+      repository.dispose();
     });
   });
 }

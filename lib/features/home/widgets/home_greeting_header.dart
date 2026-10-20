@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme.dart';
-import '../../auth/models/app_user.dart';
+import '../../../common/models/app_user.dart';
 
 /// Top-of-screen greeting ("Good morning, Alex") with a tappable initial
 /// avatar for account actions (sign out, later a profile screen).

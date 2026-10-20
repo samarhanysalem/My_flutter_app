@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
-import 'package:doctor_appointment_app/features/auth/services/auth_repository.dart';
+import 'package:doctor_appointment_app/common/models/app_user.dart';
+import 'package:doctor_appointment_app/common/repositories/auth_repository.dart';
 
 /// Hand-written test double so auth tests never touch real Firebase.
 ///

@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../common/models/appointment.dart';
-import '../services/availability_service.dart';
-import '../services/booking_service.dart';
+import '../../../common/repositories/availability_repository.dart';
+import '../../../common/repositories/booking_repository.dart';
 
 /// Owns the selected day, that day's fetched time slots, and booking the
 /// selected slot, for both AvailabilitySection and BookAppointmentButton.
@@ -10,8 +10,8 @@ import '../services/booking_service.dart';
 /// (provided above them in DoctorProfileView).
 class AvailabilityProvider extends ChangeNotifier {
   AvailabilityProvider({
-    required AvailabilityService availabilityService,
-    required BookingService bookingService,
+    required AvailabilityRepository availabilityRepository,
+    required BookingRepository bookingRepository,
     required String doctorId,
     required String doctorName,
     required String doctorSpecialty,
@@ -19,8 +19,8 @@ class AvailabilityProvider extends ChangeNotifier {
     required String? patientId,
     required DateTime initialDate,
     Appointment? reschedulingAppointment,
-  }) : _availabilityService = availabilityService,
-       _bookingService = bookingService,
+  }) : _availabilityRepository = availabilityRepository,
+       _bookingRepository = bookingRepository,
        _doctorId = doctorId,
        _doctorName = doctorName,
        _doctorSpecialty = doctorSpecialty,
@@ -31,8 +31,8 @@ class AvailabilityProvider extends ChangeNotifier {
     _load();
   }
 
-  final AvailabilityService _availabilityService;
-  final BookingService _bookingService;
+  final AvailabilityRepository _availabilityRepository;
+  final BookingRepository _bookingRepository;
   final String _doctorId;
   final String _doctorName;
   final String _doctorSpecialty;
@@ -100,7 +100,7 @@ class AvailabilityProvider extends ChangeNotifier {
     _selectedSlotIndex = null;
     notifyListeners();
     try {
-      _slots = await _availabilityService.getAvailableSlots(
+      _slots = await _availabilityRepository.getAvailableSlots(
         doctorId: _doctorId,
         date: _selectedDate,
       );
@@ -130,7 +130,7 @@ class AvailabilityProvider extends ChangeNotifier {
     try {
       final rescheduling = _reschedulingAppointment;
       if (rescheduling != null) {
-        await _bookingService.rescheduleAppointment(
+        await _bookingRepository.rescheduleAppointment(
           appointmentId: rescheduling.id,
           doctorId: _doctorId,
           doctorName: _doctorName,
@@ -142,7 +142,7 @@ class AvailabilityProvider extends ChangeNotifier {
           slot: slot,
         );
       } else {
-        await _bookingService.bookAppointment(
+        await _bookingRepository.bookAppointment(
           patientId: patientId,
           doctorId: _doctorId,
           doctorName: _doctorName,

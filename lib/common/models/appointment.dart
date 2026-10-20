@@ -37,7 +37,7 @@ class Appointment {
   /// `common/utils/date_id.dart`.
   final String date;
 
-  /// Time-of-day label, e.g. "10:30 AM" — matches an `AvailabilityService`
+  /// Time-of-day label, e.g. "10:30 AM" — matches an `AvailabilityRepository`
   /// slot string.
   final String slot;
 

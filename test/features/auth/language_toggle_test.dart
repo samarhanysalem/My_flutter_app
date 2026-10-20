@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'fake_auth_repository.dart';
+import '../../common/repositories/fake_auth_repository.dart';
 
 /// Mirrors how `MyApp` wires `LocaleProvider` into `MaterialApp.locale`, so
 /// switching the language actually re-renders in the new language — not

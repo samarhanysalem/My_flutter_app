@@ -1,5 +1,5 @@
 import 'package:doctor_appointment_app/common/models/appointment.dart';
-import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
+import 'package:doctor_appointment_app/common/models/app_user.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
 import 'package:doctor_appointment_app/navigation/main_nav_shell.dart';
@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import '../features/auth/fake_auth_repository.dart';
-import '../features/home/fake_appointment_service.dart';
-import '../features/profile/fake_profile_service.dart';
+import '../common/repositories/fake_auth_repository.dart';
+import '../common/repositories/fake_appointment_repository.dart';
+import '../common/repositories/fake_profile_repository.dart';
 
 const _upcomingAppointment = Appointment(
   id: 'a1',
@@ -22,7 +22,7 @@ const _upcomingAppointment = Appointment(
   status: 'confirmed',
 );
 
-Future<FakeAppointmentService> _pumpShell(
+Future<FakeAppointmentRepository> _pumpShell(
   WidgetTester tester, {
   List<Appointment> upcomingAppointments = const [],
 }) async {
@@ -48,9 +48,9 @@ Future<FakeAppointmentService> _pumpShell(
   // HomeProvider is created (Provider's `create` only runs once) — see
   // home_view_test.dart's `_signedInAuthProvider` for the same fix.
   await tester.pump();
-  final appointmentService = FakeAppointmentService()
+  final appointmentRepository = FakeAppointmentRepository()
     ..upcomingAppointments = upcomingAppointments;
-  addTearDown(appointmentService.dispose);
+  addTearDown(appointmentRepository.dispose);
   await tester.pumpWidget(
     ChangeNotifierProvider<AuthProvider>.value(
       value: authProvider,
@@ -58,16 +58,16 @@ Future<FakeAppointmentService> _pumpShell(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: MainNavShell(
-          appointmentService: appointmentService,
-          profileService: FakeProfileService(),
+          appointmentRepository: appointmentRepository,
+          profileRepository: FakeProfileRepository(),
         ),
       ),
     ),
   );
   await tester.pump();
-  appointmentService.emitDoctors(const []);
+  appointmentRepository.emitDoctors(const []);
   await tester.pumpAndSettle();
-  return appointmentService;
+  return appointmentRepository;
 }
 
 void main() {
@@ -96,12 +96,12 @@ void main() {
       // My appointments fetches its own Upcoming list (independent of
       // Home's upcoming-card stream below), so the fake needs it primed
       // before the shell — and therefore MyAppointmentsProvider — is built.
-      final appointmentService = await _pumpShell(
+      final appointmentRepository = await _pumpShell(
         tester,
         upcomingAppointments: [_upcomingAppointment],
       );
 
-      appointmentService.emitUpcomingAppointment(_upcomingAppointment);
+      appointmentRepository.emitUpcomingAppointment(_upcomingAppointment);
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('View details'));

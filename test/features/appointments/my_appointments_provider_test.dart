@@ -3,8 +3,8 @@ import 'package:doctor_appointment_app/common/models/doctor.dart';
 import 'package:doctor_appointment_app/features/appointments/view/my_appointments_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../doctor_profile/fake_booking_service.dart';
-import '../home/fake_appointment_service.dart';
+import '../../common/repositories/fake_booking_repository.dart';
+import '../../common/repositories/fake_appointment_repository.dart';
 
 const _upcoming = Appointment(
   id: 'a1',
@@ -30,12 +30,12 @@ const _past = Appointment(
 
 void main() {
   test('starts loading both tabs, then shows the fetched lists', () async {
-    final service = FakeAppointmentService()
+    final repository = FakeAppointmentRepository()
       ..upcomingAppointments = [_upcoming]
       ..pastAppointments = [_past];
     final provider = MyAppointmentsProvider(
-      appointmentService: service,
-      bookingService: FakeBookingService(),
+      appointmentRepository: repository,
+      bookingRepository: FakeBookingRepository(),
       patientId: 'u1',
     );
 
@@ -52,14 +52,14 @@ void main() {
     expect(provider.hasUpcomingError, isFalse);
     expect(provider.hasPastError, isFalse);
 
-    service.dispose();
+    repository.dispose();
   });
 
   test('defaults to the Upcoming tab and switches on selectTab', () async {
-    final service = FakeAppointmentService();
+    final repository = FakeAppointmentRepository();
     final provider = MyAppointmentsProvider(
-      appointmentService: service,
-      bookingService: FakeBookingService(),
+      appointmentRepository: repository,
+      bookingRepository: FakeBookingRepository(),
       patientId: 'u1',
     );
     await Future<void>.value();
@@ -69,15 +69,15 @@ void main() {
     provider.selectTab(AppointmentsTab.past);
     expect(provider.selectedTab, AppointmentsTab.past);
 
-    service.dispose();
+    repository.dispose();
   });
 
   test('surfaces an error per tab when fetching fails', () async {
-    final service = FakeAppointmentService()
+    final repository = FakeAppointmentRepository()
       ..getAppointmentsErrorToThrow = Exception('boom');
     final provider = MyAppointmentsProvider(
-      appointmentService: service,
-      bookingService: FakeBookingService(),
+      appointmentRepository: repository,
+      bookingRepository: FakeBookingRepository(),
       patientId: 'u1',
     );
     await Future<void>.value();
@@ -87,14 +87,14 @@ void main() {
     expect(provider.upcoming, isEmpty);
     expect(provider.past, isEmpty);
 
-    service.dispose();
+    repository.dispose();
   });
 
   test('with no signed-in patient, both tabs are empty and not loading', () async {
-    final service = FakeAppointmentService();
+    final repository = FakeAppointmentRepository();
     final provider = MyAppointmentsProvider(
-      appointmentService: service,
-      bookingService: FakeBookingService(),
+      appointmentRepository: repository,
+      bookingRepository: FakeBookingRepository(),
       patientId: null,
     );
 
@@ -103,7 +103,7 @@ void main() {
     expect(provider.upcoming, isEmpty);
     expect(provider.past, isEmpty);
 
-    service.dispose();
+    repository.dispose();
   });
 
   test('getDoctor returns the looked-up doctor', () async {
@@ -113,37 +113,37 @@ void main() {
       specialty: 'Cardiologist',
       rating: 4.9,
     );
-    final service = FakeAppointmentService()..doctorToReturn = doctor;
+    final repository = FakeAppointmentRepository()..doctorToReturn = doctor;
     final provider = MyAppointmentsProvider(
-      appointmentService: service,
-      bookingService: FakeBookingService(),
+      appointmentRepository: repository,
+      bookingRepository: FakeBookingRepository(),
       patientId: 'u1',
     );
 
     expect(await provider.getDoctor('1'), doctor);
 
-    service.dispose();
+    repository.dispose();
   });
 
   test('getDoctor returns null when the doctor is not found', () async {
-    final service = FakeAppointmentService();
+    final repository = FakeAppointmentRepository();
     final provider = MyAppointmentsProvider(
-      appointmentService: service,
-      bookingService: FakeBookingService(),
+      appointmentRepository: repository,
+      bookingRepository: FakeBookingRepository(),
       patientId: 'u1',
     );
 
     expect(await provider.getDoctor('missing'), isNull);
 
-    service.dispose();
+    repository.dispose();
   });
 
-  test('cancelAppointment cancels via BookingService and refreshes', () async {
-    final service = FakeAppointmentService()..upcomingAppointments = [_upcoming];
-    final bookingService = FakeBookingService();
+  test('cancelAppointment cancels via BookingRepository and refreshes', () async {
+    final repository = FakeAppointmentRepository()..upcomingAppointments = [_upcoming];
+    final bookingRepository = FakeBookingRepository();
     final provider = MyAppointmentsProvider(
-      appointmentService: service,
-      bookingService: bookingService,
+      appointmentRepository: repository,
+      bookingRepository: bookingRepository,
       patientId: 'u1',
     );
     await Future<void>.value();
@@ -151,33 +151,33 @@ void main() {
 
     // Simulate the cancellation having taken effect server-side by the
     // time refresh() re-fetches.
-    service.upcomingAppointments = const [];
+    repository.upcomingAppointments = const [];
     final success = await provider.cancelAppointment(_upcoming);
     await Future<void>.value();
 
     expect(success, isTrue);
-    expect(bookingService.cancelledAppointmentId, 'a1');
-    expect(bookingService.cancelledDoctorId, '1');
-    expect(bookingService.cancelledDate, '2099-01-02');
-    expect(bookingService.cancelledSlot, '10:30 AM');
+    expect(bookingRepository.cancelledAppointmentId, 'a1');
+    expect(bookingRepository.cancelledDoctorId, '1');
+    expect(bookingRepository.cancelledDate, '2099-01-02');
+    expect(bookingRepository.cancelledSlot, '10:30 AM');
     expect(provider.upcoming, isEmpty);
 
-    service.dispose();
+    repository.dispose();
   });
 
   test('cancelAppointment returns false when it fails', () async {
-    final service = FakeAppointmentService()..upcomingAppointments = [_upcoming];
-    final bookingService = FakeBookingService()
+    final repository = FakeAppointmentRepository()..upcomingAppointments = [_upcoming];
+    final bookingRepository = FakeBookingRepository()
       ..errorToThrow = Exception('permission-denied');
     final provider = MyAppointmentsProvider(
-      appointmentService: service,
-      bookingService: bookingService,
+      appointmentRepository: repository,
+      bookingRepository: bookingRepository,
       patientId: 'u1',
     );
     await Future<void>.value();
 
     expect(await provider.cancelAppointment(_upcoming), isFalse);
 
-    service.dispose();
+    repository.dispose();
   });
 }

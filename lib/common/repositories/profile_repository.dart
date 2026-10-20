@@ -16,7 +16,7 @@ class ProfileException implements Exception {
 
 /// Abstraction over the profile backend, so `ProfileProvider` can be unit
 /// tested with a fake instead of talking to real Firebase.
-abstract class ProfileService {
+abstract class ProfileRepository {
   /// [uid]'s `users` document, or `null` if it doesn't exist yet (e.g. the
   /// best-effort write at sign-up failed — see
   /// `FirebaseAuthRepository.signUp`).
@@ -48,8 +48,8 @@ abstract class ProfileService {
   });
 }
 
-class FirestoreProfileService implements ProfileService {
-  FirestoreProfileService({fb.FirebaseAuth? firebaseAuth, FirebaseFirestore? firestore})
+class FirestoreProfileRepository implements ProfileRepository {
+  FirestoreProfileRepository({fb.FirebaseAuth? firebaseAuth, FirebaseFirestore? firestore})
     : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
       _firestore = firestore ?? FirebaseFirestore.instance;
 

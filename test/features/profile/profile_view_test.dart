@@ -1,15 +1,15 @@
-import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
+import 'package:doctor_appointment_app/common/models/app_user.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
-import 'package:doctor_appointment_app/features/profile/models/user_profile.dart';
-import 'package:doctor_appointment_app/features/profile/services/profile_service.dart';
+import 'package:doctor_appointment_app/common/models/user_profile.dart';
+import 'package:doctor_appointment_app/common/repositories/profile_repository.dart';
 import 'package:doctor_appointment_app/features/profile/view/profile_view.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import '../auth/fake_auth_repository.dart';
-import 'fake_profile_service.dart';
+import '../../common/repositories/fake_auth_repository.dart';
+import '../../common/repositories/fake_profile_repository.dart';
 
 const _profile = UserProfile(
   fullName: 'Alex Doe',
@@ -19,7 +19,7 @@ const _profile = UserProfile(
 
 Future<void> _pumpView(
   WidgetTester tester,
-  FakeProfileService profileService,
+  FakeProfileRepository profileRepository,
 ) async {
   final authProvider = AuthProvider(
     authRepository: FakeAuthRepository(
@@ -42,7 +42,7 @@ Future<void> _pumpView(
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: ProfileView(profileService: profileService),
+        home: ProfileView(profileRepository: profileRepository),
       ),
     ),
   );
@@ -50,8 +50,8 @@ Future<void> _pumpView(
 
 void main() {
   testWidgets('shows the loaded name, phone, and email', (tester) async {
-    final profileService = FakeProfileService()..profileToReturn = _profile;
-    await _pumpView(tester, profileService);
+    final profileRepository = FakeProfileRepository()..profileToReturn = _profile;
+    await _pumpView(tester, profileRepository);
     await tester.pump();
 
     expect(find.text('alex@example.com'), findsWidgets);
@@ -62,9 +62,9 @@ void main() {
   testWidgets('shows a load error message when fetching the profile fails', (
     tester,
   ) async {
-    final profileService = FakeProfileService()
+    final profileRepository = FakeProfileRepository()
       ..getProfileErrorToThrow = Exception('offline');
-    await _pumpView(tester, profileService);
+    await _pumpView(tester, profileRepository);
     await tester.pump();
 
     expect(
@@ -76,8 +76,8 @@ void main() {
   testWidgets(
     'editing name and phone then Save updates the profile and shows a success snackbar',
     (tester) async {
-      final profileService = FakeProfileService()..profileToReturn = _profile;
-      await _pumpView(tester, profileService);
+      final profileRepository = FakeProfileRepository()..profileToReturn = _profile;
+      await _pumpView(tester, profileRepository);
       await tester.pump();
 
       await tester.enterText(
@@ -91,9 +91,9 @@ void main() {
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 
-      expect(profileService.updateProfileCalled, isTrue);
-      expect(profileService.lastFullName, 'Alexandra Doe');
-      expect(profileService.lastPhone, '+1 555 0199');
+      expect(profileRepository.updateProfileCalled, isTrue);
+      expect(profileRepository.lastFullName, 'Alexandra Doe');
+      expect(profileRepository.lastPhone, '+1 555 0199');
       expect(find.text('Profile updated.'), findsOneWidget);
     },
   );
@@ -101,10 +101,10 @@ void main() {
   testWidgets('Save shows a generic error snackbar when it fails', (
     tester,
   ) async {
-    final profileService = FakeProfileService()
+    final profileRepository = FakeProfileRepository()
       ..profileToReturn = _profile
       ..errorToThrow = Exception('network');
-    await _pumpView(tester, profileService);
+    await _pumpView(tester, profileRepository);
     await tester.pump();
 
     await tester.tap(find.text('Save'));
@@ -119,8 +119,8 @@ void main() {
   testWidgets(
     'Change password succeeds with the correct current password',
     (tester) async {
-      final profileService = FakeProfileService()..profileToReturn = _profile;
-      await _pumpView(tester, profileService);
+      final profileRepository = FakeProfileRepository()..profileToReturn = _profile;
+      await _pumpView(tester, profileRepository);
       await tester.pump();
 
       await tester.tap(find.text('Change password'));
@@ -137,9 +137,9 @@ void main() {
       await tester.tap(find.widgetWithText(TextButton, 'Change password'));
       await tester.pumpAndSettle();
 
-      expect(profileService.changePasswordCalled, isTrue);
-      expect(profileService.lastCurrentPassword, 'oldpassword1');
-      expect(profileService.lastNewPassword, 'newpassword2');
+      expect(profileRepository.changePasswordCalled, isTrue);
+      expect(profileRepository.lastCurrentPassword, 'oldpassword1');
+      expect(profileRepository.lastNewPassword, 'newpassword2');
       expect(find.text('Password changed.'), findsOneWidget);
     },
   );
@@ -147,10 +147,10 @@ void main() {
   testWidgets(
     'Change password shows the specific error and stays open for a wrong current password',
     (tester) async {
-      final profileService = FakeProfileService()
+      final profileRepository = FakeProfileRepository()
         ..profileToReturn = _profile
         ..errorToThrow = const ProfileException('That password is incorrect.');
-      await _pumpView(tester, profileService);
+      await _pumpView(tester, profileRepository);
       await tester.pump();
 
       await tester.tap(find.text('Change password'));
@@ -176,8 +176,8 @@ void main() {
   testWidgets('Delete account calls deleteAccount with the entered password', (
     tester,
   ) async {
-    final profileService = FakeProfileService()..profileToReturn = _profile;
-    await _pumpView(tester, profileService);
+    final profileRepository = FakeProfileRepository()..profileToReturn = _profile;
+    await _pumpView(tester, profileRepository);
     await tester.pump();
 
     await tester.tap(find.text('Delete account'));
@@ -192,16 +192,16 @@ void main() {
     await tester.tap(find.widgetWithText(TextButton, 'Delete account'));
     await tester.pumpAndSettle();
 
-    expect(profileService.deleteAccountCalled, isTrue);
+    expect(profileRepository.deleteAccountCalled, isTrue);
   });
 
   testWidgets(
     'Delete account shows the specific error and stays open for a wrong password',
     (tester) async {
-      final profileService = FakeProfileService()
+      final profileRepository = FakeProfileRepository()
         ..profileToReturn = _profile
         ..errorToThrow = const ProfileException('That password is incorrect.');
-      await _pumpView(tester, profileService);
+      await _pumpView(tester, profileRepository);
       await tester.pump();
 
       await tester.tap(find.text('Delete account'));
@@ -222,8 +222,8 @@ void main() {
   testWidgets('Log out opens the sign-out confirmation dialog', (
     tester,
   ) async {
-    final profileService = FakeProfileService()..profileToReturn = _profile;
-    await _pumpView(tester, profileService);
+    final profileRepository = FakeProfileRepository()..profileToReturn = _profile;
+    await _pumpView(tester, profileRepository);
     await tester.pump();
 
     await tester.tap(find.text('Sign out'));

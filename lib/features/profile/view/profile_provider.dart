@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../services/profile_service.dart';
+import '../../../common/repositories/profile_repository.dart';
 
 /// Owns the signed-in patient's editable profile fields plus the
 /// loading/saving/error state for fetching them and for the three actions
@@ -9,10 +9,10 @@ import '../services/profile_service.dart';
 /// `MyAppointmentsProvider`'s reasoning for its own one-time fetches.
 class ProfileProvider extends ChangeNotifier {
   ProfileProvider({
-    required ProfileService profileService,
+    required ProfileRepository profileRepository,
     required String? uid,
     required String? email,
-  }) : _profileService = profileService,
+  }) : _profileRepository = profileRepository,
        _uid = uid,
        _email = email {
     if (uid == null) {
@@ -22,7 +22,7 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
-  final ProfileService _profileService;
+  final ProfileRepository _profileRepository;
   final String? _uid;
   final String? _email;
 
@@ -51,7 +51,7 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<void> _load(String uid) async {
     try {
-      final profile = await _profileService.getProfile(uid);
+      final profile = await _profileRepository.getProfile(uid);
       _fullName = profile?.fullName ?? '';
       _phone = profile?.phone ?? '';
       _hasLoadError = false;
@@ -74,7 +74,7 @@ class ProfileProvider extends ChangeNotifier {
     _isSaving = true;
     notifyListeners();
     try {
-      await _profileService.updateProfile(uid: uid, fullName: fullName, phone: phone);
+      await _profileRepository.updateProfile(uid: uid, fullName: fullName, phone: phone);
       _fullName = fullName;
       _phone = phone;
       return true;
@@ -96,7 +96,7 @@ class ProfileProvider extends ChangeNotifier {
     _passwordError = null;
     notifyListeners();
     try {
-      await _profileService.changePassword(
+      await _profileRepository.changePassword(
         email: email,
         currentPassword: currentPassword,
         newPassword: newPassword,
@@ -123,7 +123,7 @@ class ProfileProvider extends ChangeNotifier {
     _deleteError = null;
     notifyListeners();
     try {
-      await _profileService.deleteAccount(email: email, currentPassword: currentPassword);
+      await _profileRepository.deleteAccount(email: email, currentPassword: currentPassword);
       return true;
     } catch (error) {
       _deleteError = _messageFor(error);

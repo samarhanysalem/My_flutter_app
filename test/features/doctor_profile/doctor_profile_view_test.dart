@@ -1,17 +1,17 @@
 import 'package:doctor_appointment_app/common/models/appointment.dart';
 import 'package:doctor_appointment_app/common/models/doctor.dart';
-import 'package:doctor_appointment_app/features/auth/models/app_user.dart';
+import 'package:doctor_appointment_app/common/models/app_user.dart';
 import 'package:doctor_appointment_app/features/auth/view/auth_provider.dart';
-import 'package:doctor_appointment_app/features/doctor_profile/services/booking_service.dart';
+import 'package:doctor_appointment_app/common/repositories/booking_repository.dart';
 import 'package:doctor_appointment_app/features/doctor_profile/view/doctor_profile_view.dart';
 import 'package:doctor_appointment_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import '../auth/fake_auth_repository.dart';
-import 'fake_availability_service.dart';
-import 'fake_booking_service.dart';
+import '../../common/repositories/fake_auth_repository.dart';
+import '../../common/repositories/fake_availability_repository.dart';
+import '../../common/repositories/fake_booking_repository.dart';
 
 final _today = DateTime(2024, 1, 2);
 
@@ -41,14 +41,14 @@ Widget _wrap(Widget child) {
 /// just that the screen never touches real Firestore.
 DoctorProfileView _profileView(
   Doctor doctor, {
-  FakeAvailabilityService? availabilityService,
-  FakeBookingService? bookingService,
+  FakeAvailabilityRepository? availabilityRepository,
+  FakeBookingRepository? bookingRepository,
   Appointment? reschedulingAppointment,
 }) {
   return DoctorProfileView(
     doctor: doctor,
-    availabilityService: availabilityService ?? FakeAvailabilityService(const {}),
-    bookingService: bookingService ?? FakeBookingService(),
+    availabilityRepository: availabilityRepository ?? FakeAvailabilityRepository(const {}),
+    bookingRepository: bookingRepository ?? FakeBookingRepository(),
     reschedulingAppointment: reschedulingAppointment,
     today: _today,
   );
@@ -150,7 +150,7 @@ void main() {
       _wrap(
         _profileView(
           _doctorWithBio,
-          availabilityService: FakeAvailabilityService(const {}),
+          availabilityRepository: FakeAvailabilityRepository(const {}),
         ),
       ),
     );
@@ -172,7 +172,7 @@ void main() {
     // DoctorProfileView from a launcher screen and observes the popped
     // result there instead of asserting text inside the profile screen.
     String? confirmationMessage;
-    final bookingService = FakeBookingService();
+    final bookingRepository = FakeBookingRepository();
     await tester.pumpWidget(
       _wrap(
         Builder(
@@ -182,10 +182,10 @@ void main() {
                 MaterialPageRoute(
                   builder: (_) => _profileView(
                     _doctorWithBio,
-                    availabilityService: FakeAvailabilityService({
+                    availabilityRepository: FakeAvailabilityRepository({
                       _today: ['10:30 AM', '1:00 PM'],
                     }),
-                    bookingService: bookingService,
+                    bookingRepository: bookingRepository,
                   ),
                 ),
               );
@@ -205,7 +205,7 @@ void main() {
 
     expect(find.text('Doctor profile'), findsNothing);
     expect(confirmationMessage, contains('Appointment booked'));
-    expect(bookingService.bookedSlots, ['10:30 AM']);
+    expect(bookingRepository.bookedSlots, ['10:30 AM']);
   });
 
   testWidgets(
@@ -222,7 +222,7 @@ void main() {
         status: 'confirmed',
       );
       String? confirmationMessage;
-      final bookingService = FakeBookingService();
+      final bookingRepository = FakeBookingRepository();
       await tester.pumpWidget(
         _wrap(
           Builder(
@@ -232,10 +232,10 @@ void main() {
                   MaterialPageRoute(
                     builder: (_) => _profileView(
                       _doctorWithBio,
-                      availabilityService: FakeAvailabilityService({
+                      availabilityRepository: FakeAvailabilityRepository({
                         _today: ['10:30 AM', '1:00 PM'],
                       }),
-                      bookingService: bookingService,
+                      bookingRepository: bookingRepository,
                       reschedulingAppointment: originalAppointment,
                     ),
                   ),
@@ -264,10 +264,10 @@ void main() {
       // rescheduleAppointment (which updates the same doc) was called, not
       // bookAppointment (which would create a second one) — the exact bug
       // this test guards against.
-      expect(bookingService.rescheduledAppointmentId, 'appt-1');
-      expect(bookingService.reschedulePreviousDate, '2024-01-01');
-      expect(bookingService.reschedulePreviousSlot, '9:00 AM');
-      expect(bookingService.bookedSlots, ['10:30 AM']);
+      expect(bookingRepository.rescheduledAppointmentId, 'appt-1');
+      expect(bookingRepository.reschedulePreviousDate, '2024-01-01');
+      expect(bookingRepository.reschedulePreviousSlot, '9:00 AM');
+      expect(bookingRepository.bookedSlots, ['10:30 AM']);
     },
   );
 
@@ -282,16 +282,16 @@ void main() {
       slot: '9:00 AM',
       status: 'confirmed',
     );
-    final bookingService = FakeBookingService()
+    final bookingRepository = FakeBookingRepository()
       ..errorToThrow = const BookingException('slot-unavailable');
     await tester.pumpWidget(
       _wrap(
         _profileView(
           _doctorWithBio,
-          availabilityService: FakeAvailabilityService({
+          availabilityRepository: FakeAvailabilityRepository({
             _today: ['10:30 AM'],
           }),
-          bookingService: bookingService,
+          bookingRepository: bookingRepository,
           reschedulingAppointment: originalAppointment,
         ),
       ),
@@ -310,16 +310,16 @@ void main() {
   });
 
   testWidgets('shows an error notice when booking fails', (tester) async {
-    final bookingService = FakeBookingService()
+    final bookingRepository = FakeBookingRepository()
       ..errorToThrow = const BookingException('slot-unavailable');
     await tester.pumpWidget(
       _wrap(
         _profileView(
           _doctorWithBio,
-          availabilityService: FakeAvailabilityService({
+          availabilityRepository: FakeAvailabilityRepository({
             _today: ['10:30 AM'],
           }),
-          bookingService: bookingService,
+          bookingRepository: bookingRepository,
         ),
       ),
     );
@@ -346,16 +346,16 @@ void main() {
       // write — shouldn't tell the patient the slot they can still see is
       // unavailable; that's misleading and sends them retrying a doomed
       // action instead of the real problem getting noticed.
-      final bookingService = FakeBookingService()
+      final bookingRepository = FakeBookingRepository()
         ..errorToThrow = Exception('permission-denied');
       await tester.pumpWidget(
         _wrap(
           _profileView(
             _doctorWithBio,
-            availabilityService: FakeAvailabilityService({
+            availabilityRepository: FakeAvailabilityRepository({
               _today: ['10:30 AM'],
             }),
-            bookingService: bookingService,
+            bookingRepository: bookingRepository,
           ),
         ),
       );
